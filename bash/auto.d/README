@@ -1,0 +1,4 @@
+# This directory will automatically be sourced by the main bashrc file
+# This is a good place to add custom files to
+# For example, you can create a "myPS1.sh" file which overrides the PS1 prompt
+# set by my bashrc, or "myfunctions.sh" to source your own custom bash functions
