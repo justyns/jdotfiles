@@ -1,0 +1,6 @@
+#Color definitions for bash
+red="\[\033[01;31m\]";
+green="\[\033[01;32m\]";
+teal="\[\033[00;36m\]";
+blue="\[\033[01;34m\]";
+dkgrey="\[\033[01;30m\]"
