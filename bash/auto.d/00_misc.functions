@@ -43,3 +43,23 @@ function sysinfo() {
         echo -e "\tListening:\t`netstat -an | grep -Ec '^tcp.*LISTEN'`";
 }
 
+# function to update the X DISPLAY variable .  Good for when you re-attach a screen or tmux session from another computer
+# from http://brainscraps.wikidot.com/tmux
+update_display() {
+  good_display=$(netstat -an | /bin/grep 0\ [0-9,:,.]*:60..\  | awk '{print $4}' | tail -n 1)
+  good_display=${good_display: -2}
+  export DISPLAY=${HOSTNAME}:${good_display}.0
+}
+
+# used to refresh ssh connection for tmux
+# http://justinchouinard.com/blog/2010/04/10/fix-stale-ssh-environment-variables-in-gnu-screen-and-tmux/
+# http://readystate4.com/category/tmux/
+function r() {
+  if [[ -n $TMUX ]]; then
+    NEW_SSH_AUTH_SOCK=`tmux showenv|grep ^SSH_AUTH_SOCK|cut -d = -f 2`
+    if [[ -n $NEW_SSH_AUTH_SOCK ]] && [[ -S $NEW_SSH_AUTH_SOCK ]]; then
+      SSH_AUTH_SOCK=$NEW_SSH_AUTH_SOCK
+    fi
+  fi
+}
+
