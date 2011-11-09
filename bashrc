@@ -37,3 +37,7 @@ export PS1="\[\033[01;32m\][\u@\h\[\033[01;34m\] \w ]$\[\033[00m\]"
 for file in $HOME/.bash/auto.d/*.sh; do
     [ -x $file ] && . $file
 done
+
+# Source .bashrc.local if it exists(Can be used to override settings on a per-machine basis)
+[[ -f $HOME/.bashrc.local ]] && source $HOME/.bashrc.local
+
