@@ -3,5 +3,16 @@
 	email = justyn@justynshull.com
 [core]
 	editor = vim
+[color]
+    diff = auto
+    status = auto
+    branch = auto
+[push]
+    default = matching
+[alias]
+    co = checkout
+    ci = commit
+    st = status --untracked-files=no
+    up = pull
 [merge]
 	tool = vimdiff
