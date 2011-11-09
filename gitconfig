@@ -1,0 +1,7 @@
+[user]
+	name = Justyn Shull
+	email = justyn@justynshull.com
+[core]
+	editor = vim
+[merge]
+	tool = vimdiff
