@@ -30,6 +30,10 @@ fi
 # Source color definitions
 [[ -f $HOME/.bash/colors ]] && source $HOME/.bash/colors
 
+# Set VIM as the editor
+export EDITOR="vim"
+export VISUAL="$EDITOR"
+
 # ### PROMPT ###
 export PS1="\[\033[01;32m\][\u@\h\[\033[01;34m\] \w ]$\[\033[00m\]"
 
