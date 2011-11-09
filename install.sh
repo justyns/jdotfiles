@@ -14,7 +14,7 @@ do
         # ignore file
         echo -n
     else
-        if [ -f $HOME/.$file ] && [ ! -L $HOME/.$file ] && [ -d $HOME/.$file ]; then
+        if [ -f $HOME/.$file ] && [ ! -L $HOME/.$file ]; then
             echo -e "${RedF}$file${reset}: Exists but not a symlink. You should backup and delete(or move) it."
             continue
         fi
