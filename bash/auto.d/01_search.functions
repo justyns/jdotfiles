@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# Contains functions to search online sites like google, wikipedia, etc
+
+#search wikipedia using dns txt records.  wicked
+function wiki () {
+        COLUMNS=`tput cols`
+        dig +short txt "${1}".wp.dg.cx | sed -e 's/" "//g' -e 's/^"//g' -e 's/"$//g' -e 's/ http:/\n\nhttp:/' | fmt -w $COLUMNS
+}
+
+geoip(){ curl -A "Mozilla/5.0" -s "http://www.geody.com/geoip.php?ip=$1" | grep "^IP.*$1" | html2text; }
+#search commandlinefu.com through the commandline
+cmdfu(){ curl "http://www.commandlinefu.com/commands/matching/$@/$(echo -n $@ | openssl base64)/plaintext"; }
+#look up the definition of a word
+dict() { curl -s dict://dict.org/d:$1 | perl -ne 's/\r//; last if /^\.$/; print if /^151/../^250/'; }
+#weather for any us city
+weather() { lynx -dump "http://mobile.weather.gov/port_zh.php?inputstring=$*" | sed 's/^ *//;/ror has occ/q;2h;/__/!{x;s/\n.*//;x;H;d};x;s/\n/ -- /;q';}
+

@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# Contains several security-related functions
+
+genpasswd() {
+        local l=$1
+        [ "$l" == "" ] && l=20
+        tr -dc A-Za-z0-9_ < /dev/urandom | head -c ${l} | xargs
+}
+
+#Function to expand short urls
+# http://pthree.org/2011/10/18/use-wget1-to-expand-shortened-urls/
+expandurl() { wget -S $1 2>&1 | grep ^Location; }
+
