@@ -15,4 +15,6 @@ cmdfu(){ curl "http://www.commandlinefu.com/commands/matching/$@/$(echo -n $@ | 
 dict() { curl -s dict://dict.org/d:$1 | perl -ne 's/\r//; last if /^\.$/; print if /^151/../^250/'; }
 #weather for any us city
 weather() { lynx -dump "http://mobile.weather.gov/port_zh.php?inputstring=$*" | sed 's/^ *//;/ror has occ/q;2h;/__/!{x;s/\n.*//;x;H;d};x;s/\n/ -- /;q';}
+#check downfoeveryoneorjustme.com
+down4me() { curl -s "http://www.downforeveryoneorjustme.com/$1" | sed '/just you/!d;s/<[^>]*>//g' ; }
 

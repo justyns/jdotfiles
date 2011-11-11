@@ -13,6 +13,11 @@ topproc10u() { ps -eo user,pcpu,pmem | tail -n +2 | awk '{num[$1]++; cpu[$1] += 
 # Calculator!
 calc(){ awk "BEGIN{ print $* }" ;}
 
+#convert megabits and megabytes
+#TODO: convert this to use google or something else
+function megabytestomegabits() { awk "BEGIN{ print 8 * $* }" ;}
+function megabitstomegabytes() { awk "BEGIN{ print $* /8 }" ;}
+
 #check to see the dates on a ssl cert
 function check_ssl_date() {
         echo | openssl s_client -connect "${1}":443 2>/dev/null |openssl x509 -dates -noout
@@ -42,6 +47,15 @@ function sysinfo() {
         echo -e "\tEstablished:\t`netstat -an | grep -Ec '^tcp.+ESTABLISHED$'`";
         echo -e "\tListening:\t`netstat -an | grep -Ec '^tcp.*LISTEN'`";
 }
+
+#time dns lookup and site download speed
+test_Site_speed() {
+	URL="${1}";
+	curl -L --w "$URL\nDNS %{time_namelookup}s conn %{time_connect}s time %{time_total}s\nSpeed %{speed_download}bps Size %{size_download}bytes\n" -o/dev/null -s $URL	
+}
+
+#turn internet radio on or off
+radio() { if [ "$(pidof mpg123)" ] ; then killall mpg123; else mpg123 -q -@ http://173.236.29.51:8200  & fi }
 
 # function to update the X DISPLAY variable .  Good for when you re-attach a screen or tmux session from another computer
 # from http://brainscraps.wikidot.com/tmux
