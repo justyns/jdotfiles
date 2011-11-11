@@ -99,6 +99,12 @@ bindkey "^[." next
 #
 defscrollback 50000
 
+# From http://www4.informatik.uni-erlangen.de/~jnweiger/screen-faq.html
+# Q: My xterm scrollbar does not work with screen.
+# A: The problem is that xterm will not allow scrolling if the alternate text buffer is selected. The standard definitions of the termcap initialize capabilities ti and te switch to and from the alternate text buffer. (The scrollbar also does not work when you start e.g. ‘vi’). You can tell screen not to use these initialisations by adding the line “termcapinfo xterm ti@:te@” to your ~/.screenrc file.
+termcapinfo xterm ti@:te@”
+
+
 #default screens
 #screen -t root 0 sudo -i
 #screen -t work 1 
