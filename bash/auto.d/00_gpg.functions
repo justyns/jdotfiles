@@ -1,0 +1,21 @@
+### Some stuff I found on http://www.novell.com/coolsolutions/tools/17142.html ###
+################### Begin gpg functions ##################
+encrypt ()
+{
+# Use ascii armor
+gpg -ac --no-options "$1"
+}
+
+bencrypt ()
+{
+# No ascii armor
+# Encrypt binary data. jpegs/gifs/vobs/etc.
+gpg -c --no-options "$1"
+}
+
+decrypt ()
+{
+gpg --no-options "$1"
+}
+
+################### End gpg functions ##################
