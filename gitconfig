@@ -7,8 +7,9 @@
     diff = auto
     status = auto
     branch = auto
+	ui = auto
 [push]
-    default = matching
+	default = matching
 [alias]
     co = checkout
     ci = commit
@@ -16,3 +17,8 @@
     up = pull
 [merge]
 	tool = vimdiff
+	stat = true
+[diff]
+	mnemonicprefix = true
+[branch]
+	autosetupmerge = true
