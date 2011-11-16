@@ -2,6 +2,7 @@
 # Justyn Shull https://github.com/justyns/jdotfiles
 # Extremely simple script, but makes it so I dont have to remember to go to the dropbox website and find the link to download
 # Does not include an init script.
+# Linux download/install link:  https://www.dropbox.com/install?os=lnx
 
 cd $HOME
 if [ `getconf LONG_BIT` == '64' ];
