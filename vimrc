@@ -7,3 +7,4 @@ filetype indent on
 "http://irssi.org/documentation/tips
 "Auto update changed date to todates date
 autocmd BufWrite *.pl %s/changed     => '.*/\="changed     => '" . strftime("%c") . "',"/e
+map <C-B> :w !php -l <CR>
