@@ -1,3 +1,4 @@
+call pathogen#infect()
 set background=dark
 colorscheme desert
 syntax on
