@@ -1,0 +1,3 @@
+[submodule "vim/bundle/vim-neatstatus"]
+	path = vim/bundle/vim-neatstatus
+	url = git://github.com/maciakl/vim-neatstatus.git
