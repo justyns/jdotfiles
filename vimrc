@@ -13,7 +13,7 @@ filetype plugin indent on
 set nocompatible
 
 " enable inline spellcheck
-set spell
+" set spell
 set spelllang=en
 
 " show line and column markers
