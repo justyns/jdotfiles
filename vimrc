@@ -1,4 +1,4 @@
-call pathogen#infect()
+runtime bundle/vim-pathogen/autoload/pathogen.vim
 set background=dark
 colorscheme desert
 syntax on
