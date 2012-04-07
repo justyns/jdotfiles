@@ -14,7 +14,10 @@ irssi_nickpane() {
 # irssi wrapper
 irssi() {
     irssi_nickpane
+    #tail -n2 -f ~/.irssi/fnotify | sed -u 's/[<@&]//g' | while read heading message ; do notify-send -i gtk-dialog-info -t 3000 --hint=int:transient:1 -- "${heading}" "${message}"; done &
+    #echo $! > /tmp/irssifnotify.pid
     $(which irssi)                                                  # launch irssi
+    #kill -9 `cat /tmp/irssifnotify.pid`
 }
 
 # repair running irssi's nicklist pane
