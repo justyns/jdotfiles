@@ -14,8 +14,7 @@ done
 
 
 dotdir=$(pwd)
-ignore="README.md .git install.sh bin"
-. bash/colors
+ignore="README.md .git install.sh bin update.sh"
 for file in *; 
 do
     if [[ "$ignore" =~ "$file" ]]; then
