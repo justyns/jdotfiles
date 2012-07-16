@@ -1,6 +1,6 @@
 #/bin/bash
 # Author:  Justyn Shull < justyn [at] justynshull.com >
-# Last Updated: 11/08/2011
+# Last Updated: 07/15/2012
 #
 # Script to link my dot files and configs to where they belong
 . bash/colors
