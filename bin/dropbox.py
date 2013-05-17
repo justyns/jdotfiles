@@ -4,7 +4,7 @@
 #
 # dropbox
 # Dropbox frontend script
-# This file is part of nautilus-dropbox 0.7.1.
+# This file is part of nautilus-dropbox 1.4.0.
 #
 # nautilus-dropbox is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -239,7 +239,7 @@ def download_uri_to_buffer(uri):
 
 # This sets a custom User-Agent
 class DropboxURLopener(urllib.FancyURLopener):
-    version = "DropboxLinuxDownloader/0.7.1"
+    version = "DropboxLinuxDownloader/1.4.0"
 urllib._urlopener = DropboxURLopener()
 
 class DownloadState(object):
