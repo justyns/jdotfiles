@@ -8,6 +8,11 @@ filetype plugin on
 filetype indent on
 filetype plugin indent on
 
+" Tabs
+set expandtab
+set tabstop=4
+set shiftwidth=4
+
 " Some stuff from http://www.terminally-incoherent.com/blog/2012/03/26/how-to-configure-vim/
 " break compatibility with vi
 set nocompatible
