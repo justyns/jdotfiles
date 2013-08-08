@@ -4,6 +4,17 @@
 # Stop here if we're in a non-interactive shell
 [[ $- != *i* ]] && return
 
+# Same as above, but a allows emacs tramp mode to work
+if [[ "$TERM" == "dumb" ]]
+then
+  unsetopt zle
+  unsetopt prompt_cr
+  unsetopt prompt_subst
+  unfunction precmd
+  unfunction preexec
+  PS1='$ '
+fi
+
 # Source global definitions if they exist
 [[ -f /etc/bashrc ]] && . /etc/bashrc
 
