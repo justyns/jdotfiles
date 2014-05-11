@@ -21,3 +21,9 @@ Updates
     git pull
     git submodule update
     ./install.sh
+
+Updating submodules
+-------------------
+If you want to update the git submodules to a commit newer than what is referenced in this git repo, you can by running this:
+    git submodule foreach git pull origin master
+You can then commit the changes to update the submodule metadata

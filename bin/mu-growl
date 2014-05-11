@@ -1,0 +1,13 @@
+#!/bin/bash
+# Finds recent e-mail and pops up a growl notification
+# Found here: https://groups.google.com/forum/#!topic/mu-discuss/bb_BlV8-E4M
+NBACK=$(gdate +%s --date="$1 sec ago") 
+NMAIL=$(LC_ALL=en_GB.UTF-8 mu find "" --after=$NBACK | wc -l) 
+if [ $NMAIL -eq 1 ] 
+then 
+    growlnotify -I /Applications/Emacs.app -t "mu4e" -m "$NMAIL new message." 
+elif [ $NMAIL -gt 1 ] 
+then 
+    growlnotify -I /Applications/Emacs.app -t "mu4e" -m "$NMAIL new messages." 
+fi 
+
