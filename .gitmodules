@@ -28,3 +28,9 @@
 [submodule "vim/bundles/conque"]
 	path = vim/bundles/conque
 	url = https://github.com/chilicuil/conque
+[submodule "vim/bundle/tagbar"]
+	path = vim/bundle/tagbar
+	url = git://github.com/majutsushi/tagbar.git
+[submodule "vim/bundle/conque"]
+	path = vim/bundle/conque
+	url = https://github.com/chilicuil/conque
