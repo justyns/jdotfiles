@@ -30,7 +30,7 @@ set autoindent
 set copyindent
 set smartindent
 
-set showcmd     " Show (partial) command in status line.
+set showcmd         " Show (partial) command in status line.
 set showmatch       " Show matching brackets.
 set ignorecase      " Do case insensitive matching
 set smartcase       " Do smart case matching
@@ -65,3 +65,14 @@ endif
 "Auto update changed date to todates date
 autocmd BufWrite *.pl %s/changed     => '.*/\="changed     => '" . strftime("%c") . "',"/e
 map <C-B> :w !php -l <CR>
+
+" Turn on rainbow parantheses by default
+" https://github.com/kien/rainbow_parentheses.vim
+au VimEnter * RainbowParenthesesToggle
+au Syntax * RainbowParenthesesLoadRound
+au Syntax * RainbowParenthesesLoadSquare
+au Syntax * RainbowParenthesesLoadBraces
+
+" Enable closetag for html/xml only
+autocmd FileType html,htmldjango,jinjahtml,eruby,mako let b:closetag_html_style=1
+autocmd FileType html,xhtml,xml,htmldjango,jinjahtml,eruby,mako source ~/.vim/bundle/closetag/plugin/closetag.vim

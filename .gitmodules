@@ -19,3 +19,12 @@
 [submodule "vim/bundle/puppet"]
 	path = vim/bundle/puppet
 	url = git://github.com/rodjek/vim-puppet.git
+[submodule "vim/bundle/closetag"]
+	path = vim/bundle/closetag
+	url = git://github.com/docunext/closetag.vim.git
+[submodule "vim/bundle/pyflakes"]
+	path = vim/bundle/pyflakes
+	url = git://github.com/kevinw/pyflakes-vim.git
+[submodule "vim/bundles/conque"]
+	path = vim/bundles/conque
+	url = https://github.com/chilicuil/conque
