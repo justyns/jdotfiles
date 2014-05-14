@@ -1,8 +1,10 @@
 [user]
 	name = Justyn Shull
-	email = justyn@justynshull.com
+	email = justyns@codero.com
 [core]
 	editor = vim
+	excludesfile = /Users/justyns/.gitignore_global
+	autocrlf = input
 [color]
     diff = auto
     status = auto
@@ -22,3 +24,9 @@
 	mnemonicprefix = true
 [branch]
 	autosetupmerge = true
+[difftool "sourcetree"]
+	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
+	path = 
+[mergetool "sourcetree"]
+	cmd = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
+	trustExitCode = true
