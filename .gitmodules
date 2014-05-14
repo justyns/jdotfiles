@@ -43,3 +43,6 @@
 [submodule "vim/bundle/vim-matchit"]
 	path = vim/bundle/vim-matchit
 	url = https://github.com/edsono/vim-matchit
+[submodule "vim/bundle/rainbow_parentheses"]
+	path = vim/bundle/rainbow_parentheses
+	url = https://github.com/kien/rainbow_parentheses.vim.git
