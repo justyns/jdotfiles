@@ -46,3 +46,6 @@
 [submodule "vim/bundle/vim-vagrant"]
 	path = vim/bundle/vim-vagrant
 	url = git://github.com/markcornick/vim-vagrant.git
+[submodule "vim/bundle/pyflakes"]
+	path = vim/bundle/pyflakes
+	url = git://github.com/kevinw/pyflakes-vim.git
