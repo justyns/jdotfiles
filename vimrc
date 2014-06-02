@@ -95,3 +95,6 @@ inoremap <right> <nop>
 
 " Allowe hidden buffers
 set hidden
+
+" Fix backspace when using auto indent and stuff
+set backspace=indent,eol,start
