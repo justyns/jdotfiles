@@ -93,3 +93,5 @@ inoremap <down> <nop>
 inoremap <left> <nop>
 inoremap <right> <nop>
 
+" Allowe hidden buffers
+set hidden
