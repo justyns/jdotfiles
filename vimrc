@@ -12,6 +12,7 @@ filetype plugin indent on
 set expandtab
 set tabstop=4
 set shiftwidth=4
+set softtabstop=4
 
 " Some stuff from http://www.terminally-incoherent.com/blog/2012/03/26/how-to-configure-vim/
 " break compatibility with vi
@@ -28,7 +29,8 @@ set spelllang=en
 set autoindent
 " copy previous indent on enter 
 set copyindent
-set smartindent
+" set smartindent - disabling per comments in
+" http://www.reddit.com/r/vim/comments/26z00g/going_to_start_learning_vim_pretty_overwhelmed/
 
 set showcmd         " Show (partial) command in status line.
 set showmatch       " Show matching brackets.
@@ -80,3 +82,14 @@ autocmd FileType html,xhtml,xml,htmldjango,jinjahtml,eruby,mako source ~/.vim/bu
 " Tagbar
 let g:tagbar_usearrows = 1
 nnoremap <leader>l :TagbarToggle<CR>
+
+" disable arrow keys to learn to use hjkl
+nnoremap <up> <nop>
+nnoremap <down> <nop>
+nnoremap <left> <nop>
+nnoremap <right> <nop>
+inoremap <up> <nop>
+inoremap <down> <nop>
+inoremap <left> <nop>
+inoremap <right> <nop>
+
