@@ -50,3 +50,6 @@
 	path = vim/bundle/pyflakes
 	url = git://github.com/kevinw/pyflakes-vim.git
 	ignore = dirty
+[submodule "vim/bundle/00_sensible"]
+	path = vim/bundle/00_sensible
+	url = https://github.com/tpope/vim-sensible.git
