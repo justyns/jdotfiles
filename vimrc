@@ -70,10 +70,12 @@ map <C-B> :w !php -l <CR>
 
 " Turn on rainbow parantheses by default
 " https://github.com/kien/rainbow_parentheses.vim
-au VimEnter * RainbowParenthesesToggle
-au Syntax * RainbowParenthesesLoadRound
-au Syntax * RainbowParenthesesLoadSquare
-au Syntax * RainbowParenthesesLoadBraces
+if exists('au')
+    au VimEnter * RainbowParenthesesToggle
+    au Syntax * RainbowParenthesesLoadRound
+    au Syntax * RainbowParenthesesLoadSquare
+    au Syntax * RainbowParenthesesLoadBraces
+endif
 
 " Enable closetag for html/xml only
 autocmd FileType html,htmldjango,jinjahtml,eruby,mako let b:closetag_html_style=1
