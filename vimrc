@@ -14,6 +14,17 @@ set tabstop=4
 set shiftwidth=4
 set softtabstop=4
 
+" Some stuff from http://stackoverflow.com/questions/1218390/what-is-your-most-productive-shortcut-with-vim
+" Scroll 2 lines above/below cursor
+set scrolloff=2
+set showmode            " Show mode in status bar
+set ruler               " show cursor position in status bar
+set laststatus=2        " use 2 lines for the status bar
+set matchtime=2         " show matching bracket for 0.2 seconds
+set matchpairs+=<:>     " specially for html
+set esckeys             " map missed escape sequences (enables keypad keys)
+set viminfo='20,\"500   " remember copy registers after quitting in the .viminfo
+
 " Some stuff from http://www.terminally-incoherent.com/blog/2012/03/26/how-to-configure-vim/
 " break compatibility with vi
 set nocompatible
