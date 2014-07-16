@@ -53,3 +53,6 @@
 [submodule "vim/bundle/00_sensible"]
 	path = vim/bundle/00_sensible
 	url = https://github.com/tpope/vim-sensible.git
+[submodule "vim/bundle/salt-vim"]
+	path = vim/bundle/salt-vim
+	url = https://github.com/saltstack/salt-vim.git
