@@ -144,3 +144,5 @@ augroup encrypted
   autocmd BufWritePost,FileWritePost *.gpg u
 augroup END
 
+" Statusline / airline settings
+let g:airline#extensions#tabline#enabled = 1
