@@ -1,3 +1,8 @@
+" Needed so fish doesn't break vim - https://github.com/dag/vim-fish
+if &shell =~# 'fish$'
+    set shell=sh
+endif
+
 runtime bundle/vim-pathogen/autoload/pathogen.vim
 call pathogen#infect()
 set background=dark
