@@ -18,12 +18,12 @@ If any files or directories exist already, move them out of the way and re-run i
 Updates
 -------
     cd ~/.jdotfiles
-    git pull
-    git submodule update
-    ./install.sh
+    ./update.sh
 
 Updating submodules
 -------------------
 If you want to update the git submodules to a commit newer than what is referenced in this git repo, you can by running this:
+
     git submodule foreach git pull origin master
+
 You can then commit the changes to update the submodule metadata
