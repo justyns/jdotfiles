@@ -1,0 +1,17 @@
+# Always sort the files
+#--sort−files
+
+# Always color, even if piping to a another program
+#--color
+
+# Directories to ignore
+--ignore-dir=.idea/
+--ignore-dir=node_modules/
+
+# Types
+--type-set=coffeescript=.coffee
+--type-set=coffee=.coffee
+
+# Files to ignore
+--ignore-file=ext:log
+
