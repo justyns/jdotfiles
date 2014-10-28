@@ -19,6 +19,13 @@ set tabstop=4
 set shiftwidth=4
 set softtabstop=4
 
+" Some settings from http://stevelosh.com/blog/2010/09/coming-home-to-vim/#using-the-leader
+set encoding=utf-8
+set wildmenu
+set wildmode=full
+
+
+
 " Some stuff from http://stackoverflow.com/questions/1218390/what-is-your-most-productive-shortcut-with-vim
 " Scroll 2 lines above/below cursor
 set scrolloff=2
@@ -39,7 +46,7 @@ set nocompatible
 set spelllang=en
 
 " show line and column markers
-" set cursorline
+set cursorline
 " set cursorcolumn
 
 set autoindent
@@ -55,6 +62,9 @@ set smartcase       " Do smart case matching
  
 set incsearch       " incremental search
 set hlsearch        " highlights searches
+
+" Re-map the leader key from \ to ,
+let mapleader = ","
 
 " pressing \<space> clears the search highlights
 nmap <silent> <leader><space> :nohlsearch<CR>
@@ -159,4 +169,56 @@ nnoremap <C-H> <C-W><C-H>
 " Vim’s default
 set splitbelow
 set splitright
+
+" Create vertical split using <leader>w and then switch to it
+nnoremap <leader>w <C-w>v<C-w>l
+
+" map jj to ESC to make it easier to leave insert mode
+inoremap jj <ESC>
+
+" http://stevelosh.com/blog/2010/09/coming-home-to-vim/#using-the-leader
+" Yank one line, paste it below, move to it and replace every character with =
+" ie: Create MarkDown headings
+nnoremap <leader>= yypVr=
+
+" Use normal regex instead of vim's regex
+nnoremap / /\v
+vnoremap / /\v
+
+" Use the tab key to move between brackets and paranthesis instead of %
+nnoremap <tab> %
+vnoremap <tab> %
+
+" Add a color column at 85
+set colorcolumn=85
+
+"set wrap
+"set textwidth=79
+"set formatoptions=qrn1
+
+" Re-map ; to : in normal-mode
+nnoremap ; :
+
+" strip all trailing whitespace in the current file
+nnoremap <leader>W :%s/\s\+$//<cr>:let @/=''<CR>
+
+" Use ack by pressing ,g
+nnoremap <leader>g :Ack
+
+" Select text that was just pasted
+nnoremap <leader>v V`]
+
+" Open ~/.vimrc in a split window
+nnoremap <leader>ev <C-w><C-v><C-l>:e $MYVIMRC<cr>
+
+
+
+" Use <leader>a and n to switch between buffers (similar to my tmux/screen
+" config)
+map <Leader>a :bprev<Return>
+map <Leader>p :bprev<Return>
+map <Leader>n :bnext<Return>
+map <Leader>d :bd<Return>
+map <Leader>f :b
+nmap <Leader>bb :ls<CR>:buffer<Space>
 
