@@ -109,7 +109,7 @@ autocmd FileType html,xhtml,xml,htmldjango,jinjahtml,eruby,mako source ~/.vim/bu
 
 " Tagbar
 let g:tagbar_usearrows = 1
-nnoremap <leader>l :TagbarToggle<CR>
+nnoremap <leader>l :TagbarToggle<CR><C-w><C-w>
 
 " disable arrow keys to learn to use hjkl
 " nnoremap <up> <nop>
@@ -221,4 +221,7 @@ map <Leader>n :bnext<Return>
 map <Leader>d :bd<Return>
 map <Leader>f :b
 nmap <Leader>bb :ls<CR>:buffer<Space>
+
+" Use <leader>t to toggle nerdtree
+map <Leader>t :NERDTreeToggle<Return>
 
