@@ -14,10 +14,10 @@ filetype indent on
 filetype plugin indent on
 
 " Tabs
-set expandtab
-set tabstop=4
-set shiftwidth=4
-set softtabstop=4
+set expandtab       " Turn tabs into spaces
+set tabstop=4       " number of visual spaces per tab
+set shiftwidth=4 
+set softtabstop=4   " number of spaces in a tab when editing
 
 " Some settings from http://stevelosh.com/blog/2010/09/coming-home-to-vim/#using-the-leader
 set encoding=utf-8
@@ -225,3 +225,5 @@ nmap <Leader>bb :ls<CR>:buffer<Space>
 " Use <leader>t to toggle nerdtree
 map <Leader>t :NERDTreeToggle<Return>
 
+" Format javascript 
+nmap =j :%!python -m json.tool<CR>
