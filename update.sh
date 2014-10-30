@@ -14,6 +14,6 @@ echo "Updating main repo"
 git pull
 echo "Updating git submodules"
 git submodule init
-git submodule update
+git submodule update --recursive
 echo "Re-running install.sh"
 ./install.sh

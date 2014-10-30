@@ -190,7 +190,7 @@ nnoremap <tab> %
 vnoremap <tab> %
 
 " Add a color column at 85
-set colorcolumn=85
+" set colorcolumn=85
 
 "set wrap
 "set textwidth=79
