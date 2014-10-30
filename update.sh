@@ -1,6 +1,6 @@
 #!/bin/bash
 # Author:  Justyn Shull < justyn [at] justynshull.com >
-# Last Updated: 05/14/2014
+# Last Updated: 10/30/2014
 #
 # Script that updates the files from my jdotfiles repo and also updates all git submodules
 # https://github.com/justyns/jdotfiles
@@ -14,6 +14,7 @@ echo "Updating main repo"
 git pull
 echo "Updating git submodules"
 git submodule init
-git submodule update --recursive
+git submodule update
+git submodule update --init --recursive
 echo "Re-running install.sh"
 ./install.sh
