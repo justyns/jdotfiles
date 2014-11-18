@@ -6,7 +6,8 @@ endif
 runtime bundle/vim-pathogen/autoload/pathogen.vim
 call pathogen#infect()
 set background=dark
-colorscheme desert
+" colorscheme desert
+colorscheme solarized
 syntax on
 filetype on
 filetype plugin on
@@ -203,7 +204,7 @@ nnoremap ; :
 nnoremap <leader>W :%s/\s\+$//<cr>:let @/=''<CR>
 
 " Use ack by pressing ,g
-nnoremap <leader>g :Ack
+nnoremap <leader>g :Ack 
 
 " Select text that was just pasted
 nnoremap <leader>v V`]
@@ -219,6 +220,7 @@ map <Leader>a :bprev<Return>
 map <Leader>p :bprev<Return>
 map <Leader>n :bnext<Return>
 map <Leader>d :bd<Return>
+map <Leader>D :bw<Return>
 map <Leader>f :b
 nmap <Leader>bb :ls<CR>:buffer<Space>
 
