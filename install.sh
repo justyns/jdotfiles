@@ -14,7 +14,7 @@ done
 
 
 dotdir=$(pwd)
-ignore="README.md .git install.sh bin update.sh"
+ignore="README.md .git install.sh bin update.sh misc"
 for file in *; 
 do
     if [[ "$ignore" =~ "$file" ]]; then

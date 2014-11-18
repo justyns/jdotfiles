@@ -27,3 +27,7 @@ If you want to update the git submodules to a commit newer than what is referenc
     git submodule foreach git pull origin master
 
 You can then commit the changes to update the submodule metadata
+
+iTerm Solarized
+===============
+Download the iterm2 solarized colors here: https://github.com/altercation/solarized/tree/master/iterm2-colors-solarized
