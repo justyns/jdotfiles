@@ -13,6 +13,7 @@ Installation
     git submodule init
     git submodule update
     ./install.sh
+    ./update.sh
 If any files or directories exist already, move them out of the way and re-run install.sh
 
 Updates
