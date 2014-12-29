@@ -229,3 +229,31 @@ map <Leader>t :NERDTreeToggle<Return>
 
 " Format javascript 
 nmap =j :%!python -m json.tool<CR>
+
+
+" From http://www.vimbits.com/bits/153 - TODO: Move to its own file
+" Motions to Ack for things. Works with pretty much everything, including: w,
+" W, e, E, b, B, t*, f*, i*, a*, and custom text objects.
+"
+" For example: \aiw will Ack for the word under the cursor. \aib will Ack for
+" the contents of the parentheses the cursor is inside.
+nnoremap <silent> \a :set opfunc=<SID>AckMotion<CR>g@
+xnoremap <silent> \a :<C-U>call <SID>AckMotion(visualmode())<CR>
+ 
+function! s:CopyMotionForType(type)
+    if a:type ==# 'v'
+        silent execute "normal! `<" . a:type . "`>y"
+    elseif a:type ==# 'char'
+        silent execute "normal! `[v`]y"
+    endif
+endfunction
+ 
+function! s:AckMotion(type) abort
+    let reg_save = @@
+ 
+    call s:CopyMotionForType(a:type)
+ 
+    execute "normal! :Ack! --literal " . shellescape(@@) . "\<cr>"
+ 
+    let @@ = reg_save
+endfunction
