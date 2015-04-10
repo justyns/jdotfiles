@@ -230,6 +230,10 @@ map <Leader>t :NERDTreeToggle<Return>
 " Format javascript 
 nmap =j :%!python -m json.tool<CR>
 
+" Format python using yapf (from
+" https://github.com/mindriot101/vim-yapf#why-you-may-not-need-this-plugin)
+nmap =y :%!yapf<CR>
+
 
 " From http://www.vimbits.com/bits/153 - TODO: Move to its own file
 " Motions to Ack for things. Works with pretty much everything, including: w,
