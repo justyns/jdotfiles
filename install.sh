@@ -6,7 +6,7 @@
 . bash/colors
 
 #Check and see if these commands exist on the system
-reqcommands="vim git ruby screen tmux mutt pyflakes hg ack ctags"
+reqcommands="vim git ruby screen tmux mutt pyflakes hg ack ag ctags flake8"
 for com in $reqcommands;
 do
 	hash ${com} 2>&- || echo -e >&2 "${RedF}${com}${reset}: not installed"
