@@ -204,7 +204,7 @@ nnoremap ; :
 nnoremap <leader>W :%s/\s\+$//<cr>:let @/=''<CR>
 
 " Use ack by pressing ,g
-nnoremap <leader>g :Ack
+nnoremap <leader>g :Ack 
 
 " Select text that was just pasted
 nnoremap <leader>v V`]

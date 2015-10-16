@@ -77,3 +77,6 @@
 [submodule "vim/bundle/ag"]
 	path = vim/bundle/ag
 	url = https://github.com/rking/ag.vim
+[submodule "vim/bundle/vim-flake8"]
+	path = vim/bundle/vim-flake8
+	url = https://github.com/nvie/vim-flake8.git
