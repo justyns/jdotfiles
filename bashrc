@@ -56,3 +56,5 @@ done
 # Source .bashrc.local if it exists(Can be used to override settings on a per-machine basis)
 [[ -f $HOME/.bashrc.local ]] && source $HOME/.bashrc.local
 
+
+export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting

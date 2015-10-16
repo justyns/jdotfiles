@@ -17,7 +17,7 @@ filetype plugin indent on
 " Tabs
 set expandtab       " Turn tabs into spaces
 set tabstop=4       " number of visual spaces per tab
-set shiftwidth=4 
+set shiftwidth=4
 set softtabstop=4   " number of spaces in a tab when editing
 
 " Some settings from http://stevelosh.com/blog/2010/09/coming-home-to-vim/#using-the-leader
@@ -51,7 +51,7 @@ set cursorline
 " set cursorcolumn
 
 set autoindent
-" copy previous indent on enter 
+" copy previous indent on enter
 set copyindent
 " set smartindent - disabling per comments in
 " http://www.reddit.com/r/vim/comments/26z00g/going_to_start_learning_vim_pretty_overwhelmed/
@@ -60,7 +60,7 @@ set showcmd         " Show (partial) command in status line.
 set showmatch       " Show matching brackets.
 set ignorecase      " Do case insensitive matching
 set smartcase       " Do smart case matching
- 
+
 set incsearch       " incremental search
 set hlsearch        " highlights searches
 
@@ -85,7 +85,7 @@ if v:version >= 730
     set undofile        " keep a persistent backup file
 endif
 
-" Load indentation rules according to the detected filetype. 
+" Load indentation rules according to the detected filetype.
 if has("autocmd")
     filetype indent on
 endif
@@ -204,7 +204,7 @@ nnoremap ; :
 nnoremap <leader>W :%s/\s\+$//<cr>:let @/=''<CR>
 
 " Use ack by pressing ,g
-nnoremap <leader>g :Ack 
+nnoremap <leader>g :Ack
 
 " Select text that was just pasted
 nnoremap <leader>v V`]
@@ -227,7 +227,7 @@ nmap <Leader>bb :ls<CR>:buffer<Space>
 " Use <leader>t to toggle nerdtree
 map <Leader>t :NERDTreeToggle<Return>
 
-" Format javascript 
+" Format javascript
 nmap =j :%!python -m json.tool<CR>
 
 " Format python using yapf (from
@@ -243,7 +243,7 @@ nmap =y :%!yapf<CR>
 " the contents of the parentheses the cursor is inside.
 nnoremap <silent> \a :set opfunc=<SID>AckMotion<CR>g@
 xnoremap <silent> \a :<C-U>call <SID>AckMotion(visualmode())<CR>
- 
+
 function! s:CopyMotionForType(type)
     if a:type ==# 'v'
         silent execute "normal! `<" . a:type . "`>y"
@@ -251,13 +251,20 @@ function! s:CopyMotionForType(type)
         silent execute "normal! `[v`]y"
     endif
 endfunction
- 
+
 function! s:AckMotion(type) abort
     let reg_save = @@
- 
+
     call s:CopyMotionForType(a:type)
- 
+
     execute "normal! :Ack! --literal " . shellescape(@@) . "\<cr>"
- 
+
     let @@ = reg_save
 endfunction
+
+
+" Folding stuff
+set foldmethod=syntax
+set foldnestmax=2
+set nofoldenable
+nnoremap <Space> za   " Toggle current fold open/closed
