@@ -80,3 +80,12 @@
 [submodule "vim/bundle/vim-flake8"]
 	path = vim/bundle/vim-flake8
 	url = https://github.com/nvie/vim-flake8.git
+[submodule "vim/bundle/vim-geeknote"]
+	path = vim/bundle/vim-geeknote
+	url = https://github.com/neilagabriel/vim-geeknote
+[submodule "vim/bundle/javascript-libraries-syntax"]
+	path = vim/bundle/javascript-libraries-syntax
+	url = https://github.com/othree/javascript-libraries-syntax.vim.git
+[submodule "vim/bundle/vim-angular"]
+	path = vim/bundle/vim-angular
+	url = https://github.com/burnettk/vim-angular.git

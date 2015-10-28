@@ -268,3 +268,9 @@ set foldmethod=syntax
 set foldnestmax=2
 set nofoldenable
 nnoremap <Space> za   " Toggle current fold open/closed
+
+" Flake8 stuff
+let g:flake8_show_in_gutter=1
+
+" https://github.com/othree/javascript-libraries-syntax.vim
+let g:used_javascript_libs = 'jquery,angularjs,react'
