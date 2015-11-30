@@ -3,8 +3,12 @@ if &shell =~# 'fish$'
     set shell=sh
 endif
 
-runtime bundle/vim-pathogen/autoload/pathogen.vim
-call pathogen#infect()
+" runtime bundle/vim-pathogen/autoload/pathogen.vim
+" call pathogen#infect()
+" vim-plug https://github.com/junegunn/vim-plug
+so ~/.vim/plugs.vim
+
+
 set background=dark
 " colorscheme desert
 colorscheme solarized
