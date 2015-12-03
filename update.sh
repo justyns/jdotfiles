@@ -18,3 +18,5 @@ git submodule update
 git submodule update --init --recursive
 echo "Re-running install.sh"
 ./install.sh
+echo "Updating vim plugins"
+vim +PlugUpdate +qall

@@ -67,6 +67,8 @@ do
     fi
 done
 
-echo "Installing youcompleteme for vim"
-cd ~/.vim/bundle/YouCompleteMe
-./install.py --clang-completer --gocode-completer
+#echo "Installing youcompleteme for vim"
+#cd ~/.vim/bundle/YouCompleteMe
+#./install.py --clang-completer --gocode-completer
+echo "Installing vim plugins"
+vim +PlugInstall +qall
