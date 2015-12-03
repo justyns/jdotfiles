@@ -299,3 +299,10 @@ set title  " Change the title in the terminal
 " From http://nvie.com/posts/how-i-boosted-my-vim/ - use w!! to write
 " something as root
 cmap w!! w !sudo tee % >/dev/null
+
+let g:ctrlp_cache_dir = $HOME . '/.cache/ctrlp'     " Persist ctrlp cache to disk
+" If ag is installed, use it for ctrlp instead of the built in search
+if executable('ag')
+    let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
+endif
+
