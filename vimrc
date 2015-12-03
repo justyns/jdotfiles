@@ -213,9 +213,14 @@ nnoremap <leader>g :Ack
 " Select text that was just pasted
 nnoremap <leader>v V`]
 
+" Toggle paste mode with F2
+nnoremap <F2> :set invpaste paste?<CR>
+set pastetoggle=<F2>
+
+
 " Open ~/.vimrc in a split window
 nnoremap <leader>ev <C-w><C-v><C-l>:e $MYVIMRC<cr>
-
+nnoremap <leader>sv :so $MYVIMRC<cr>
 
 
 " Use <leader>a and n to switch between buffers (similar to my tmux/screen
@@ -278,3 +283,19 @@ let g:flake8_show_in_gutter=1
 
 " https://github.com/othree/javascript-libraries-syntax.vim
 let g:used_javascript_libs = 'jquery,angularjs,react'
+
+" Set default font for MacVim
+if has('win32')
+    set guifont=Consolas:h12   " Win32.
+elseif has('gui_macvim')
+    set guifont=Monaco:h14     " OSX.
+else
+    set guifont=Monospace\ 12  " Linux.
+endif
+
+set wildignore=*.swp,*.bak,*.pyc,*.class
+set title  " Change the title in the terminal
+
+" From http://nvie.com/posts/how-i-boosted-my-vim/ - use w!! to write
+" something as root
+cmap w!! w !sudo tee % >/dev/null
