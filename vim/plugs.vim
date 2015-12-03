@@ -46,7 +46,8 @@ Plug 'scrooloose/syntastic'   " syntax checker
 Plug 'tpope/vim-repeat'
 Plug 'jiangmiao/auto-pairs'
 Plug 'majutsushi/tagbar'
-
+Plug 'airblade/vim-gitgutter'
+Plug 'tpope/vim-fugitive'
 
 
 call plug#end()
