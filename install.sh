@@ -72,3 +72,4 @@ done
 #./install.py --clang-completer --gocode-completer
 echo "Installing vim plugins"
 vim +PlugInstall +qall
+

@@ -33,6 +33,7 @@ Plug 'markcornick/vim-vagrant'
 Plug 'tpope/vim-markdown'
 Plug 'fatih/vim-go'
 Plug 'othree/javascript-libraries-syntax.vim'
+Plug 'vadv/vim-chef'
 
 " Python
 Plug 'davidhalter/jedi-vim'
