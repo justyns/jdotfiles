@@ -73,3 +73,8 @@ done
 echo "Installing vim plugins"
 vim +PlugInstall +qall
 
+if [[ ! -f ~/.gitconfig.local ]]; then
+    echo -e "${RedF}~/.gitconfig.local${reset}: Doesn't exist.  You should create it with something like: \n[user]\n\tname = Justyn Shull\n\temail = git@justyn.io\n";
+else
+    echo -e "${GreenF}~/.gitconfig.local${reset}: exists"
+fi
