@@ -1,9 +1,8 @@
-[user]
-	name = Justyn Shull
-	email = justyns@codero.com
+[include]
+    path = ~/.gitconfig.local
 [core]
 	editor = vim
-	excludesfile = /Users/justyns/.gitignore_global
+	excludesfile = ~/.gitignore_global
 	autocrlf = input
 [color]
     diff = auto
@@ -13,10 +12,15 @@
 [push]
 	default = matching
 [alias]
+    br = branch
     co = checkout
     ci = commit
+    cia = commit -av
     st = status --untracked-files=no
     up = pull
+    pp = pull --prune
+    l = log --oneline --stat
+    ll = log --graph --all --oneline --decorate
 [merge]
 	tool = vimdiff
 	stat = true
