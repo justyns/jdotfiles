@@ -53,7 +53,9 @@ do
 				printf -- 'latest version: %s\n' "$verlatest"
 			fi
 			if [ "$latest" -ne 0 ] && [ "$verlocal" = 'latest' ] || [ "$verlocal" != "$verlatest" ]
-			then brew cask install --force "$app" && [ "$verlocal" != "$verlatest" ] && rm -rf "$appdir/$verlocal"
+			then
+			    echo "Upgrading $app from $verlocal to $verlatest";
+			    brew cask install --force "$app" && [ "$verlocal" != "$verlatest" ] && rm -rf "$appdir/$verlocal";
 			fi
 			;;
 		*)
