@@ -26,6 +26,7 @@
 	stat = true
 [diff]
 	mnemonicprefix = true
+	algorithm = histogram
 [branch]
 	autosetupmerge = true
 [difftool "sourcetree"]
