@@ -10,9 +10,10 @@ so ~/.vim/plugs.vim
 
 
 set background=dark
-" colorscheme desert
-colorscheme solarized
 syntax on
+" colorscheme desert
+" colorscheme solarized
+colorscheme monokai
 filetype on
 filetype plugin on
 filetype indent on
