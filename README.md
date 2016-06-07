@@ -41,3 +41,5 @@ Atom Flatland theme (to match monokai): https://atom.io/themes/flatland
 Input font (based on Monaco settings): [http://input.fontbureau.com](http://input.fontbureau.com/preview/?size=15&language=python&theme=monokai&family=InputMono&width=300&weight=300&line-height=1.2&a=0&g=ss&i=serif&l=serifs&zero=slash&asterisk=0&braces=0&preset=monaco&customize=please)
 
 Fish theme(matches monokai): https://github.com/hasanozgan/theme-lambda
+
+OSX Menumeters: http://member.ipmu.jp/yuji.tachikawa/MenuMetersElCapitan/
