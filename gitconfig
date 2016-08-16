@@ -38,4 +38,5 @@
 [gpg]
 	program = gpg2
 [user]
-	signingkey = 6CBBDA995E2D619
+	signingkey = 6CBBDA995E2D619C
+
