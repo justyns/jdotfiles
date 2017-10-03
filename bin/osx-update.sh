@@ -22,3 +22,6 @@ echo "Updating atom"
 if [ -x `which apm` ]; then
     apm update --confirm=false
 fi
+
+echo "Updating OSX"
+softwareupdate -i -a
