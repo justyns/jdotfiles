@@ -297,6 +297,7 @@ endif
 set wildignore=*.swp,*.bak,*.pyc,*.class
 set title  " Change the title in the terminal
 
+
 " From http://nvie.com/posts/how-i-boosted-my-vim/ - use w!! to write
 " something as root
 cmap w!! w !sudo tee % >/dev/null
@@ -310,3 +311,17 @@ endif
 " For chef berkshelf
 autocmd BufNewFile,BufRead Gemfile set filetype=ruby
 autocmd BufNewFile,BufRead Berksfile set filetype=ruby
+
+" Syntastic settings
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+let g:syntastic_ruby_checkers = [ 'rubocop' ]
+
+" Hide Info window after completions
+autocmd CursorMovedI * if pumvisible() == 0|pclose|endif
+autocmd InsertLeave * if pumvisible() == 0|pclose|endif

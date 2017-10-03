@@ -35,6 +35,7 @@ Plug 'tpope/vim-markdown'
 Plug 'fatih/vim-go'
 Plug 'othree/javascript-libraries-syntax.vim'
 Plug 'vadv/vim-chef'
+Plug 'hashivim/vim-terraform'
 
 " Python
 Plug 'davidhalter/jedi-vim'
@@ -50,6 +51,7 @@ Plug 'jiangmiao/auto-pairs'
 Plug 'majutsushi/tagbar'
 Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
+Plug 'juliosueiras/vim-terraform-completion'
 
 
 call plug#end()
