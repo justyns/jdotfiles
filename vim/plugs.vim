@@ -52,6 +52,7 @@ Plug 'majutsushi/tagbar'
 Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
 Plug 'juliosueiras/vim-terraform-completion'
+Plug 'ledger/vim-ledger'
 
 
 call plug#end()

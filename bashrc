@@ -41,6 +41,9 @@ fi
 # Source color definitions
 [[ -f $HOME/.bash/colors ]] && source $HOME/.bash/colors
 
+# Source pass auto-complete
+[[ -f $HOME/.bash/pass.bash-completion ]] && source $HOME/.bash/pass.bash-completion
+
 # Set VIM as the editor
 export EDITOR="vim"
 export VISUAL="$EDITOR"
@@ -58,6 +61,4 @@ done
 
 
 export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
-
-# added by travis gem
-[ -f ~/.travis/travis.sh ] && source ~/.travis/travis.sh
+export PATH="$PATH:/usr/local/go/bin:$HOME/go/bin"

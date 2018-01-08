@@ -325,3 +325,6 @@ let g:syntastic_ruby_checkers = [ 'rubocop' ]
 " Hide Info window after completions
 autocmd CursorMovedI * if pumvisible() == 0|pclose|endif
 autocmd InsertLeave * if pumvisible() == 0|pclose|endif
+
+" For ledger
+au BufNewFile,BufRead *.ldg,*.ledger setf ledger | comp ledger
