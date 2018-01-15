@@ -81,6 +81,9 @@ command WQ wq
 command Wq wq
 command Q q
 
+" run a shell command and put the output in a scratch buffer
+command! -nargs=* -complete=shellcmd R new | setlocal buftype=nofile bufhidden=hide noswapfile | r !<args>
+
 " save more in undo history
 set history=1000
 set undolevels=1000
@@ -328,3 +331,15 @@ autocmd InsertLeave * if pumvisible() == 0|pclose|endif
 
 " For ledger
 au BufNewFile,BufRead *.ldg,*.ledger setf ledger | comp ledger
+let g:ledger_maxwidth = 120
+let g:ledger_fold_blanks = 1
+function LedgerSort()
+    :%! ledger -f - print --sort 'date, amount'
+    :%LedgerAlign
+endfunction
+command LedgerSort call LedgerSort()
+
+" Ultisnips
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsJumpForwardTrigger="<c-b>"
+let g:UltiSnipsJumpBackwardTrigger="<c-n>"

@@ -54,5 +54,9 @@ Plug 'tpope/vim-fugitive'
 Plug 'juliosueiras/vim-terraform-completion'
 Plug 'ledger/vim-ledger'
 
+" Snippets
+Plug 'SirVer/ultisnips'
+Plug 'honza/vim-snippets'
+
 
 call plug#end()
