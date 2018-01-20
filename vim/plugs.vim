@@ -53,6 +53,7 @@ Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
 Plug 'juliosueiras/vim-terraform-completion'
 Plug 'ledger/vim-ledger'
+Plug 'nathangrigg/vim-beancount'
 
 " Snippets
 Plug 'SirVer/ultisnips'

@@ -62,3 +62,4 @@ done
 
 export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
 export PATH="$PATH:/usr/local/go/bin:$HOME/go/bin"
+export PATH="$PATH:$HOME/.local/bin"  # Mostly used by pip
