@@ -36,6 +36,7 @@ Plug 'fatih/vim-go'
 Plug 'othree/javascript-libraries-syntax.vim'
 Plug 'vadv/vim-chef'
 Plug 'hashivim/vim-terraform'
+Plug 'hashivim/vim-nomadproject'
 
 " Python
 Plug 'davidhalter/jedi-vim'
