@@ -1,0 +1,6 @@
+package brew
+package rvm
+package z
+theme default
+theme lambda
+theme robbyrussell

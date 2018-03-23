@@ -14,7 +14,7 @@ done
 
 
 dotdir=$(pwd)
-ignore="README.md .git install.sh bin update.sh misc"
+ignore="README.md .git install.sh bin update.sh misc .config"
 for file in *; 
 do
     if [[ "$ignore" =~ "$file" ]]; then
@@ -62,6 +62,34 @@ do
             else
                     echo -e "${YellowF}bin/$file${reset}: Linking to ${BoldOn}$HOME/bin/$file${reset}"
                     ln -s $dotdir/bin/$file $HOME/bin/$file
+            fi
+        fi
+    fi
+done
+
+# Do the same for the config dir
+# TODO: This should all really be moved into functions
+ignore="README.md .gitkeep"
+cd ${dotdir}/config
+mkdir -pv ${HOME}/.config
+for file in *;
+do
+    if [[ "$ignore" =~ "$file" ]]; then
+        # ignore file
+        echo -n
+    else
+        if [ -f $HOME/.config/$file ] && [ ! -L $HOME/.config/$file ]; then
+            echo -e "${RedF}$file${reset}: Exists but not a symlink. You should backup and delete(or move) it."
+            continue
+        fi
+        if [ -h $HOME/.config/$file ]; then
+            echo -e "${GreenF}.config/$file${reset}: symlink exists"
+        else
+            if [ -d $HOME/.config/$file ]; then
+                    echo -e "${RedF}.config/$file${reset}: is a directory. You should backup and delete(or move) it."
+            else
+                    echo -e "${YellowF}.config/$file${reset}: Linking to ${BoldOn}$HOME/config/$file${reset}"
+                    ln -s $dotdir/config/$file $HOME/.config/$file
             fi
         fi
     fi
