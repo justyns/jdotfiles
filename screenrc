@@ -15,7 +15,7 @@
 # Note that if you want to use the color brown under konsole
 # You actually use bright yellow (%{Y}).
 
-# Note the embeded space after the colon, I feel
+# Note the embedded space after the colon, I feel
 #  it just looks nicer with a blank between the
 #  text and console edge:
 #   '%{=b}%{G} Screens: '
@@ -34,7 +34,7 @@
 #   '%D'
 
 #This displays the date in Mon/day/year format:
-# and again I embeded a space to give me one space
+# and again I embedded a space to give me one space
 # between the text and console edge:
 #  '%M/%d/%Y '
 
