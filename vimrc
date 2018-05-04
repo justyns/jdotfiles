@@ -72,7 +72,7 @@ set hlsearch        " highlights searches
 " Re-map the leader key from \ to ,
 let mapleader = ","
 
-" pressing \<space> clears the search highlights
+" pressing ,<space> clears the search highlights
 nmap <silent> <leader><space> :nohlsearch<CR>
 
 " for when you mess up and hold shift too long
@@ -223,6 +223,8 @@ set pastetoggle=<F2>
 
 
 " Open ~/.vimrc in a split window
+" ,ev - edit vimrc
+" ,sv - reload vimrc
 nnoremap <leader>ev <C-w><C-v><C-l>:e $MYVIMRC<cr>
 nnoremap <leader>sv :so $MYVIMRC<cr>
 

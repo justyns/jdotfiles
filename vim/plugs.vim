@@ -23,6 +23,10 @@ Plug 'rking/ag.vim', { 'on': 'Ag' }
 
 " navigation
 Plug 'ctrlpvim/ctrlp.vim'  " , { 'on': ['CtrlP', 'CtrlPBuffer', 'CtrlPMixed'] }
+" Remove nerdtree and replace with a small netrw window if  I can figure out
+" how to add git support to it
+Plug 'Xuyuanp/nerdtree-git-plugin', { 'on':  'NERDTreeToggle' }
+Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
 
 " Syntax hilighting for various things
 Plug 'ekalinin/Dockerfile.vim'   " , { 'for': 'dockerfile' }
@@ -50,6 +54,7 @@ Plug 'scrooloose/syntastic'   " syntax checker
 Plug 'tpope/vim-repeat'
 Plug 'jiangmiao/auto-pairs'
 Plug 'majutsushi/tagbar'
+Plug 'ludovicchabant/vim-gutentags'
 Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
 Plug 'juliosueiras/vim-terraform-completion'
