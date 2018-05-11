@@ -23,10 +23,11 @@ Plug 'rking/ag.vim', { 'on': 'Ag' }
 
 " navigation
 Plug 'ctrlpvim/ctrlp.vim'  " , { 'on': ['CtrlP', 'CtrlPBuffer', 'CtrlPMixed'] }
-" Remove nerdtree and replace with a small netrw window if  I can figure out
-" how to add git support to it
+" netrw has some bugs when using it as a "sidebar", so just use NerdTree for
+" now if I need it.  Load on demand.
 Plug 'Xuyuanp/nerdtree-git-plugin', { 'on':  'NERDTreeToggle' }
 Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
+Plug 'majutsushi/tagbar'
 
 " Syntax hilighting for various things
 Plug 'ekalinin/Dockerfile.vim'   " , { 'for': 'dockerfile' }
@@ -43,23 +44,35 @@ Plug 'hashivim/vim-terraform'
 Plug 'hashivim/vim-nomadproject'
 
 " Python
-Plug 'davidhalter/jedi-vim'
-Plug 'klen/python-mode'
+" Plug 'davidhalter/jedi-vim'
 Plug 'vim-scripts/indentpython.vim'
 Plug 'nvie/vim-flake8'
 
-" misc plugins
-Plug 'stephpy/vim-yaml'   " faster yaml processing for salt files with large lines
-Plug 'scrooloose/syntastic'   " syntax checker
-Plug 'tpope/vim-repeat'
-Plug 'jiangmiao/auto-pairs'
-Plug 'majutsushi/tagbar'
-Plug 'ludovicchabant/vim-gutentags'
+" Git
 Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
-Plug 'juliosueiras/vim-terraform-completion'
+
+" Text-based accounting
 Plug 'ledger/vim-ledger'
 Plug 'nathangrigg/vim-beancount'
+
+" misc plugins
+Plug 'stephpy/vim-yaml'   " faster yaml processing for salt files with large lines
+Plug 'tpope/vim-repeat'
+Plug 'jiangmiao/auto-pairs'
+Plug 'ludovicchabant/vim-gutentags'
+
+" syntax checker / linter
+if v:version >= 800
+    Plug 'w0rp/ale'    " async linter for vim 8+
+else
+    Plug 'scrooloose/syntastic'   " and use syntastic on older versions
+endif
+
+" Code completion via YCM.  It's kind of a big install, but it usually works
+" pretty well compared to the other ones I've tried.
+Plug 'Valloric/YouCompleteMe', { 'do': './install.py' }
+Plug 'juliosueiras/vim-terraform-completion'
 
 " Snippets
 Plug 'SirVer/ultisnips'
