@@ -50,3 +50,5 @@
 [user]
 	signingkey = 6CBBDA995E2D619C
 
+[commit]
+	verbose = true
