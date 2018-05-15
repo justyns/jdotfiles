@@ -297,7 +297,7 @@ else
     set guifont=Monospace\ 12  " Linux.
 endif
 
-set wildignore=*.swp,*.bak,*.pyc,*.class
+set wildignore=*.swp,*.bak,*.pyc,*.class,tags
 set title  " Change the title in the terminal
 
 

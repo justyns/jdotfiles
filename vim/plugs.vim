@@ -13,7 +13,7 @@ call plug#begin('~/.vim/plugged')
 " Plug 'altercation/vim-colors-solarized'
 " Plug 'sickill/vim-monokai'
 Plug 'liuchengxu/space-vim-dark'
-Plug 'bling/vim-airline'
+Plug 'vim-airline/vim-airline'
 
 " https://github.com/tpope/vim-sensible
 Plug 'tpope/vim-sensible'
@@ -28,6 +28,9 @@ Plug 'ctrlpvim/ctrlp.vim'  " , { 'on': ['CtrlP', 'CtrlPBuffer', 'CtrlPMixed'] }
 Plug 'Xuyuanp/nerdtree-git-plugin', { 'on':  'NERDTreeToggle' }
 Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
 Plug 'majutsushi/tagbar', { 'on': 'TagbarToggle' }
+if v:version >= 704
+    Plug 'terryma/vim-multiple-cursors'
+endif
 
 " Syntax hilighting for various things
 Plug 'ekalinin/Dockerfile.vim'   " , { 'for': 'dockerfile' }
