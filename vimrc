@@ -9,11 +9,13 @@ endif
 so ~/.vim/plugs.vim
 
 
-set background=dark
 syntax on
 " colorscheme desert
 " colorscheme solarized
-colorscheme monokai
+" colorscheme monokai
+set background=dark
+colorscheme space-vim-dark
+
 filetype on
 filetype plugin on
 filetype indent on

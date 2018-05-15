@@ -11,7 +11,8 @@ call plug#begin('~/.vim/plugged')
 
 " Theme
 " Plug 'altercation/vim-colors-solarized'
-Plug 'sickill/vim-monokai'
+" Plug 'sickill/vim-monokai'
+Plug 'liuchengxu/space-vim-dark'
 Plug 'bling/vim-airline'
 
 " https://github.com/tpope/vim-sensible
