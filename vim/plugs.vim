@@ -37,11 +37,13 @@ Plug 'hdima/python-syntax'
 Plug 'saltstack/salt-vim'
 Plug 'markcornick/vim-vagrant'
 Plug 'tpope/vim-markdown'
-Plug 'fatih/vim-go'
 Plug 'othree/javascript-libraries-syntax.vim'
 Plug 'vadv/vim-chef'
 Plug 'hashivim/vim-terraform'
 Plug 'hashivim/vim-nomadproject'
+if !(v:version < 704 || (v:version == 704 && !has('patch1689')))
+    Plug 'fatih/vim-go'
+endif
 
 " Python
 " Plug 'davidhalter/jedi-vim'
@@ -60,7 +62,9 @@ Plug 'nathangrigg/vim-beancount'
 Plug 'stephpy/vim-yaml'   " faster yaml processing for salt files with large lines
 Plug 'tpope/vim-repeat'
 Plug 'jiangmiao/auto-pairs'
-Plug 'ludovicchabant/vim-gutentags'
+if v:version >= 800
+    Plug 'ludovicchabant/vim-gutentags'
+endif
 
 " syntax checker / linter
 if v:version >= 800
@@ -71,7 +75,9 @@ endif
 
 " Code completion via YCM.  It's kind of a big install, but it usually works
 " pretty well compared to the other ones I've tried.
-Plug 'Valloric/YouCompleteMe', { 'do': './install.py' }
+if !(v:version < 704 || (v:version == 704 && !has('patch1578')))
+    Plug 'Valloric/YouCompleteMe', { 'do': './install.py' }
+endif
 Plug 'juliosueiras/vim-terraform-completion'
 
 " Snippets
