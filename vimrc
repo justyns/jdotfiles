@@ -306,9 +306,15 @@ set title  " Change the title in the terminal
 cmap w!! w !sudo tee % >/dev/null
 
 let g:ctrlp_cache_dir = $HOME . '/.cache/ctrlp'     " Persist ctrlp cache to disk
-" If ag is installed, use it for ctrlp instead of the built in search
+
+" Check if ag (the_silver_searcher) is installed
 if executable('ag')
+    " If ag is installed, use it for ctrlp instead of the built in search
     let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
+    " Also use it for ack.vim due to https://github.com/rking/ag.vim/issues/124#issuecomment-227038003
+    let g:ackprg = 'ag --vimgrep --smart-case'
+    cnoreabbrev ag Ack
+    cnoreabbrev Ag Ack
 endif
 
 " For chef berkshelf

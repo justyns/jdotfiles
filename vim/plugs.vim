@@ -19,8 +19,7 @@ Plug 'bling/vim-airline'
 Plug 'tpope/vim-sensible'
 
 " searching / grep - only loaded when invoked
-Plug 'mileszs/ack.vim', { 'on': 'Ack' }
-Plug 'rking/ag.vim', { 'on': 'Ag' }
+Plug 'mileszs/ack.vim', { 'on': ['Ack', 'Ag'] }
 
 " navigation
 Plug 'ctrlpvim/ctrlp.vim'  " , { 'on': ['CtrlP', 'CtrlPBuffer', 'CtrlPMixed'] }
@@ -28,7 +27,7 @@ Plug 'ctrlpvim/ctrlp.vim'  " , { 'on': ['CtrlP', 'CtrlPBuffer', 'CtrlPMixed'] }
 " now if I need it.  Load on demand.
 Plug 'Xuyuanp/nerdtree-git-plugin', { 'on':  'NERDTreeToggle' }
 Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
-Plug 'majutsushi/tagbar'
+Plug 'majutsushi/tagbar', { 'on': 'TagbarToggle' }
 
 " Syntax hilighting for various things
 Plug 'ekalinin/Dockerfile.vim'   " , { 'for': 'dockerfile' }
