@@ -46,7 +46,6 @@ if !(v:version < 704 || (v:version == 704 && !has('patch1689')))
 endif
 
 " Python
-" Plug 'davidhalter/jedi-vim'
 Plug 'vim-scripts/indentpython.vim'
 Plug 'nvie/vim-flake8'
 
@@ -62,6 +61,7 @@ Plug 'nathangrigg/vim-beancount'
 Plug 'stephpy/vim-yaml'   " faster yaml processing for salt files with large lines
 Plug 'tpope/vim-repeat'
 Plug 'jiangmiao/auto-pairs'
+Plug 'alvan/vim-closetag'
 if v:version >= 800
     Plug 'ludovicchabant/vim-gutentags'
 endif
