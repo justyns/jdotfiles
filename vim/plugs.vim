@@ -44,6 +44,8 @@ Plug 'othree/javascript-libraries-syntax.vim'
 Plug 'vadv/vim-chef'
 Plug 'hashivim/vim-terraform'
 Plug 'hashivim/vim-nomadproject'
+Plug 'fatih/vim-hclfmt'
+Plug 'b4b4r07/vim-hcl'
 if !(v:version < 704 || (v:version == 704 && !has('patch1689')))
     Plug 'fatih/vim-go'
 endif
