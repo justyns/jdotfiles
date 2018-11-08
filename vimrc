@@ -3,11 +3,16 @@ if &shell =~# 'fish$'
     set shell=sh
 endif
 
+" Needed because of this bug: https://github.com/vim/vim/issues/3117
+" Can probably be removed later
+if has('python3')
+  silent! python3 1
+endif
+
 " runtime bundle/vim-pathogen/autoload/pathogen.vim
 " call pathogen#infect()
 " vim-plug https://github.com/junegunn/vim-plug
 so ~/.vim/plugs.vim
-
 
 syntax on
 " colorscheme desert
@@ -31,7 +36,6 @@ set softtabstop=4   " number of spaces in a tab when editing
 set encoding=utf-8
 set wildmenu
 set wildmode=full
-
 
 
 " Some stuff from http://stackoverflow.com/questions/1218390/what-is-your-most-productive-shortcut-with-vim
