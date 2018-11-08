@@ -5,6 +5,9 @@
 
 # prereq:  brew install tesseract xmlstarlet imagemagick
 
+# Run this to OCR all screenshots on the Desktop (before moving them somewhere else)
+#   find ~/Desktop/ -name Screen\* -print -exec ocr_shot.sh '{}' \;
+
 set -e
 
 export TESSDATA_PREFIX=/usr/local/share/tessdata
