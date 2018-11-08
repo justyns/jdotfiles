@@ -7,9 +7,11 @@
 
 set -e
 
+export TESSDATA_PREFIX=/usr/local/share/tessdata
+
 echo "Checking $1"
 # CONTENTS=$(tesseract -c language_model_penalty_non_dict_word=0.8 --tessdata-dir /usr/local/share/ "$1" stdout -l eng | xml esc)
-CONTENTS=$(convert "$1" -magnify -alpha remove - | tesseract -c language_model_penalty_non_dict_word=0.8 --tessdata-dir /usr/local/share/ stdin stdout -l eng | xml esc)
+CONTENTS=$(convert "$1" -magnify -alpha remove - | tesseract -c language_model_penalty_non_dict_word=0.8 stdin stdout -l eng | xml esc)
 
 hex=$((cat <<EOF
 <?xml version="1.0" encoding="UTF-8"?>
