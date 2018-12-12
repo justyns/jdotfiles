@@ -96,7 +96,7 @@ endif
 " For now, I'm also excluding windows because compiling YCM on windows is a
 " bit more work.
 if !(v:version < 704 || (v:version == 704 && !has('patch1578'))) || !has('win32')
-    Plug 'Valloric/YouCompleteMe', { 'do': './install.py' }
+    Plug 'Valloric/YouCompleteMe', { 'do': './install.py --go-completer' }
 endif
 Plug 'juliosueiras/vim-terraform-completion'
 
