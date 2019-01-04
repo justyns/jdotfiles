@@ -7,7 +7,20 @@ if empty(glob('~/.vim/autoload/plug.vim'))
   autocmd VimEnter * PlugInstall | source $MYVIMRC
 endif
 
-call plug#begin('~/.vim/plugged')
+if has('win32')
+    call plug#begin('~/.vim/plugged.win')
+else
+    call plug#begin('~/.vim/plugged')
+endif
+
+" From https://github.com/junegunn/vim-plug/wiki/tips#conditional-activation
+function! Cond(cond, ...)
+  let opts = get(a:000, 0, {})
+  return a:cond ? opts : extend(opts, { 'on': [], 'for': [] })
+endfunction
+
+" vim-plug itself (adds help files/etc)
+Plug 'junegunn/vim-plug'
 
 " Theme
 " Plug 'altercation/vim-colors-solarized'
@@ -80,8 +93,10 @@ endif
 
 " Code completion via YCM.  It's kind of a big install, but it usually works
 " pretty well compared to the other ones I've tried.
-if !(v:version < 704 || (v:version == 704 && !has('patch1578')))
-    Plug 'Valloric/YouCompleteMe', { 'do': './install.py' }
+" For now, I'm also excluding windows because compiling YCM on windows is a
+" bit more work.
+if !(v:version < 704 || (v:version == 704 && !has('patch1578'))) || !has('win32')
+    Plug 'Valloric/YouCompleteMe', { 'do': './install.py --go-completer' }
 endif
 Plug 'juliosueiras/vim-terraform-completion'
 
