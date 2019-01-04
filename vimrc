@@ -90,6 +90,13 @@ command Q q
 " run a shell command and put the output in a scratch buffer
 command! -nargs=* -complete=shellcmd R new | setlocal buftype=nofile bufhidden=hide noswapfile | r !<args>
 
+" save undo/swap/backup files in a central location instead of cluttering up
+" the current directory.  Unless the tmp dirs aren't writable, then it still
+" goes to the current directory.
+set backupdir=$HOME/.vim/tmp//,$HOME/tmp//,.
+set directory=$HOME/.vim/tmp//,$HOME/tmp//,.
+set undodir=$HOME/.vim/tmp//,$HOME/tmp//,.
+
 " save more in undo history
 set history=1000
 set undolevels=1000
