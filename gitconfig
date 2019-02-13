@@ -6,13 +6,13 @@
     editor = vim
     excludesfile = ~/.gitignore_global
 [color]
-	pager = true
-	ui = auto
+    pager = true
+    ui = auto
     branch = auto
     diff = auto
     status = auto
 [push]
-	default = matching
+    default = matching
 [alias]
     br = branch
     co = checkout
@@ -23,32 +23,32 @@
     pp = pull --prune
     l = log --oneline --stat
     ll = log --graph --all --oneline --decorate
-	graph = log --pretty=format:\"%C(yellow)%h %ar %C(auto)%d %Creset %s , %Cblue%cn\" --graph --all
+    graph = log --pretty=format:\"%C(yellow)%h %ar %C(auto)%d %Creset %s , %Cblue%cn\" --graph --all
 [log]
     date = relative
 [format]
     pretty = format:%C(auto,yellow)%h%C(auto,magenta)% G? %C(auto,blue)%>(14,trunc)%ad %C(auto,green)%<(13,trunc)%aN%C(auto,reset)%s%C(auto,red)% gD% D
 [merge]
-	tool = vimdiff
-	stat = true
+    tool = vimdiff
+    stat = true
 [diff]
-	mnemonicprefix = true
-	compactionHeuristic = true
-	algorithm = histogram
+    mnemonicprefix = true
+    compactionHeuristic = true
+    algorithm = histogram
 [diff "gpg"]
     textconv = gpg --no-tty -qd
 [branch]
-	autosetupmerge = true
+    autosetupmerge = true
 [difftool "sourcetree"]
-	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
-	path = 
+    cmd = opendiff \"$LOCAL\" \"$REMOTE\"
+    path = 
 [mergetool "sourcetree"]
-	cmd = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
-	trustExitCode = true
+    cmd = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
+    trustExitCode = true
 [gpg]
-	program = gpg
+    program = gpg
 [user]
-	signingkey = 6CBBDA995E2D619C
+    signingkey = 6CBBDA995E2D619C
 
 [commit]
-	verbose = true
+    verbose = true
