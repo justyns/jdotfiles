@@ -6,7 +6,7 @@
 . bash/colors
 
 #Check and see if these commands exist on the system
-reqcommands="vim git ruby screen tmux mutt pyflakes hg ack ag ctags flake8 go"
+reqcommands="vim git ruby screen tmux mutt pyflakes hg ack ag ctags flake8 go zsh"
 for com in $reqcommands;
 do
 	hash ${com} 2>&- || echo -e >&2 "${RedF}${com}${reset}: not installed"
@@ -100,6 +100,14 @@ done
 #./install.py --clang-completer --gocode-completer
 echo "Installing vim plugins"
 vim +PlugInstall +qall
+
+# Install oh-my-zsh and extra plugins/themes
+echo "Installing oh-my-zsh and plugins"
+# [[ ! -d $HOME/.oh-my-zsh ]] && git clone --depth=1 https://github.com/robbyrussell/oh-my-zsh.git $HOME/.oh-my-zsh
+[[ -d $HOME/.oh-my-zsh/custom/themes ]] && [[ ! -d $HOME/.oh-my-zsh/custom/themes/spaceship-prompt ]] \
+    && git clone --depth=1 https://github.com/denysdovhan/spaceship-prompt.git $HOME/.oh-my-zsh/custom/themes/spaceship-prompt \
+    && ln -sv $HOME/.oh-my-zsh/custom/themes/spaceship-prompt/spaceship.zsh-theme $HOME/.oh-my-zsh/custom/themes/spaceship.zsh-theme
+[[ ! -d $HOME/.oh-my-zsh ]] && echo -e "Run this to install oh-my-zsh: \n  sh -c '$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)'"
 
 if [[ ! -f ~/.gitconfig.local ]]; then
     echo -e "${RedF}~/.gitconfig.local${reset}: Doesn't exist.  You should create it with something like: \n[user]\n\tname = Justyn Shull\n\temail = git@justyn.io\n";
