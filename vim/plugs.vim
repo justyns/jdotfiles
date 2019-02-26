@@ -30,6 +30,7 @@ Plug 'vim-airline/vim-airline'
 
 " https://github.com/tpope/vim-sensible
 Plug 'tpope/vim-sensible'
+Plug 'tpope/vim-dispatch' " Could potentially use skywind3000/asyncrun.vim instead for Vim8 async jobs
 
 " searching / grep - only loaded when invoked
 Plug 'mileszs/ack.vim', { 'on': ['Ack', 'Ag'] }
@@ -41,6 +42,7 @@ Plug 'ctrlpvim/ctrlp.vim'  " , { 'on': ['CtrlP', 'CtrlPBuffer', 'CtrlPMixed'] }
 Plug 'Xuyuanp/nerdtree-git-plugin', { 'on':  'NERDTreeToggle' }
 Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
 Plug 'majutsushi/tagbar', { 'on': 'TagbarToggle' }
+Plug 'ryanoasis/vim-devicons'
 if v:version >= 704
     Plug 'terryma/vim-multiple-cursors'
 endif

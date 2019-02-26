@@ -129,6 +129,9 @@ endif
 let g:tagbar_usearrows = 1
 nnoremap <leader>l :TagbarToggle<CR><C-w><C-w>
 
+" ctrlp for tags
+nnoremap <leader>. :CtrlPTag<CR>
+
 " disable arrow keys to learn to use hjkl
 " nnoremap <up> <nop>
 " nnoremap <down> <nop>
@@ -303,7 +306,11 @@ let g:used_javascript_libs = 'jquery,angularjs,react'
 if has('win32')
     set guifont=Consolas:h12   " Win32.
 elseif has('gui_macvim')
-    set guifont=Monaco:h14     " OSX.
+    " set guifont=Monaco:h14     " OSX.
+    " downloaded from https://github.com/ryanoasis/nerd-fonts#option-4-homebrew-fonts
+    " see also: https://app.programmingfonts.org/#input
+    set guifont=HackNerdFontComplete-Regular:h14
+    " set guifont="SauceCodeProNerdFontCompleteM-Regular:h14"
 else
     set guifont=Monospace\ 12  " Linux.
 endif
@@ -382,3 +389,5 @@ let g:ycm_use_ultisnips_completer = 1 " Default 1, just ensure
 let g:ycm_seed_identifiers_with_syntax = 1 " Completion for programming language's keyword
 let g:ycm_complete_in_comments = 1 " Completion in comments
 let g:ycm_complete_in_strings = 1 " Completion in string
+
+" ! | l 1 Z 2 0 O o @ ao g bd m n () [] {} <> ; : '' "" ? -_+=^ 
