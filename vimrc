@@ -390,4 +390,7 @@ let g:ycm_seed_identifiers_with_syntax = 1 " Completion for programming language
 let g:ycm_complete_in_comments = 1 " Completion in comments
 let g:ycm_complete_in_strings = 1 " Completion in string
 
+" EditorConfig - https://github.com/editorconfig/editorconfig-vim#readme
+let g:EditorConfig_exclude_patterns = ['fugitive://.*', 'scp://.*']
+
 " ! | l 1 Z 2 0 O o @ ao g bd m n () [] {} <> ; : '' "" ? -_+=^ 

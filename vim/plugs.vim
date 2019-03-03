@@ -82,6 +82,8 @@ Plug 'stephpy/vim-yaml'   " faster yaml processing for salt files with large lin
 Plug 'tpope/vim-repeat'
 Plug 'jiangmiao/auto-pairs'
 Plug 'alvan/vim-closetag'
+Plug 'editorconfig/editorconfig-vim'    " https://editorconfig.org/
+
 if v:version >= 800
     Plug 'ludovicchabant/vim-gutentags'
 endif
