@@ -31,6 +31,7 @@ set expandtab       " Turn tabs into spaces
 set tabstop=4       " number of visual spaces per tab
 set shiftwidth=4
 set softtabstop=4   " number of spaces in a tab when editing
+set number
 
 " Some settings from http://stevelosh.com/blog/2010/09/coming-home-to-vim/#using-the-leader
 set encoding=utf-8
@@ -394,5 +395,7 @@ let g:ycm_complete_in_strings = 1 " Completion in string
 let g:EditorConfig_exclude_patterns = ['fugitive://.*', 'scp://.*']
 
 " https://github.com/neoclide/coc.nvim
-set shortmess+=c
-set signcolumn=yes
+" set shortmess+=c
+" set signcolumn=yes
+" let g:airline_section_error = '%{airline#util#wrap(airline#extensions#coc#get_error(),0)}'
+" let g:airline_section_warning = '%{airline#util#wrap(airline#extensions#coc#get_warning(),0)}'

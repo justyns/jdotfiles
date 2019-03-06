@@ -81,9 +81,11 @@ Plug 'nathangrigg/vim-beancount'
 " misc plugins
 Plug 'stephpy/vim-yaml'   " faster yaml processing for salt files with large lines
 Plug 'tpope/vim-repeat'
+Plug 'tpope/vim-surround'
 Plug 'jiangmiao/auto-pairs'
 Plug 'alvan/vim-closetag'
 Plug 'editorconfig/editorconfig-vim'    " https://editorconfig.org/
+Plug 'Yggdroot/indentLine'
 
 if v:version >= 800
     Plug 'ludovicchabant/vim-gutentags'
@@ -100,16 +102,19 @@ endif
 " pretty well compared to the other ones I've tried.
 " For now, I'm also excluding windows because compiling YCM on windows is a
 " bit more work.
-" if !(v:version < 704 || (v:version == 704 && !has('patch1578'))) || !has('win32')
-"     Plug 'Valloric/YouCompleteMe', { 'do': './install.py --go-completer' }
-" endif
+if !(v:version < 704 || (v:version == 704 && !has('patch1578'))) || !has('win32')
+    Plug 'Valloric/YouCompleteMe', { 'do': './install.py --go-completer' }
+endif
 
 " Trying out COC instead of YCM for a while
 " https://github.com/neoclide/coc.nvim
 if v:version >= 801
     " TODO: This requires yarn/npm/javascript..  Figure out how to detect if
-    " I have it and use something else if not
-    Plug 'neoclide/coc.nvim', {'tag': '*', 'do': { -> coc#util#install()}}
+    "       I have it and use something else if not
+    " Plug 'neoclide/coc.nvim', {'tag': '*', 'do': { -> coc#util#install()}}
+    " TODO: Disabling for now..  It doesn't seem to be any better than YCM,
+    "       and has more requirements
+    " TODO: Try deoplete instead?  Or neovim+ncm2
 endif
 
 

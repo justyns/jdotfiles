@@ -20,3 +20,5 @@ echo "Re-running install.sh"
 ./install.sh
 echo "Updating vim plugins"
 vim +PlugUpdate +qall
+echo "Cleaning old plugins"
+vim +PlugClean +qall
