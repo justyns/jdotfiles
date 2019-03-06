@@ -42,7 +42,7 @@ Plug 'ctrlpvim/ctrlp.vim'  " , { 'on': ['CtrlP', 'CtrlPBuffer', 'CtrlPMixed'] }
 Plug 'Xuyuanp/nerdtree-git-plugin', { 'on':  'NERDTreeToggle' }
 Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
 Plug 'majutsushi/tagbar', { 'on': 'TagbarToggle' }
-Plug 'ryanoasis/vim-devicons'
+Plug 'ryanoasis/vim-devicons'  " TODO: Figure out how to load this only if I have the right font
 if v:version >= 704
     Plug 'terryma/vim-multiple-cursors'
 endif
@@ -58,6 +58,7 @@ Plug 'tpope/vim-markdown'
 Plug 'othree/javascript-libraries-syntax.vim'
 Plug 'vadv/vim-chef'
 Plug 'hashivim/vim-terraform'
+Plug 'juliosueiras/vim-terraform-completion'
 Plug 'hashivim/vim-nomadproject'
 Plug 'fatih/vim-hclfmt'
 Plug 'b4b4r07/vim-hcl'
@@ -99,14 +100,21 @@ endif
 " pretty well compared to the other ones I've tried.
 " For now, I'm also excluding windows because compiling YCM on windows is a
 " bit more work.
-if !(v:version < 704 || (v:version == 704 && !has('patch1578'))) || !has('win32')
-    Plug 'Valloric/YouCompleteMe', { 'do': './install.py --go-completer' }
+" if !(v:version < 704 || (v:version == 704 && !has('patch1578'))) || !has('win32')
+"     Plug 'Valloric/YouCompleteMe', { 'do': './install.py --go-completer' }
+" endif
+
+" Trying out COC instead of YCM for a while
+" https://github.com/neoclide/coc.nvim
+if v:version >= 801
+    " TODO: This requires yarn/npm/javascript..  Figure out how to detect if
+    " I have it and use something else if not
+    Plug 'neoclide/coc.nvim', {'tag': '*', 'do': { -> coc#util#install()}}
 endif
-Plug 'juliosueiras/vim-terraform-completion'
+
 
 " Snippets
 Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
-
 
 call plug#end()

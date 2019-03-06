@@ -393,4 +393,6 @@ let g:ycm_complete_in_strings = 1 " Completion in string
 " EditorConfig - https://github.com/editorconfig/editorconfig-vim#readme
 let g:EditorConfig_exclude_patterns = ['fugitive://.*', 'scp://.*']
 
-" ! | l 1 Z 2 0 O o @ ao g bd m n () [] {} <> ; : '' "" ? -_+=^ 
+" https://github.com/neoclide/coc.nvim
+set shortmess+=c
+set signcolumn=yes
