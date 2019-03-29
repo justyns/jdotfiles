@@ -399,3 +399,16 @@ let g:EditorConfig_exclude_patterns = ['fugitive://.*', 'scp://.*']
 " set signcolumn=yes
 " let g:airline_section_error = '%{airline#util#wrap(airline#extensions#coc#get_error(),0)}'
 " let g:airline_section_warning = '%{airline#util#wrap(airline#extensions#coc#get_warning(),0)}'
+
+" let g:terraform_completion_keys = 1
+" 
+" let g:deoplete#omni_patterns = {}
+" call deoplete#custom#option('omni_patterns', {
+" \ 'complete_method': 'omnifunc',
+" \ 'terraform': '[^ *\t"{=$]\w*',
+" \})
+" call deoplete#initialize()
+
+let g:vim_json_syntax_conceal = 0
+
+set completeopt=menuone,preview,noinsert

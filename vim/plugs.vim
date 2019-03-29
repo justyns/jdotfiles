@@ -43,25 +43,26 @@ Plug 'Xuyuanp/nerdtree-git-plugin', { 'on':  'NERDTreeToggle' }
 Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
 Plug 'majutsushi/tagbar', { 'on': 'TagbarToggle' }
 Plug 'ryanoasis/vim-devicons'  " TODO: Figure out how to load this only if I have the right font
-if v:version >= 704
-    Plug 'terryma/vim-multiple-cursors'
-endif
+" if v:version >= 704
+"     Plug 'terryma/vim-multiple-cursors'
+" endif
 
 " Syntax hilighting for various things
 Plug 'ekalinin/Dockerfile.vim'   " , { 'for': 'dockerfile' }
 Plug 'dag/vim-fish'
-Plug 'rodjek/vim-puppet'
+" Plug 'rodjek/vim-puppet'
 Plug 'hdima/python-syntax'
 Plug 'saltstack/salt-vim'
 Plug 'markcornick/vim-vagrant'
 Plug 'tpope/vim-markdown'
-Plug 'othree/javascript-libraries-syntax.vim'
+" Plug 'othree/javascript-libraries-syntax.vim'
 Plug 'vadv/vim-chef'
 Plug 'hashivim/vim-terraform'
-Plug 'juliosueiras/vim-terraform-completion'
-Plug 'hashivim/vim-nomadproject'
-Plug 'fatih/vim-hclfmt'
-Plug 'b4b4r07/vim-hcl'
+" Plug 'juliosueiras/vim-terraform-completion'
+" Plug 'hashivim/vim-nomadproject'
+" Plug 'fatih/vim-hclfmt'
+" Plug 'b4b4r07/vim-hcl'
+Plug 'martinda/Jenkinsfile-vim-syntax'
 if !(v:version < 704 || (v:version == 704 && !has('patch1689')))
     Plug 'fatih/vim-go'
 endif
@@ -75,8 +76,8 @@ Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
 
 " Text-based accounting
-Plug 'ledger/vim-ledger'
-Plug 'nathangrigg/vim-beancount'
+" Plug 'ledger/vim-ledger'
+" Plug 'nathangrigg/vim-beancount'
 
 " misc plugins
 Plug 'stephpy/vim-yaml'   " faster yaml processing for salt files with large lines
@@ -102,9 +103,9 @@ endif
 " pretty well compared to the other ones I've tried.
 " For now, I'm also excluding windows because compiling YCM on windows is a
 " bit more work.
-if !(v:version < 704 || (v:version == 704 && !has('patch1578'))) || !has('win32')
-    Plug 'Valloric/YouCompleteMe', { 'do': './install.py --go-completer' }
-endif
+" if !(v:version < 704 || (v:version == 704 && !has('patch1578'))) || !has('win32')
+"     Plug 'Valloric/YouCompleteMe', { 'do': './install.py --go-completer' }
+" endif
 
 " Trying out COC instead of YCM for a while
 " https://github.com/neoclide/coc.nvim
@@ -116,10 +117,36 @@ if v:version >= 801
     "       and has more requirements
     " TODO: Try deoplete instead?  Or neovim+ncm2
 endif
+" if has('nvim')
+"   Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+" else
+"   Plug 'Shougo/deoplete.nvim'
+"   Plug 'roxma/nvim-yarp'
+"   Plug 'roxma/vim-hug-neovim-rpc'
+" endif
+" let g:deoplete#enable_at_startup = 1
+" assuming you're using vim-plug: https://github.com/junegunn/vim-plug
+" Plug 'roxma/nvim-yarp'
+" Plug 'roxma/vim-hug-neovim-rpc'
+" Plug 'ncm2/ncm2'
+" 
+" " enable ncm2 for all buffers
+" autocmd BufEnter * call ncm2#enable_for_buffer()
+" 
+" " IMPORTANT: :help Ncm2PopupOpen for more information
+" set completeopt=noinsert,menuone,noselect
+" 
+" " NOTE: you need to install completion sources to get completions. Check
+" " our wiki page for a list of sources: https://github.com/ncm2/ncm2/wiki
+" Plug 'ncm2/ncm2-bufword'
+" Plug 'ncm2/ncm2-path'
+" Plug 'ncm2/ncm2-vim' | Plug 'Shougo/neco-vim'
 
+Plug 'ajh17/VimCompletesMe'
+Plug 'juliosueiras/vim-terraform-completion'
 
 " Snippets
 Plug 'SirVer/ultisnips'
-Plug 'honza/vim-snippets'
+" Plug 'honza/vim-snippets'
 
 call plug#end()
