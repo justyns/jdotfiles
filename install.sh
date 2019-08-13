@@ -114,3 +114,8 @@ if [[ ! -f ~/.gitconfig.local ]]; then
 else
     echo -e "${GreenF}~/.gitconfig.local${reset}: exists"
 fi
+
+# I should probably split tasks like this into separate files
+
+# Knife on windows or wsl is super slow, rehash causes it to cache the list of knife sub commands and speeds it up quite a bit
+hash knife  2>&- && knife rehash

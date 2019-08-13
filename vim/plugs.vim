@@ -87,6 +87,7 @@ Plug 'jiangmiao/auto-pairs'
 Plug 'alvan/vim-closetag'
 Plug 'editorconfig/editorconfig-vim'    " https://editorconfig.org/
 Plug 'Yggdroot/indentLine'
+Plug 'mbbill/undotree'
 
 if v:version >= 800
     Plug 'ludovicchabant/vim-gutentags'
@@ -106,6 +107,14 @@ endif
 " if !(v:version < 704 || (v:version == 704 && !has('patch1578'))) || !has('win32')
 "     Plug 'Valloric/YouCompleteMe', { 'do': './install.py --go-completer' }
 " endif
+
+" Try ncm for now..  pynvim is also needed (pip3 install pynvim)
+Plug 'roxma/vim-hug-neovim-rpc'
+Plug 'roxma/nvim-yarp'
+Plug 'ncm2/ncm2'
+Plug 'ncm2/ncm2-vim' | Plug 'Shougo/neco-vim'
+Plug 'ncm2/ncm2-go'
+Plug 'ncm2/ncm2-markdown-subscope'
 
 " Trying out COC instead of YCM for a while
 " https://github.com/neoclide/coc.nvim
