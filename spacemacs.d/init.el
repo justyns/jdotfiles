@@ -36,38 +36,74 @@ values."
      ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
      ;; <M-m f e R> (Emacs style) to install them.
      ;; ----------------------------------------------------------------
-     helm
-     auto-completion
-     ;; better-defaults
-     emacs-lisp
-     git
-     markdown
-     org
-     ;; (shell :variables
-     ;;        shell-default-height 30
-     ;;        shell-default-position 'bottom)
-     ;; spell-checking
-     ;; syntax-checking
-     ;; version-control
-     go
-     nim
-     php
-     python
-     ruby
-     rust
-     shell-scripts
-     yaml
-     ansible
+
+     ;; Languages
+     cb-groovy
      docker
-     finance
+     emacs-lisp
+     go
+     html
+     javascript
+     markdown
+     python
+     ;; react
+     ruby
+     ;; salt
+     shell-scripts
      terraform
+     typescript
+     yaml
+
+     ;; Finance
      beancount
+     finance
+
+     ;; Helpers
+     better-defaults
+     evil-commentary
+     helm
+     osx
+
+     ;; Version control
+     git
+     (version-control :variables
+                      version-control-global-margin t
+                      version-control-diff-side 'left
+                      version-control-diff-tool 'git-gutter)
+
+     ;; Syntax / Linting / Auto complete
+     syntax-checking
+     (spell-checking :variables
+                     enable-flyspell-auto-completion t
+                     spell-checking-enable-by-default nil)
+     (auto-completion :disabled-for markdown
+                      :variables
+                      auto-completion-enable-help-tooltip t
+                      auto-completion-tab-key-behavior 'cycle
+                      auto-completion-return-key-behavior 'complete
+                      auto-completion-enable-sort-by-usage t
+                      auto-completion-private-snippets-directory "~/.spacemacs.d/snippets/")
+
+     ;; Org and misc
+     (org :variables
+          org-enable-github-support t
+          org-enable-reveal-js-support t)
+
+     ;; Shell / Terminals
+     (shell :variables
+            shell-default-shell 'ansi-term
+            shell-default-height 30
+            shell-default-position 'bottom
+            shell-default-term-shell "/bin/zsh")
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
-   dotspacemacs-additional-packages '()
+   dotspacemacs-additional-packages '(company-terraform
+                                      company-quickhelp
+                                      exec-path-from-shell
+                                      )
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be installed and loaded.
@@ -146,7 +182,7 @@ values."
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
    ;; quickly tweak the mode-line size to make separators look not too crappy.
    dotspacemacs-default-font '("Source Code Pro"
-                               :size 13
+                               :size 14
                                :weight normal
                                :width normal
                                :powerline-scale 1.1)
@@ -306,24 +342,89 @@ values."
    dotspacemacs-whitespace-cleanup nil
    ))
 
+(defun my-setup-indent (n)
+  ;; taken from https://stackoverflow.com/questions/36719386/spacemacs-set-tab-width
+  ;; java/c/c++
+  (setq c-basic-offset n)
+  ;; web development
+  (setq coffee-tab-width n) ; coffeescript
+  (setq javascript-indent-level n) ; javascript-mode
+  (setq js-indent-level n) ; js-mode
+  (setq js2-basic-offset n) ; js2-mode, in latest js2-mode, it's alias of js-indent-level
+  (setq web-mode-markup-indent-offset n) ; web-mode, html tag in html file
+  (setq web-mode-css-indent-offset n) ; web-mode, css in html file
+  (setq web-mode-code-indent-offset n) ; web-mode, js code in html file
+  (setq css-indent-offset n) ; css-mode
+  )
+
 (defun dotspacemacs/user-init ()
   "Initialization function for user code.
-It is called immediately after `dotspacemacs/init', before layer configuration
-executes.
- This function is mostly useful for variables that need to be set
-before packages are loaded. If you are unsure, you should try in setting them in
-`dotspacemacs/user-config' first."
+It is called immediately after `dotspacemacs/init'.  You are free to put almost
+any user code here.  The exception is org related code, which should be placed
+in `dotspacemacs/user-config'."
+  (setq-default
+   ;; Indent javascript and json by 2 spaces instead of 4
+   js2-basic-offset 2
+   js-indent-level 2
+   ;; Other tab-related settings
+   tab-width 2
+   evil-shift-width 2
+   python-indent-offset 4
+   )
+  ;; Indent everything by 2 spaces by default instead of 4
+  (my-setup-indent 2)
   )
 
 (defun dotspacemacs/user-config ()
   "Configuration function for user code.
 This function is called at the very end of Spacemacs initialization after
-layers configuration.
-This is the place where most of your configurations should be done. Unless it is
-explicitly specified that a variable should be set before a package is loaded,
-you should place your code here."
-  
+layers configuration. You are free to put any user code."
+  (add-to-list 'default-frame-alist '(height . 42))
+  (add-to-list 'default-frame-alist '(width . 160))
+  (setq org-clock-persist 'history)
+  (org-clock-persistence-insinuate)
+  (setq org-enable-github-support t)
+  (setq rst-pdf-program "/Applications/Preview.app/Contents/MacOS/Preview")
+  (setq magit-repository-directories '("~/dev/"))
+  (setq org-agenda-files (quote ("~/org/notes.org" "~/org/journal.org" "~/org/worklog.org" "~/org/TODO.org")))
+  (setq org-refile-targets '((org-agenda-files . (:maxlevel . 3))))
+  (add-hook 'org-capture-mode-hook 'sticky-window-delete-other-windows)
+  (setq org-capture-templates
+        '(("t" "Todo" entry (file+headline "~/org/TODO.org" "Tasks")
+           "* TODO %?\n  %i\n  %a")
+          ("j" "Journal" entry (file+datetree "~/org/journal.org")
+           "* %?\nEntered on %U\n  %i\n  %a" :empty-lines 1)
+          ("w" "WorkLog" entry (file+datetree "~/org/worklog.org")
+           "* %U %?\n  %i\n  %a\n")))
+  ;; Map Ctrl+p to helm-projectile-find-file like the vim plugin
+  (define-key evil-normal-state-map (kbd "C-p") 'helm-projectile-find-file)
+  ;; Map Super-/ to toggle comments (like most IDEs)
+  (define-key evil-normal-state-map (kbd "S-/") 'evil-commentary)
+  ;; Enable company for autocomplete and get it working for terraform+quickhelp
+  (global-company-mode t)
+  (company-terraform-init)
+  ;; Copy ssh-agent vars into emacs so magit can work
+  (exec-path-from-shell-copy-env "SSH_AGENT_PID")
+  (exec-path-from-shell-copy-env "SSH_AUTH_SOCK")
+  ;; Show 80-column marker
+  ;; (define-globalized-minor-mode global-fci-mode fci-mode (lambda () (fci-mode 1)))
+  ;; (global-fci-mode 1)
+  (turn-on-fci-mode)
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (smeargle orgit magit-gitflow helm-gitignore gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link evil-magit magit transient yapfify yaml-mode xterm-color ws-butler winum which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package unfill toc-org tide tagedit spaceline slim-mode shell-pop scss-mode sass-mode rvm ruby-tools ruby-test-mode rubocop rspec-mode robe reveal-in-osx-finder restart-emacs request rbenv rake rainbow-delimiters pyvenv pytest pyenv-mode py-isort pug-mode popwin pip-requirements persp-mode pbcopy paradox ox-reveal ox-gfm osx-trash osx-dictionary org-projectile org-present org-pomodoro org-mime org-download org-bullets open-junk-file neotree mwim multi-term move-text mmm-mode minitest markdown-toc macrostep lorem-ipsum livid-mode live-py-mode linum-relative link-hint ledger-mode launchctl js2-refactor js-doc insert-shebang indent-guide hy-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-pydoc helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag groovy-mode google-translate golden-ratio go-guru go-eldoc gnuplot git-gutter-fringe git-gutter-fringe+ gh-md fuzzy flyspell-popup flyspell-correct-helm flycheck-pos-tip flycheck-ledger flx-ido fish-mode fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-commentary evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help emmet-mode elisp-slime-nav dumb-jump dockerfile-mode docker diminish diff-hl cython-mode company-web company-terraform company-tern company-statistics company-shell company-quickhelp company-go company-anaconda column-enforce-mode coffee-mode clean-aindent-mode chruby bundler auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
