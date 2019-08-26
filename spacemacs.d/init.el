@@ -388,6 +388,14 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
         subtree-end
       nil)))
 
+;; Also from above link, but do I really want to filter out habits?
+(defun air-org-skip-subtree-if-habit ()
+  "Skip an agenda entry if it has a STYLE property equal to \"habit\"."
+  (let ((subtree-end (save-excursion (org-end-of-subtree t))))
+    (if (string= (org-entry-get nil "STYLE") "habit")
+        subtree-end
+      nil)))
+
 (defun dotspacemacs/user-config ()
   "Configuration function for user code.
 This function is called at the very end of Spacemacs initialization after
@@ -411,16 +419,19 @@ layers configuration. You are free to put any user code."
            "* %U %?\n  %i\n  %a\n")))
   (setq org-todo-keywords
         '((sequence "TODO(t!)" "NEXT(n!)" "DOING(d!)" "BLOCKED(b!)" "DONE(F!)")))
+  ;; Borrowed from https://blog.aaronbieber.com/2016/09/24/an-agenda-for-life-with-org-mode.html
   (setq org-agenda-custom-commands
-        '(("c" "Simple agenda view"
+        '(("d" "Daily agenda and all TODOs"
            ((tags "PRIORITY=\"A\""
                   ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
                    (org-agenda-overriding-header "High-priority unfinished tasks:")))
-            (agenda "")
+            (agenda "" ((org-agenda-span 2)))
             (alltodo ""
-                     ((org-agenda-skip-function
-                       '(or (air-org-skip-subtree-if-priority ?A)
-                            (org-agenda-skip-if nil '(scheduled deadline))))))))))
+                     ((org-agenda-skip-function '(or (air-org-skip-subtree-if-habit)
+                                                     (air-org-skip-subtree-if-priority ?A)
+                                                     (org-agenda-skip-if nil '(scheduled deadline))))
+                      (org-agenda-overriding-header "ALL normal priority tasks:"))))
+           ((org-agenda-compact-blocks t)))))
 
   ;; Map Ctrl+p to helm-projectile-find-file like the vim plugin
   (define-key evil-normal-state-map (kbd "C-p") 'helm-projectile-find-file)
