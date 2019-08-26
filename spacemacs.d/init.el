@@ -538,7 +538,7 @@ layers configuration. You are free to put any user code."
   (setq magit-repository-directories '("~/dev/"))
   (setq org-agenda-files (quote ("~/org/")))
   (setq org-refile-targets '((org-agenda-files . (:maxlevel . 3))))
-  (add-hook 'org-capture-mode-hook 'sticky-window-delete-other-windows)
+  ;; TODO this doesn't work anymore: (add-hook 'org-capture-mode-hook 'sticky-window-delete-other-windows)
   (setq org-capture-templates
         '(("t" "Todo" entry (file+headline "~/org/TODO.org" "Tasks")
            "* TODO %?\n  %i\n  %a")
