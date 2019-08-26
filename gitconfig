@@ -37,6 +37,8 @@
     algorithm = histogram
 [diff "gpg"]
     textconv = gpg --no-tty -qd
+[diff "org"]
+    xfuncname = "^\\*+ +.*$"
 [branch]
     autosetupmerge = true
 [difftool "sourcetree"]
