@@ -20,6 +20,7 @@
 --exclude=\*.cache
 --exclude=\*.dll
 --exclude=\*.pdb
+--exclude=\*.json
 --exclude=tags
 --exclude=cscope.\*
 --exclude=\*.tar.\*

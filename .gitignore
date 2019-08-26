@@ -6,3 +6,4 @@ fish_history
 fish_read_history
 fishd.*
 config/fish/config.*.copy
+.spacemacs.env
