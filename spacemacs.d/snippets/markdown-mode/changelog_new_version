@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: New Changelog Entry
+# key: changelog
+# --
+## [$1] - `(format-time-string "%Y-%m-%d")`
+### $2
+- $0

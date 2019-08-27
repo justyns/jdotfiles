@@ -543,10 +543,24 @@ layers configuration. You are free to put any user code."
   (setq org-capture-templates
         '(("t" "Todo" entry (file+headline "~/org/TODO.org" "Tasks")
            "* TODO %?\n  %i\n  %a")
-          ("j" "Journal" entry (file+datetree "~/org/journal.org")
-           "* %?\nEntered on %U\n  %i\n  %a" :empty-lines 1)
-          ("w" "WorkLog" entry (file+datetree "~/org/worklog.org")
-           "* %U %?\n  %i\n  %a\n")))
+          ("T" "Todo with Clipboard" entry (file+headline "~/org/TODO.org" "Tasks")
+           "* TODO %?\n%U\n   %c" :empty-lines 1)
+          ("j" "Journal"
+           entry (file+datetree "~/org/journal.org")
+           "* %?\nEntered on %U\n  %i\n  %a"
+           :empty-lines 1)
+          ("w" "WorkLog"
+           entry (file+datetree "~/org/worklog.org")
+           "* %U %?\n  %i\n  %a\n"
+           :empty-lines 1)
+          ("m" "Meeting"
+           entry (file+datetree "~/org/worklog.org")
+           "* Meeting for %?\n** Agenda/Purpose\n\n** Who\n- \n\n** Notes\n- \n\n"
+           :empty-lines 1
+           :clock-in t
+           :clock-resume t)
+
+          ))
   (setq org-todo-keywords
         '((sequence "TODO(t)" "NEXT(n)" "IN-PROGRESS(i!)" "|" "DONE(d!)")
           (sequence "WAITING(w@/!)" "BLOCKED(b@/!)" "|" "CANCELLED(c@/!)")))
@@ -579,6 +593,9 @@ layers configuration. You are free to put any user code."
   ;; (define-globalized-minor-mode global-fci-mode fci-mode (lambda () (fci-mode 1)))
   ;; (global-fci-mode 1)
   (turn-on-fci-mode)
+  ;; Use /sshx because /ssh doesn't seem to work on bsd, and some of my
+  ;; remote shells don't use sh/bash.  ssh/sshx should also be faster than scp
+  (setq tramp-default-method "sshx")
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
