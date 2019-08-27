@@ -84,6 +84,7 @@ This function should only modify configuration layer settings."
                       auto-completion-tab-key-behavior 'cycle
                       auto-completion-return-key-behavior 'complete
                       auto-completion-enable-sort-by-usage t
+                      auto-completion-enable-snippets-in-popup t
                       auto-completion-private-snippets-directory "~/.spacemacs.d/snippets/")
 
      ;; Org and misc
@@ -547,7 +548,8 @@ layers configuration. You are free to put any user code."
           ("w" "WorkLog" entry (file+datetree "~/org/worklog.org")
            "* %U %?\n  %i\n  %a\n")))
   (setq org-todo-keywords
-        '((sequence "TODO(t!)" "NEXT(n!)" "DOING(d!)" "BLOCKED(b!)" "DONE(F!)")))
+        '((sequence "TODO(t)" "NEXT(n)" "IN-PROGRESS(i!)" "|" "DONE(d!)")
+          (sequence "WAITING(w@/!)" "BLOCKED(b@/!)" "|" "CANCELLED(c@/!)")))
   ;; Borrowed from https://blog.aaronbieber.com/2016/09/24/an-agenda-for-life-with-org-mode.html
   (setq org-agenda-custom-commands
         '(("d" "Daily agenda and all TODOs"
@@ -561,7 +563,8 @@ layers configuration. You are free to put any user code."
                                                      (org-agenda-skip-if nil '(scheduled deadline))))
                       (org-agenda-overriding-header "ALL normal priority tasks:"))))
            ((org-agenda-compact-blocks t)))))
-
+  ;; Enable org-clock in modeline
+  (setq spaceline-org-clock-p t)
   ;; Map Ctrl+p to helm-projectile-find-file like the vim plugin
   (define-key evil-normal-state-map (kbd "C-p") 'helm-projectile-find-file)
   ;; Map Super-/ to toggle comments (like most IDEs)
