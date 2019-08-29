@@ -542,20 +542,22 @@ layers configuration. You are free to put any user code."
   ;; TODO this doesn't work anymore: (add-hook 'org-capture-mode-hook 'sticky-window-delete-other-windows)
   (setq org-capture-templates
         '(("t" "Todo" entry (file+headline "~/org/TODO.org" "Tasks")
-           "* TODO %?\n  %i\n  %a")
+           "* TODO %?\nCREATED: %U\n  %i\n  %a")
           ("T" "Todo with Clipboard" entry (file+headline "~/org/TODO.org" "Tasks")
-           "* TODO %?\n%U\n   %c" :empty-lines 1)
+           "* TODO %?\nCREATED: %U\n%U\n   %c" :empty-lines 1)
           ("j" "Journal"
            entry (file+datetree "~/org/journal.org")
-           "* %?\nEntered on %U\n  %i\n  %a"
+           "* %? \nCREATED: %U\n  %i\n  %a"
            :empty-lines 1)
           ("w" "WorkLog"
            entry (file+datetree "~/org/worklog.org")
-           "* %U %?\n  %i\n  %a\n"
+           "* %T %? :work:\nCREATED: %U\n  %i\n  %a\n"
+           :clock-in t
+           :clock-resume t
            :empty-lines 1)
           ("m" "Meeting"
            entry (file+datetree "~/org/worklog.org")
-           "* Meeting for %?\n** Agenda/Purpose\n\n** Who\n- \n\n** Notes\n- \n\n"
+           "* Meeting for %? :work:meeting:\nCREATED: %T\n** Agenda/Purpose\n\n** Who\n- \n\n** Notes\n- \n\n"
            :empty-lines 1
            :clock-in t
            :clock-resume t)
@@ -579,6 +581,8 @@ layers configuration. You are free to put any user code."
            ((org-agenda-compact-blocks t)))))
   ;; Enable org-clock in modeline
   (setq spaceline-org-clock-p t)
+  ;; Enable org-habit org module - TODO: This might've broken my agenda view?
+  (add-to-list 'org-modules 'org-habit t)
   ;; Map Ctrl+p to helm-projectile-find-file like the vim plugin
   (define-key evil-normal-state-map (kbd "C-p") 'helm-projectile-find-file)
   ;; Map Super-/ to toggle comments (like most IDEs)
