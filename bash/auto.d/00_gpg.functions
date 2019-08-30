@@ -19,3 +19,7 @@ gpg --no-options "$1"
 }
 
 ################### End gpg functions ##################
+
+# From https://www.devopsgroup.com/2016/12/08/easy-git-crypt-user-identification/ as a quick way to list who has access in a git-crypt encrypted repo
+# See https://github.com/AGWA/git-crypt/issues/39 for an official feature request
+alias gitcryptusers='pushd .git-crypt/keys/default/0; for file in *.gpg; do echo "${file} : " && git log -- ${file} | sed -n 9p; done; popd'
