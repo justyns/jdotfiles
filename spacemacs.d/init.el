@@ -627,10 +627,10 @@ layers configuration. You are free to put any user code."
   ;; Borrowed from https://blog.aaronbieber.com/2016/09/24/an-agenda-for-life-with-org-mode.html
   (setq org-agenda-custom-commands
         '(("d" "Daily agenda and all TODOs"
-           ((tags "PRIORITY=\"A\""
+           ((agenda "" ((org-agenda-span 2)))
+            (tags "PRIORITY=\"A\""
                   ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
                    (org-agenda-overriding-header "High-priority unfinished tasks:")))
-            (agenda "" ((org-agenda-span 2)))
             (alltodo ""
                      ((org-agenda-skip-function '(or (air-org-skip-subtree-if-habit)
                                                      (air-org-skip-subtree-if-priority ?A)
@@ -641,6 +641,11 @@ layers configuration. You are free to put any user code."
   (setq spaceline-org-clock-p t)
   ;; Enable org-habit org module - TODO: This might've broken my agenda view?
   (add-to-list 'org-modules 'org-habit t)
+  ;; Enable org-expiry org module
+  (add-to-list 'org-modules 'org-expiry t)
+  (org-expiry-insinuate)
+  (setq org-expiry-created-property-name "CREATED"
+        org-expiry-inactive-timestamps t)
   ;; Enable speed commands for single-key commands at the beginning of headers.  ? for help
   (setq org-use-speed-commands t)
   ;; Prettier code blocks
