@@ -526,6 +526,53 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
         subtree-end
       nil)))
 
+;; From https://gitlab.com/howardabrams/spacemacs.d/blob/master/layers/ha-org/funcs.el#L352
+(defun ha/org-capture-code-snippet (f)
+  "Given a file, F, this captures the currently selected text
+within an Org SRC block with a language based on the current mode
+and a backlink to the function and the file."
+  (with-current-buffer (find-buffer-visiting f)
+    (let ((org-src-mode (replace-regexp-in-string "-mode" "" (format "%s" major-mode)))
+          (func-name (which-function)))
+      (ha/org-capture-fileref-snippet f "SRC" org-src-mode func-name))))
+
+(defun ha/org-capture-clip-snippet (f)
+  "Given a file, F, this captures the currently selected text
+within an Org EXAMPLE block and a backlink to the file."
+  (with-current-buffer (find-buffer-visiting f)
+    (ha/org-capture-fileref-snippet f "EXAMPLE" "" nil)))
+
+(defun ha/org-capture-fileref-snippet (f type headers func-name)
+  (let* ((code-snippet
+          (buffer-substring-no-properties (mark) (- (point) 1)))
+         (file-name   (buffer-file-name))
+         (file-base   (file-name-nondirectory file-name))
+         (line-number (line-number-at-pos (region-beginning)))
+         (initial-txt (if (null func-name)
+                          (format "From [[file:%s::%s][%s]]:"
+                                  file-name line-number file-base)
+                        (format "From ~%s~ (in [[file:%s::%s][%s]]):"
+                                func-name file-name line-number
+                                file-base))))
+    (format "
+   %s
+
+   #+BEGIN_%s %s
+%s
+   #+END_%s" initial-txt type headers code-snippet type)))
+
+(defun ha/code-to-clock (&optional start end)
+  "Send the currently selected code to the currently clocked-in org-mode task."
+  (interactive)
+  (org-capture nil "F"))
+
+(defun ha/code-comment-to-clock (&optional start end)
+  "Send the currently selected code (with comments) to the
+currently clocked-in org-mode task."
+  (interactive)
+  (org-capture nil "f"))
+
+
 (defun dotspacemacs/user-config ()
   "Configuration function for user code.
 This function is called at the very end of Spacemacs initialization after
@@ -544,7 +591,8 @@ layers configuration. You are free to put any user code."
         '(("t" "Todo" entry (file+headline "~/org/TODO.org" "Tasks")
            "* TODO %?\nCREATED: %U\n  %i\n  %a")
           ("T" "Todo with Clipboard" entry (file+headline "~/org/TODO.org" "Tasks")
-           "* TODO %?\nCREATED: %U\n%U\n   %c" :empty-lines 1)
+           "* TODO %?\nCREATED: %U\n   %c"
+           :empty-lines 1)
           ("j" "Journal"
            entry (file+datetree "~/org/journal.org")
            "* %? \nCREATED: %U\n  %i\n  %a"
@@ -555,13 +603,23 @@ layers configuration. You are free to put any user code."
            :clock-in t
            :clock-resume t
            :empty-lines 1)
+          ("n" "Append timestamp note to clocked task" item (clock)
+           "%U %?"
+           :empty-lines 1)
           ("m" "Meeting"
            entry (file+datetree "~/org/worklog.org")
            "* Meeting for %? :work:meeting:\nCREATED: %T\n** Agenda/Purpose\n\n** Who\n- \n\n** Notes\n- \n\n"
            :empty-lines 1
            :clock-in t
            :clock-resume t)
-
+          ("v" "Code Reference with Comments to Current Task"
+           plain (clock)
+           "%(ha/org-capture-code-snippet \"%F\")\n\n   %?"
+           :empty-lines 1)
+          ("V" "Link to Code Reference to Current Task"
+           plain (clock)
+           "%(ha/org-capture-code-snippet \"%F\")"
+           :empty-lines 1 :immediate-finish t)
           ))
   (setq org-todo-keywords
         '((sequence "TODO(t)" "NEXT(n)" "IN-PROGRESS(i!)" "|" "DONE(d!)")
@@ -583,6 +641,10 @@ layers configuration. You are free to put any user code."
   (setq spaceline-org-clock-p t)
   ;; Enable org-habit org module - TODO: This might've broken my agenda view?
   (add-to-list 'org-modules 'org-habit t)
+  ;; Enable speed commands for single-key commands at the beginning of headers.  ? for help
+  (setq org-use-speed-commands t)
+  ;; Prettier code blocks
+  (setq org-src-fontify-natively t)
   ;; Map Ctrl+p to helm-projectile-find-file like the vim plugin
   (define-key evil-normal-state-map (kbd "C-p") 'helm-projectile-find-file)
   ;; Map Super-/ to toggle comments (like most IDEs)
