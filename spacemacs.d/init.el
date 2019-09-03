@@ -600,18 +600,25 @@ layers configuration. You are free to put any user code."
            entry (file+datetree "~/org/journal.org")
            "* %? \nCREATED: %U\n  %i\n  %a"
            :empty-lines 1)
-          ("w" "WorkLog"
+          ("w" "New WorkLog entry"
            entry (file+datetree "~/org/worklog.org")
            "* %T %? :work:\nCREATED: %U\n  %i\n  %a\n"
            :clock-in t
            :clock-resume t
            :empty-lines 1)
-          ("n" "Append timestamp note to clocked task" item (clock)
+          ("n" "Append timestamped note to clocked task"
+           plain (clock)
            "%U %?"
            :empty-lines 1)
           ("m" "Meeting"
            entry (file+datetree "~/org/worklog.org")
            "* Meeting for %? :work:meeting:\nCREATED: %T\n** Agenda/Purpose\n\n** Who\n- \n\n** Notes\n- \n\n"
+           :empty-lines 1
+           :clock-in t
+           :clock-resume t)
+          ("M" "Adhoc Meeting(Chat/InPerson/Email/Etc)"
+           entry (file+datetree "~/org/worklog.org")
+           "* Adhoc meeting w/ %? :work:meeting:\nCREATED: %T\nWho: \nNotes: \n"
            :empty-lines 1
            :clock-in t
            :clock-resume t)
