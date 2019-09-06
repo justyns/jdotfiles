@@ -55,7 +55,7 @@ This function should only modify configuration layer settings."
      ;; salt
      shell-scripts
      terraform
-     toml
+     ;; toml
      typescript
      yaml
 
@@ -93,6 +93,8 @@ This function should only modify configuration layer settings."
      ;; Org and misc
      (org :variables
           org-enable-github-support t
+          org-enable-hugo-support t
+          org-enable-trello-support t
           org-enable-reveal-js-support t)
 
      ;; Shell / Terminals
@@ -589,20 +591,19 @@ layers configuration. You are free to put any user code."
   (setq magit-repository-directories '("~/dev/"))
   (setq org-agenda-files (quote ("~/org/")))
   (setq org-refile-targets '((org-agenda-files . (:maxlevel . 3))))
-  ;; TODO this doesn't work anymore: (add-hook 'org-capture-mode-hook 'sticky-window-delete-other-windows)
   (setq org-capture-templates
         '(("t" "Todo" entry (file+headline "~/org/TODO.org" "Tasks")
-           "* TODO %?\nCREATED: %U\n  %i\n  %a")
+           "* TODO %?\n  CREATED: %U\n  %i\n  %a")
           ("T" "Todo with Clipboard" entry (file+headline "~/org/TODO.org" "Tasks")
-           "* TODO %?\nCREATED: %U\n   %c"
+           "* TODO %?\n  CREATED: %U\n   %c"
            :empty-lines 1)
           ("j" "Journal"
            entry (file+datetree "~/org/journal.org")
-           "* %? \nCREATED: %U\n  %i\n  %a"
+           "* %? \n  CREATED: %U\n  %i\n  %a"
            :empty-lines 1)
           ("w" "New WorkLog entry"
            entry (file+datetree "~/org/worklog.org")
-           "* %T %? :work:\nCREATED: %U\n  %i\n  %a\n"
+           "* %T %? :work:\n  CREATED: %U\n  %i\n  %a\n"
            :clock-in t
            :clock-resume t
            :empty-lines 1)
@@ -612,13 +613,13 @@ layers configuration. You are free to put any user code."
            :empty-lines 1)
           ("m" "Meeting"
            entry (file+datetree "~/org/worklog.org")
-           "* Meeting for %? :work:meeting:\nCREATED: %T\n** Agenda/Purpose\n\n** Who\n- \n\n** Notes\n- \n\n"
+           "* Meeting for %? :work:meeting:\n  CREATED: %T\n** Agenda/Purpose\n\n** Who\n\n** Notes\n   - \n\n"
            :empty-lines 1
            :clock-in t
            :clock-resume t)
           ("M" "Adhoc Meeting(Chat/InPerson/Email/Etc)"
            entry (file+datetree "~/org/worklog.org")
-           "* Adhoc meeting w/ %? :work:meeting:\nCREATED: %T\nWho: \nNotes: \n"
+           "* Adhoc meeting w/ %? :work:meeting:\n CREATED: %T\nWho: \nWhere: \nNotes: \n"
            :empty-lines 1
            :clock-in t
            :clock-resume t)
@@ -641,12 +642,18 @@ layers configuration. You are free to put any user code."
             (tags "PRIORITY=\"A\""
                   ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
                    (org-agenda-overriding-header "High-priority unfinished tasks:")))
+            (todo "NEXT|IN-PROGRESS"
+                  ((org-agenda-overriding-header "NEXT tasks: ")))
+            (todo "WAITING|BLOCKED"
+                  ((org-agenda-overriding-header "WAITING/BLOCKED tasks:")))
             (alltodo ""
                      ((org-agenda-skip-function '(or (air-org-skip-subtree-if-habit)
                                                      (air-org-skip-subtree-if-priority ?A)
+                                                     (org-agenda-skip-if nil '('todo "NEXT"))
                                                      (org-agenda-skip-if nil '(scheduled deadline))))
                       (org-agenda-overriding-header "ALL normal priority tasks:"))))
-           ((org-agenda-compact-blocks t)))))
+           ((org-agenda-compact-blocks t)))
+          ))
   ;; Enable org-clock in modeline
   (setq spaceline-org-clock-p t)
   ;; Enable org-habit org module - TODO: This might've broken my agenda view?
@@ -660,6 +667,8 @@ layers configuration. You are free to put any user code."
   (setq org-use-speed-commands t)
   ;; Prettier code blocks
   (setq org-src-fontify-natively t)
+  ;; Hide code blocks by default in org-mode
+  '(org-hide-block-startup t)
   ;; Map Ctrl+p to helm-projectile-find-file like the vim plugin
   (define-key evil-normal-state-map (kbd "C-p") 'helm-projectile-find-file)
   ;; Map Super-/ to toggle comments (like most IDEs)
@@ -705,9 +714,11 @@ This function is called at the very end of Spacemacs initialization."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(org-hide-block-startup t)
+ '(org-trello-current-prefix-keybinding "C-c o")
  '(package-selected-packages
    (quote
-    (toml-mode racer helm-gtags ggtags flycheck-rust counsel-gtags counsel swiper ivy cargo rust-mode spinner iedit anzu evil undo-tree powerline smartparens pcre2el org-category-capture alert log4e gntp markdown-mode parent-mode projectile pkg-info epl flx highlight git-commit with-editor goto-chg json-mode tablist magit-popup docker-tramp json-snatcher json-reformat terraform-mode hcl-mode dash-functional pos-tip inf-ruby bind-map bind-key yasnippet packed anaconda-mode pythonic f dash s async auto-complete popup go-mode company helm helm-core avy org-plus-contrib hydra lv flycheck typescript-mode skewer-mode simple-httpd multiple-cursors js2-mode haml-mode fringe-helper git-gutter+ git-gutter flyspell-correct web-completion-data tern smeargle orgit magit-gitflow helm-gitignore gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link evil-magit magit transient yapfify yaml-mode xterm-color ws-butler winum which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package unfill toc-org tide tagedit spaceline slim-mode shell-pop scss-mode sass-mode rvm ruby-tools ruby-test-mode rubocop rspec-mode robe reveal-in-osx-finder restart-emacs request rbenv rake rainbow-delimiters pyvenv pytest pyenv-mode py-isort pug-mode popwin pip-requirements persp-mode pbcopy paradox ox-reveal ox-gfm osx-trash osx-dictionary org-projectile org-present org-pomodoro org-mime org-download org-bullets open-junk-file neotree mwim multi-term move-text mmm-mode minitest markdown-toc macrostep lorem-ipsum livid-mode live-py-mode linum-relative link-hint ledger-mode launchctl js2-refactor js-doc insert-shebang indent-guide hy-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-pydoc helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag groovy-mode google-translate golden-ratio go-guru go-eldoc gnuplot git-gutter-fringe git-gutter-fringe+ gh-md fuzzy flyspell-popup flyspell-correct-helm flycheck-pos-tip flycheck-ledger flx-ido fish-mode fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-commentary evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help emmet-mode elisp-slime-nav dumb-jump dockerfile-mode docker diminish diff-hl cython-mode company-web company-terraform company-tern company-statistics company-shell company-quickhelp company-go company-anaconda column-enforce-mode coffee-mode clean-aindent-mode chruby bundler auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell))))
+    (ox-hugo org-trello request-deferred spinner iedit anzu evil undo-tree powerline smartparens pcre2el org-category-capture alert log4e gntp markdown-mode parent-mode projectile pkg-info epl flx highlight git-commit with-editor goto-chg json-mode tablist magit-popup docker-tramp json-snatcher json-reformat terraform-mode hcl-mode dash-functional pos-tip inf-ruby bind-map bind-key yasnippet packed anaconda-mode pythonic f dash s async auto-complete popup go-mode company helm helm-core avy org-plus-contrib hydra lv flycheck typescript-mode skewer-mode simple-httpd multiple-cursors js2-mode haml-mode fringe-helper git-gutter+ git-gutter flyspell-correct web-completion-data tern smeargle orgit magit-gitflow helm-gitignore gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link evil-magit magit transient yapfify yaml-mode xterm-color ws-butler winum which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package unfill toc-org tide tagedit spaceline slim-mode shell-pop scss-mode sass-mode rvm ruby-tools ruby-test-mode rubocop rspec-mode robe reveal-in-osx-finder restart-emacs request rbenv rake rainbow-delimiters pyvenv pytest pyenv-mode py-isort pug-mode popwin pip-requirements persp-mode pbcopy paradox ox-reveal ox-gfm osx-trash osx-dictionary org-projectile org-present org-pomodoro org-mime org-download org-bullets open-junk-file neotree mwim multi-term move-text mmm-mode minitest markdown-toc macrostep lorem-ipsum livid-mode live-py-mode linum-relative link-hint ledger-mode launchctl js2-refactor js-doc insert-shebang indent-guide hy-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-pydoc helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag groovy-mode google-translate golden-ratio go-guru go-eldoc gnuplot git-gutter-fringe git-gutter-fringe+ gh-md fuzzy flyspell-popup flyspell-correct-helm flycheck-pos-tip flycheck-ledger flx-ido fish-mode fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-commentary evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help emmet-mode elisp-slime-nav dumb-jump dockerfile-mode docker diminish diff-hl cython-mode company-web company-terraform company-tern company-statistics company-shell company-quickhelp company-go company-anaconda column-enforce-mode coffee-mode clean-aindent-mode chruby bundler auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
