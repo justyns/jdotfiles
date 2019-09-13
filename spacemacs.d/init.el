@@ -577,6 +577,96 @@ currently clocked-in org-mode task."
   (interactive)
   (org-capture nil "f"))
 
+;; Helpful clock functions from http://doc.norang.ca/org-mode.html#Clocking
+(defun bh/clock-in-to-next (kw)
+  "Switch a task from TODO to IN-PROGRESS when clocking in.
+Skips capture tasks, projects, and subprojects.
+Switch projects and subprojects from IN-PROGRESS back to TODO"
+  (when (not (and (boundp 'org-capture-mode) org-capture-mode))
+    (cond
+     ((and (member (org-get-todo-state) (list "TODO"))
+           (bh/is-task-p))
+      "IN-PROGRESS")
+     ((and (member (org-get-todo-state) (list "IN-PROGRESS"))
+           (bh/is-project-p))
+      "TODO"))))
+
+(defun bh/find-project-task ()
+  "Move point to the parent (project) task if any"
+  (save-restriction
+    (widen)
+    (let ((parent-task (save-excursion (org-back-to-heading 'invisible-ok) (point))))
+      (while (org-up-heading-safe)
+        (when (member (nth 2 (org-heading-components)) org-todo-keywords-1)
+          (setq parent-task (point))))
+      (goto-char parent-task)
+      parent-task)))
+
+(defun bh/punch-in (arg)
+  "Start continuous clocking and set the default task to the
+selected task.  If no task is selected set the Organization task
+as the default task."
+  (interactive "p")
+  (setq bh/keep-clock-running t)
+  (if (equal major-mode 'org-agenda-mode)
+      ;;
+      ;; We're in the agenda
+      ;;
+      (let* ((marker (org-get-at-bol 'org-hd-marker))
+             (tags (org-with-point-at marker (org-get-tags-at))))
+        (if (and (eq arg 4) tags)
+            (org-agenda-clock-in '(16))
+          (bh/clock-in-organization-task-as-default)))
+    ;;
+    ;; We are not in the agenda
+    ;;
+    (save-restriction
+      (widen)
+      ; Find the tags on the current task
+      (if (and (equal major-mode 'org-mode) (not (org-before-first-heading-p)) (eq arg 4))
+          (org-clock-in '(16))
+        (bh/clock-in-organization-task-as-default)))))
+
+(defun bh/punch-out ()
+  (interactive)
+  (setq bh/keep-clock-running nil)
+  (when (org-clock-is-active)
+    (org-clock-out))
+  (org-agenda-remove-restriction-lock))
+
+(defun bh/clock-in-default-task ()
+  (save-excursion
+    (org-with-point-at org-clock-default-task
+      (org-clock-in))))
+
+(defun bh/clock-in-parent-task ()
+  "Move point to the parent (project) task if any and clock in"
+  (let ((parent-task))
+    (save-excursion
+      (save-restriction
+        (widen)
+        (while (and (not parent-task) (org-up-heading-safe))
+          (when (member (nth 2 (org-heading-components)) org-todo-keywords-1)
+            (setq parent-task (point))))
+        (if parent-task
+            (org-with-point-at parent-task
+              (org-clock-in))
+          (when bh/keep-clock-running
+            (bh/clock-in-default-task)))))))
+
+(defvar bh/organization-task-id "EE4C523B-574F-4C5B-B270-9B3A340B7514")
+
+(defun bh/clock-in-organization-task-as-default ()
+  (interactive)
+  (org-with-point-at (org-id-find bh/organization-task-id 'marker)
+    (org-clock-in '(16))))
+
+(defun bh/clock-out-maybe ()
+  (when (and bh/keep-clock-running
+             (not org-clock-clocking-in)
+             (marker-buffer org-clock-default-task)
+             (not org-clock-resolving-clocks-due-to-idleness))
+    (bh/clock-in-parent-task)))
 
 (defun dotspacemacs/user-config ()
   "Configuration function for user code.
@@ -623,6 +713,10 @@ layers configuration. You are free to put any user code."
            :empty-lines 1
            :clock-in t
            :clock-resume t)
+          ("f" "Todo - Follow-up later today on e-mail/slack/etc"
+           entry (file+datetree "~/org/worklog.org")
+           "* NEXT [#A] Follow-up on %? :work:followup:\n SCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\")) CREATED: %T\n"
+           :empty-lines 1)
           ("v" "Code Reference with Comments to Current Task"
            plain (clock)
            "%(ha/org-capture-code-snippet \"%F\")\n\n   %?"
@@ -639,24 +733,43 @@ layers configuration. You are free to put any user code."
   (setq org-agenda-custom-commands
         '(("d" "Daily agenda and all TODOs"
            ((agenda "" ((org-agenda-span 2)))
+            (todo "IN-PROGRESS"
+                  ((org-agenda-overriding-header "In-Progress tasks:")))
             (tags "PRIORITY=\"A\""
-                  ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+                  ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo 'done)
+                                                  (org-agenda-skip-entry-if 'todo '("IN-PROGRESS"))))
                    (org-agenda-overriding-header "High-priority unfinished tasks:")))
-            (todo "NEXT|IN-PROGRESS"
-                  ((org-agenda-overriding-header "NEXT tasks: ")))
+            (todo "NEXT"
+                  ((org-agenda-skip-function '(or (air-org-skip-subtree-if-priority ?A)))
+                   (org-agenda-overriding-header "NEXT tasks: ")))
             (todo "WAITING|BLOCKED"
-                  ((org-agenda-overriding-header "WAITING/BLOCKED tasks:")))
+                  ((org-agenda-skip-function '(or (air-org-skip-subtree-if-priority ?A)))
+                   (org-agenda-overriding-header "WAITING/BLOCKED tasks:")))
             (alltodo ""
                      ((org-agenda-skip-function '(or (air-org-skip-subtree-if-habit)
                                                      (air-org-skip-subtree-if-priority ?A)
-                                                     (org-agenda-skip-if nil '('todo "NEXT"))
+                                                     (org-agenda-skip-entry-if 'todo '("NEXT" "IN-PROGRESS" "WAITING" "BLOCKED"))
                                                      (org-agenda-skip-if nil '(scheduled deadline))))
                       (org-agenda-overriding-header "ALL normal priority tasks:"))))
            ((org-agenda-compact-blocks t)))
           ))
+  ;; org-clock settings
+  (setq bh/keep-clock-running nil)
+  (add-hook 'org-clock-out-hook 'bh/clock-out-maybe 'append)
   ;; Enable org-clock in modeline
   (setq spaceline-org-clock-p t)
-  ;; Enable org-habit org module - TODO: This might've broken my agenda view?
+  ;; Delete clocks that are 0:00
+  (setq org-clock-out-remove-zero-time-clocks t)
+  ;; Include current task in clock report
+  (setq org-clock-report-include-clocking-task t)
+  ;; Store clock history for longer
+  (setq org-clock-history-length 15)
+  ;; Clock report default params
+  (setq org-agenda-clockreport-parameter-plist
+        (quote (:link t :maxlevel 3 :fileskip0 t :compact t :narrow 100)))
+  ;; Default Column View
+  (setq org-columns-default-format "%5TODO %30ITEM(Task) %10Effort(Effort){:} %10CLOCKSUM(Clocked) %3PRIORITY(PRI) %TAGS")
+  ;; Enable org-habit org module
   (add-to-list 'org-modules 'org-habit t)
   ;; Enable org-expiry org module
   (add-to-list 'org-modules 'org-expiry t)
@@ -686,6 +799,10 @@ layers configuration. You are free to put any user code."
   ;; Use /sshx because /ssh doesn't seem to work on bsd, and some of my
   ;; remote shells don't use sh/bash.  ssh/sshx should also be faster than scp
   (setq tramp-default-method "sshx")
+  ;; Custom keymaps
+  (spacemacs/declare-prefix "o" "custom")
+  (spacemacs/set-leader-keys "op" 'bh/punch-in)
+  (spacemacs/set-leader-keys "oP" 'bh/punch-out)
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
