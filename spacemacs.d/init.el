@@ -95,7 +95,9 @@ This function should only modify configuration layer settings."
           org-enable-github-support t
           org-enable-hugo-support t
           org-enable-trello-support t
-          org-enable-reveal-js-support t)
+          org-enable-reveal-js-support t
+          org-startup-indented nil
+          org-adapt-indentation nil)
      deft
 
      ;; Shell / Terminals
@@ -561,11 +563,11 @@ within an Org EXAMPLE block and a backlink to the file."
                                 func-name file-name line-number
                                 file-base))))
     (format "
-   %s
-
-   #+BEGIN_%s %s
 %s
-   #+END_%s" initial-txt type headers code-snippet type)))
+
+#+BEGIN_%s %s
+%s
+#+END_%s" initial-txt type headers code-snippet type)))
 
 (defun ha/code-to-clock (&optional start end)
   "Send the currently selected code to the currently clocked-in org-mode task."
@@ -684,17 +686,27 @@ layers configuration. You are free to put any user code."
   (setq org-refile-targets '((org-agenda-files . (:maxlevel . 3))))
   (setq org-capture-templates
         '(("t" "Todo" entry (file+headline "~/org/TODO.org" "Tasks")
-           "* TODO %?\n  CREATED: %U\n  %i\n  %a")
+           "* TODO %?\nCREATED: %U\n%i\n%a")
           ("T" "Todo with Clipboard" entry (file+headline "~/org/TODO.org" "Tasks")
-           "* TODO %?\n  CREATED: %U\n   %c"
+           "* TODO %?\nCREATED: %U\n%c"
            :empty-lines 1)
           ("j" "Journal"
            entry (file+datetree "~/org/journal.org")
-           "* %? \n  CREATED: %U\n  %i\n  %a"
+           "* %? \nCREATED: %U\n%i\n%a"
            :empty-lines 1)
           ("w" "New WorkLog entry"
            entry (file+datetree "~/org/worklog.org")
-           "* %T %? :work:\n  CREATED: %U\n  %i\n  %a\n"
+           "* %? :work:\nCREATED: %T\n%i\n%a\n"
+           :clock-in t
+           :clock-resume t
+           :empty-lines 1)
+          ("W" "New Work Ticket"
+           entry (file+datetree "~/org/worklog.org")
+           "* %^{TicketID}: %^{Title} :work:ticket:
+:PROPERTIES:
+:ID: %\\1
+:CREATED: %T
+:END:\n%?"
            :clock-in t
            :clock-resume t
            :empty-lines 1)
@@ -704,23 +716,23 @@ layers configuration. You are free to put any user code."
            :empty-lines 1)
           ("m" "Meeting"
            entry (file+datetree "~/org/worklog.org")
-           "* Meeting for %? :work:meeting:\n  CREATED: %T\n** Agenda/Purpose\n\n** Who\n\n** Notes\n   - \n\n"
+           "* Meeting for %^{Title} :work:meeting:\nCREATED: %T\n** Agenda/Purpose\n\n** Who\n\n** Notes\n - %?\n\n"
            :empty-lines 1
            :clock-in t
            :clock-resume t)
           ("M" "Adhoc Meeting(Chat/InPerson/Email/Etc)"
            entry (file+datetree "~/org/worklog.org")
-           "* Adhoc meeting w/ %? :work:meeting:\n CREATED: %T\nWho: \nWhere: \nNotes: \n"
+           "* Adhoc meeting w/ %^{Who} about %^{What} :work:meeting:\nCREATED: %T\nWho: %\\1 \nWhere: %^{Where}\nNotes: %?\n"
            :empty-lines 1
            :clock-in t
            :clock-resume t)
           ("f" "Todo - Follow-up later today on e-mail/slack/etc"
            entry (file+datetree "~/org/worklog.org")
-           "* NEXT [#A] Follow-up on %? :work:followup:\n SCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\")) CREATED: %T\n"
+           "* NEXT [#A] Follow-up on %? :work:followup:\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\")) CREATED: %T\n"
            :empty-lines 1)
           ("v" "Code Reference with Comments to Current Task"
            plain (clock)
-           "%(ha/org-capture-code-snippet \"%F\")\n\n   %?"
+           "%?\n%(ha/org-capture-code-snippet \"%F\")\n\n"
            :empty-lines 1)
           ("V" "Link to Code Reference to Current Task"
            plain (clock)
@@ -780,12 +792,17 @@ layers configuration. You are free to put any user code."
   (org-expiry-insinuate)
   (setq org-expiry-created-property-name "CREATED"
         org-expiry-inactive-timestamps t)
-  ;; Enable speed commands for single-key commands at the beginning of headers.  ? for help
+  ;; Enable speed commands for single-key commands at the beginning of headers.  ? for help  TODO: I don't really know what these do
   (setq org-use-speed-commands t)
   ;; Prettier code blocks
   (setq org-src-fontify-natively t)
   ;; Hide code blocks by default in org-mode
   '(org-hide-block-startup t)
+  ;; Don't indent subheadings in org-mode files.  Everything should be flush left
+  ;; These are set in the org layer vars above
+  ;; (setq org-adapt-indentation nil)
+  ;; (setq org-indent-mode nil)
+  ;; (setq org-startup-indented nil)
   ;; Deft settings
   (setq deft-extensions '("org" "md" "txt"))
   (setq deft-default-extension "org")
@@ -818,6 +835,25 @@ layers configuration. You are free to put any user code."
   (spacemacs/declare-prefix "o" "custom")
   (spacemacs/set-leader-keys "op" 'bh/punch-in)
   (spacemacs/set-leader-keys "oP" 'bh/punch-out)
+  (spacemacs/set-leader-keys "oc" 'calculator)
+
+  ;; Remap space q q to kill frame instead of emacs (to keep emacs server alive)
+  ;; Disabled - Just use space q f
+  ;; (evil-leader/set-key "q q" 'spacemacs/frame-killer)
+
+
+  ;; Start Emacs server
+  (unless (server-running-p)
+    (server-start))
+
+  ;; Layout settings
+  (setq dotspacemacs-display-default-layout t)
+
+  ;; Save backups in one place
+  (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
+
+  ;; Disable lock files
+  (setq create-lockfiles nil)
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
