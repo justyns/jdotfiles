@@ -695,13 +695,13 @@ layers configuration. You are free to put any user code."
            "* %? \nCREATED: %U\n%i\n%a"
            :empty-lines 1)
           ("w" "New WorkLog entry"
-           entry (file+datetree "~/org/worklog.org")
+           entry (file+datetree "~/org/worklog_2019.org")
            "* %? :work:\nCREATED: %T\n%i\n%a\n"
            :clock-in t
            :clock-resume t
            :empty-lines 1)
           ("W" "New Work Ticket"
-           entry (file+datetree "~/org/worklog.org")
+           entry (file+datetree "~/org/worklog_2019.org")
            "* %^{TicketID}: %^{Title} :work:ticket:
 :PROPERTIES:
 :ID: %\\1
@@ -715,19 +715,19 @@ layers configuration. You are free to put any user code."
            "%U %?"
            :empty-lines 1)
           ("m" "Meeting"
-           entry (file+datetree "~/org/worklog.org")
+           entry (file+datetree "~/org/worklog_2019.org")
            "* Meeting for %^{Title} :work:meeting:\nCREATED: %T\n** Agenda/Purpose\n\n** Who\n\n** Notes\n - %?\n\n"
            :empty-lines 1
            :clock-in t
            :clock-resume t)
           ("M" "Adhoc Meeting(Chat/InPerson/Email/Etc)"
-           entry (file+datetree "~/org/worklog.org")
+           entry (file+datetree "~/org/worklog_2019.org")
            "* Adhoc meeting w/ %^{Who} about %^{What} :work:meeting:\nCREATED: %T\nWho: %\\1 \nWhere: %^{Where}\nNotes: %?\n"
            :empty-lines 1
            :clock-in t
            :clock-resume t)
           ("f" "Todo - Follow-up later today on e-mail/slack/etc"
-           entry (file+datetree "~/org/worklog.org")
+           entry (file+datetree "~/org/worklog_2019.org")
            "* NEXT [#A] Follow-up on %? :work:followup:\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\")) CREATED: %T\n"
            :empty-lines 1)
           ("v" "Code Reference with Comments to Current Task"
@@ -836,6 +836,7 @@ layers configuration. You are free to put any user code."
   (spacemacs/set-leader-keys "op" 'bh/punch-in)
   (spacemacs/set-leader-keys "oP" 'bh/punch-out)
   (spacemacs/set-leader-keys "oc" 'calculator)
+  (spacemacs/set-leader-keys "os" 'org-save-all-org-buffers)
 
   ;; Remap space q q to kill frame instead of emacs (to keep emacs server alive)
   ;; Disabled - Just use space q f
