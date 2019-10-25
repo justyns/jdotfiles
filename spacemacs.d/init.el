@@ -690,10 +690,13 @@ layers configuration. You are free to put any user code."
           ("T" "Todo with Clipboard" entry (file+headline "~/org/TODO.org" "Tasks")
            "* TODO %?\nCREATED: %U\n%c"
            :empty-lines 1)
+          ("r" "Read Later" entry (file+headline "~/org/TODO.org" "Read Later")
+           "* TODO %?  :readlater:\nCREATED: %U")
           ("j" "Journal"
            entry (file+datetree "~/org/journal.org")
            "* %? \nCREATED: %U\n%i\n%a"
            :empty-lines 1)
+          ;; TODO: Use year in filename automatically
           ("w" "New WorkLog entry"
            entry (file+datetree "~/org/worklog_2019.org")
            "* %? :work:\nCREATED: %T\n%i\n%a\n"
@@ -758,6 +761,7 @@ layers configuration. You are free to put any user code."
             (todo "WAITING|BLOCKED"
                   ((org-agenda-skip-function '(or (air-org-skip-subtree-if-priority ?A)))
                    (org-agenda-overriding-header "WAITING/BLOCKED tasks:")))
+            ;; TODO: Figure out how to exclude readlater tag
             (alltodo ""
                      ((org-agenda-skip-function '(or (air-org-skip-subtree-if-habit)
                                                      (air-org-skip-subtree-if-priority ?A)
