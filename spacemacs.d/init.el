@@ -507,7 +507,7 @@ in `dotspacemacs/user-config'."
    ;; Other tab-related settings
    tab-width 2
    evil-shift-width 2
-   python-indent-offset 4
+   python-indent-offset 2
    )
   ;; Indent everything by 2 spaces by default instead of 4
   (my-setup-indent 2)
@@ -698,16 +698,18 @@ layers configuration. You are free to put any user code."
            :empty-lines 1)
           ;; TODO: Use year in filename automatically
           ("w" "New WorkLog entry"
-           entry (file+datetree "~/org/worklog_2019.org")
+           entry (file+datetree "~/org/worklog_2020.org")
            "* %? :work:\nCREATED: %T\n%i\n%a\n"
            :clock-in t
            :clock-resume t
            :empty-lines 1)
           ("W" "New Work Ticket"
-           entry (file+datetree "~/org/worklog_2019.org")
-           "* %^{TicketID}: %^{Title} :work:ticket:
+           entry (file+datetree "~/org/worklog_2020.org")
+           "* IN-PROGRESS %^{TicketID}: %^{Title} :work:ticket:
 :PROPERTIES:
 :ID: %\\1
+:BI_ENVIRONMENT: %\\2
+:BI_CUSTOMER: %\\3
 :CREATED: %T
 :END:\n%?"
            :clock-in t
@@ -718,19 +720,19 @@ layers configuration. You are free to put any user code."
            "%U %?"
            :empty-lines 1)
           ("m" "Meeting"
-           entry (file+datetree "~/org/worklog_2019.org")
-           "* Meeting for %^{Title} :work:meeting:\nCREATED: %T\n** Agenda/Purpose\n\n** Who\n\n** Notes\n - %?\n\n"
+           entry (file+datetree "~/org/worklog_2020.org")
+           "* Meeting for %^{Title} :work:meeting:\nCREATED: %T\nAgenda/Purpose: \nWho: \n\n - %?\n"
            :empty-lines 1
            :clock-in t
            :clock-resume t)
           ("M" "Adhoc Meeting(Chat/InPerson/Email/Etc)"
-           entry (file+datetree "~/org/worklog_2019.org")
+           entry (file+datetree "~/org/worklog_2020.org")
            "* Adhoc meeting w/ %^{Who} about %^{What} :work:meeting:\nCREATED: %T\nWho: %\\1 \nWhere: %^{Where}\nNotes: %?\n"
            :empty-lines 1
            :clock-in t
            :clock-resume t)
           ("f" "Todo - Follow-up later today on e-mail/slack/etc"
-           entry (file+datetree "~/org/worklog_2019.org")
+           entry (file+datetree "~/org/worklog_2020.org")
            "* NEXT [#A] Follow-up on %? :work:followup:\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\")) CREATED: %T\n"
            :empty-lines 1)
           ("v" "Code Reference with Comments to Current Task"
