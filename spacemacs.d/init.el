@@ -671,6 +671,73 @@ as the default task."
              (not org-clock-resolving-clocks-due-to-idleness))
     (bh/clock-in-parent-task)))
 
+;; From https://gist.github.com/ironchicken/6b5424bc2024b3d0a58a8a130f73c2ee and
+;; https://emacs.stackexchange.com/questions/32178/how-to-create-table-of-time-distribution-by-tags-in-org-mode
+(defun clocktable-by-tag/shift-cell (n)
+  (let ((str ""))
+    (dotimes (i n)
+      (setq str (concat str "| ")))
+    str))
+
+(defun clocktable-by-tag/insert-tag (params)
+  (let ((tag (plist-get params :tags)))
+    (insert "|--\n")
+    (insert (format "| %s | *Tag time* |\n" tag))
+    (let ((total 0))
+      (mapcar
+       (lambda (file)
+         (let ((clock-data (with-current-buffer (find-file-noselect file)
+                             (org-clock-get-table-data (buffer-name) params))))
+           (when (> (nth 1 clock-data) 0)
+             (setq total (+ total (nth 1 clock-data)))
+             (insert (format "| | File *%s* | %.2f |\n"
+                             (file-name-nondirectory file)
+                             (/ (nth 1 clock-data) 60.0)))
+             (dolist (entry (nth 2 clock-data))
+               (insert (format "| | . %s%s | %s %.2f |\n"
+                               (org-clocktable-indent-string (nth 0 entry))
+                               (nth 1 entry)
+                               (clocktable-by-tag/shift-cell (nth 0 entry))
+                               (/ (nth 4 entry) 60.0)))))))
+       (org-agenda-files))
+      (save-excursion
+        (re-search-backward "*Tag time*")
+        (org-table-next-field)
+        (org-table-blank-field)
+        (insert (format "*%.2f*" (/ total 60.0)))))
+    (org-table-align)))
+
+(defun org-dblock-write:clocktable-by-tag (params)
+  (insert "| Tag | Headline | Time (h) |\n")
+  (insert "|     |          | <r>  |\n")
+  (let ((tags (plist-get params :tags)))
+    (mapcar (lambda (tag)
+              (clocktable-by-tag/insert-tag (plist-put (plist-put params :match tag) :tags tag)))
+            tags)))
+
+;; From https://emacs.stackexchange.com/questions/9502/category-based-clock-report
+(defun private/clocktable-formatter-group-by-prop (ipos tables params)
+  (let* ((formatter (or org-clock-clocktable-formatter
+                        'org-clocktable-write-default))
+         (ht (make-hash-table :test 'equal))
+         (total 0)
+         (grouped
+          (dolist (tt tables (sort (hash-table-keys ht)
+                                   #'(lambda (x y) (string< x y))))
+            (setq total (+ total (nth 1 tt)))
+            (dolist (record (nth 2 tt))
+              (let* ((lasttwo (last record 2))
+                     (time (pop lasttwo))
+                     (prop (cdr (car (car lasttwo))))
+                     (prev (gethash prop ht 0)))
+                (puthash prop (+ prev time) ht))
+              ))
+          )
+         (newtable (mapcar (lambda (arg) (list 1 arg nil nil (gethash arg ht) nil)) grouped))
+         (new-params (org-plist-delete params :properties)))
+    (funcall formatter ipos (list (list nil total newtable)) new-params)))
+
+
 (defun dotspacemacs/user-config ()
   "Configuration function for user code.
 This function is called at the very end of Spacemacs initialization after
@@ -708,8 +775,8 @@ layers configuration. You are free to put any user code."
            "* IN-PROGRESS %^{TicketID}: %^{Title} :work:ticket:
 :PROPERTIES:
 :ID: %\\1
-:BI_ENVIRONMENT: %\\2
-:BI_CUSTOMER: %\\3
+:BI_ENVIRONMENT: %^{BI_ENVIRONMENT}
+:BI_CUSTOMER: %^{BI_CUSTOMER}
 :CREATED: %T
 :END:\n%?"
            :clock-in t
