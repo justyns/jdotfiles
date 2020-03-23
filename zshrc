@@ -76,7 +76,7 @@ plugins=(
   virtualenvwrapper
   kubectl
   kube-ps1
-  rvm
+  # rvm
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -130,3 +130,8 @@ CLOUD_SDK_HOME=/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk
 #source "${CLOUD_SDK_HOME}/path.zsh.inc"
 [[ -d ${CLOUD_SDK_HOME} ]] && source "${CLOUD_SDK_HOME}/completion.zsh.inc"
 
+[[ -x $(which jira) ]] && eval "$(jira --completion-script-zsh)"
+
+# Shortcuts to move by word with alt + left/right arrow
+bindkey "^[^[[D" backward-word
+bindkey "^[^[[C" forward-word
