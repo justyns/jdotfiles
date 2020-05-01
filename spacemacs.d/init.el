@@ -755,6 +755,7 @@ layers configuration. You are free to put any user code."
   (setq org-agenda-files (quote ("~/org/")))
   (setq org-refile-targets '((org-agenda-files . (:maxlevel . 3))))
   (setq org-capture-templates
+        ;; TODO: Move some of these to a separate file not in git, since I don't need them in every computer
         '(("t" "Todo" entry (file+headline "~/org/TODO.org" "Tasks")
            "* TODO %?\nCREATED: %U\n%i\n%a")
           ("T" "Todo with Clipboard" entry (file+headline "~/org/TODO.org" "Tasks")
@@ -797,13 +798,13 @@ layers configuration. You are free to put any user code."
            :clock-resume t)
           ("M" "Adhoc Meeting(Chat/InPerson/Email/Etc)"
            entry (file+datetree "~/org/worklog_2020.org")
-           "* Adhoc meeting w/ %^{Who} about %^{What} :work:meeting:\nCREATED: %T\nWho: %\\1 \nWhere: %^{Where}\nNotes: %?\n"
+           "* Adhoc meeting w/ %^{Who} about %^{What} :work:meeting:\nCREATED: %T\nWho: %\\1 \nNotes: %?\n"
            :empty-lines 1
            :clock-in t
            :clock-resume t)
           ("f" "Todo - Follow-up later today on e-mail/slack/etc"
            entry (file+datetree "~/org/worklog_2020.org")
-           "* NEXT [#A] Follow-up on %? :work:followup:\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\")) CREATED: %T\n"
+           "* NEXT [#A] %? :work:followup:\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\")) CREATED: %T\n"
            :empty-lines 1)
           ("v" "Code Reference with Comments to Current Task"
            plain (clock)
