@@ -24,6 +24,11 @@
 --exclude=tags
 --exclude=cscope.\*
 --exclude=\*.tar.\*
+--exclude=node_modules
+--exclude=.venv
+--exclude=plugged
+--exclude=tmp
+--exclude=temp
 
 # From https://github.com/juliosueiras/vim-terraform-completion/blob/master/ctags/terraform.ctags
 --langdef=terraform
