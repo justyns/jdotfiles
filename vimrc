@@ -411,4 +411,6 @@ let g:EditorConfig_exclude_patterns = ['fugitive://.*', 'scp://.*']
 
 let g:vim_json_syntax_conceal = 0
 
-set completeopt=menuone,preview,noinsert
+if v:version >= 740
+    set completeopt=menuone,preview,noinsert
+endif
