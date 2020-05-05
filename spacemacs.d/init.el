@@ -910,6 +910,7 @@ layers configuration. You are free to put any user code."
   ;; Deft settings
   (setq deft-extensions '("org" "md" "txt"))
   (setq deft-default-extension "org")
+  (setq deft-text-mode 'org-mode)
   ;; I created symlinks in ~/.deft pointing to my org notes/joplin/etc
   (setq deft-directory "~/.deft")
   (setq deft-recursive t)
@@ -917,7 +918,8 @@ layers configuration. You are free to put any user code."
   ;; See https://jingsi.space/post/2017/04/05/organizing-a-complex-directory-for-emacs-org-mode-and-deft/
   (setq deft-use-filename-as-title nil)
   (setq deft-use-filter-string-for-filename t)
-  (setq deft-file-naming-rules '((nospace . "-")))
+  (setq deft-file-naming-rules '((nospace . "-")
+                                 (case-fn . downcase)))
   ;; Limit the number of files Deft shows by default to speed it up
   (setq deft-file-limit 100)
   ;; Map Ctrl+p to helm-projectile-find-file like the vim plugin
