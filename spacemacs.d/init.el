@@ -69,6 +69,8 @@ This function should only modify configuration layer settings."
      evil-commentary
      gtags
      helm
+     treemacs
+     multiple-cursors
      osx
      (evil-snipe :variables
                  evil-snipe-enable-alternate-f-and-t-behaviors t)
@@ -210,6 +212,11 @@ It should only modify the values of Spacemacs settings."
    ;; (default 'vim)
    dotspacemacs-editing-style 'vim
 
+   ;; If non-nil show the version string in the Spacemacs buffer. It will
+   ;; appear as (spacemacs version)@(emacs version)
+   ;; (default t)
+   dotspacemacs-startup-buffer-show-version t
+
    ;; Specify the startup banner. Default value is `official', it displays
    ;; the official spacemacs logo. An integer value is the index of text
    ;; banner, `random' chooses a random text banner in `core/banners'
@@ -286,8 +293,10 @@ It should only modify the values of Spacemacs settings."
    dotspacemacs-major-mode-leader-key ","
 
    ;; Major mode leader key accessible in `emacs state' and `insert state'.
-   ;; (default "C-M-m")
-   dotspacemacs-major-mode-emacs-leader-key "C-M-m"
+   ;; (default "C-M-m" for terminal mode, "<M-return>" for GUI mode).
+   ;; Thus M-RET should work as leader key in both GUI and terminal modes.
+   ;; C-M-m also should work in terminal mode, but not in GUI mode.
+   dotspacemacs-major-mode-emacs-leader-key (if window-system "<M-return>" "C-M-m")
 
    ;; These variables control whether separate commands are bound in the GUI to
    ;; the key pairs `C-i', `TAB' and `C-m', `RET'.
@@ -898,7 +907,7 @@ layers configuration. You are free to put any user code."
   ;; From https://emacs.stackexchange.com/questions/804/how-do-i-speed-up-org-mode-agenda-generation
   ;; Pregenerates the agenda buffer whenever emacs is idle
   ;; TODO: This kind of works, but it deletes the window and also doesn't refresh it because of the org-agenda-sticky thing?
-  (run-with-idle-timer 5 nil (lambda () (org-agenda-list) (delete-window)))
+  (run-with-idle-timer 300 nil (lambda () (org-agenda-list) (delete-window)))
 
   (setq-default org-download-image-dir "./img/")
   ;; I couldn't get imagemagick/convert to work on MacOS, so this uses pngpaste.  It's not going to work
