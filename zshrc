@@ -124,6 +124,9 @@ done
 # kube-ps1 prompt
 export KUBE_PS1_SYMBOL_USE_IMG=true
 # export PROMPT='$(kube_ps1)'$PROMPT
+#
+# TODO: Move this
+export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
 
 # for gcloud
 CLOUD_SDK_HOME=/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk

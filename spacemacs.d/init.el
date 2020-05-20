@@ -916,6 +916,13 @@ layers configuration. You are free to put any user code."
   ;; pngpaste (https://github.com/jcsalterego/pngpaste) can be installed with: brew install pngpaste
   (setq org-download-screenshot-method "pngpaste %s")
 
+  ;; Shortcuts for org-structure templates (the +BEGIN_SRC type blocks)
+  ;; This can be accessed by pressing C-c C-,
+  (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+  (add-to-list 'org-structure-template-alist '("sh" . "src bash"))
+  (add-to-list 'org-structure-template-alist '("y" . "src yaml"))
+  (add-to-list 'org-structure-template-alist '("py" . "src python"))
+
   ;; Deft settings
   (setq deft-extensions '("org" "md" "txt"))
   (setq deft-default-extension "org")
