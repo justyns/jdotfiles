@@ -26,6 +26,7 @@
 --exclude=\*.tar.\*
 --exclude=node_modules
 --exclude=.venv
+--exclude=venv
 --exclude=plugged
 --exclude=tmp
 --exclude=temp

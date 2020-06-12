@@ -32,15 +32,20 @@ This function should only modify configuration layer settings."
 
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(ansible
-     windows-scripts
+   '(windows-scripts
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
      ;; Uncomment some layer names and press `SPC f e R' (Vim style) or
      ;; `M-m f e R' (Emacs style) to install them.
      ;; ----------------------------------------------------------------
 
+     ;; Turn on lsp layer, which should be used automatically by supported languages
+     (lsp :variables
+          lsp-ui-doc-enable t)
+     dap
+
      ;; Languages
+     ansible
      cb-groovy
      csv
      docker
@@ -49,7 +54,19 @@ This function should only modify configuration layer settings."
      html
      javascript
      markdown
-     python
+     (python :variables
+             python-backend 'lsp
+             python-lsp-server 'mspyls
+             python-fill-column 120
+             python-tab-width 4
+             python-formatter 'yapf
+             python-pipenv-activate t
+             python-shell-completion-native-enable nil
+             python-lsp-git-root "~/dev/python-language-server"
+             ;; python-format-on-save t
+             ;; python-sort-imports-on-save t
+             python-test-runner 'pytest
+             pytest-global-name "pipenv run python -m pytest -v")
      ;; react
      ruby
      ;; rust
@@ -67,7 +84,8 @@ This function should only modify configuration layer settings."
      ;; Helpers
      better-defaults
      evil-commentary
-     gtags
+     ;; Disabling gtags in favor of using dumb-jump
+     ;; gtags
      helm
      treemacs
      multiple-cursors
@@ -87,6 +105,7 @@ This function should only modify configuration layer settings."
      (spell-checking :variables
                      enable-flyspell-auto-completion t
                      spell-checking-enable-by-default nil)
+     ;; company
      (auto-completion :disabled-for markdown
                       :variables
                       auto-completion-enable-help-tooltip t
@@ -94,6 +113,7 @@ This function should only modify configuration layer settings."
                       auto-completion-return-key-behavior 'complete
                       auto-completion-enable-sort-by-usage t
                       auto-completion-enable-snippets-in-popup t
+                      auto-completion-idle-delay 0.2
                       auto-completion-private-snippets-directory "~/.spacemacs.d/snippets/")
 
      ;; Org and misc
@@ -121,6 +141,7 @@ This function should only modify configuration layer settings."
    ;; configuration in `dotspacemacs/user-config'.
    dotspacemacs-additional-packages '(company-terraform
                                       company-quickhelp
+                                      company-lsp
                                       exec-path-from-shell
                                       editorconfig
                                       )
@@ -959,6 +980,44 @@ layers configuration. You are free to put any user code."
   ;; remote shells don't use sh/bash.  ssh/sshx should also be faster than scp
   (setq tramp-default-method "sshx")
 
+  ;; Use my default ctags configuration which excludes a lot of things we don't want
+  (setq projectile-tags-command "ctags --options=~/.ctags -Re -f \"%s\" %s \"%s\"")
+
+  ;; Python settings
+  ;; Activate pipenv venv automatically
+  ;; Moved to layer config
+  ;; (setq python-pipenv-activate t)
+  ;; Mostly from https://mostlymaths.net/2019/05/lsp-for-python-and-scala.html/
+
+  ;; TODO: I'm not sure if I need to use use-package, or if I can put this in the layer config above
+  ;; This is the main mode for LSP
+  (use-package lsp-mode
+    :init (setq lsp-prefer-flymake nil)
+    :ensure t)
+  ;; This makes imenu-lsp-minor-mode available. This minor mode 
+  ;; will show a table of contents of methods, classes, variables. 
+  ;; You can configure it to be on the left by using `configure`
+  (add-hook 'lsp-after-open-hook 'lsp-enable-imenu)
+  ;; lsp-ui enables the fancy showing of documentation, error 
+  ;; messages and type hints
+  (use-package lsp-ui
+    :ensure t
+    :config
+    (setq lsp-ui-sideline-ignore-duplicate t)
+    (add-hook 'lsp-mode-hook 'lsp-ui-mode))
+  ;; company is the best autocompletion system for emacs (probably)
+  ;; and this uses the language server to provide semantic completions
+  (use-package company-lsp
+    :commands company-lsp
+    :config
+    (push 'company-lsp company-backends))
+  (use-package flycheck
+    :init (global-flycheck-mode))
+  (defun lsp-set-cfg ()
+    (let ((lsp-cfg `(:pyls (:configurationSources ("flake8")))))
+      (lsp--set-configuration lsp-cfg)))
+  (add-hook 'lsp-after-initialize-hook 'lsp-set-cfg)
+
   ;; Alias [ and ] to all types of brackets
   ;; With this, I can use evil-snipe by pressing f and then [ and it will search for any of these types of brackets
   (push '(?\[ "[[{(]") evil-snipe-aliases)
@@ -993,6 +1052,13 @@ layers configuration. You are free to put any user code."
 
   ;; Disable lock files
   (setq create-lockfiles nil)
+
+  ;; Try to prevent emacs from using 100% cpu due to autosave
+  ;; See https://github.com/syl20bnr/spacemacs/issues/9409
+  (setq history-length 250)
+  (put 'minibuffer-history 'history-length 50)
+  (put 'evil-ex-history 'history-length 50)
+  (put 'kill-ring 'history-length 25)
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
@@ -1025,7 +1091,7 @@ This function is called at the very end of Spacemacs initialization."
  '(org-trello-current-prefix-keybinding "C-c o" nil (org-trello))
  '(package-selected-packages
    (quote
-    (evil-snipe spinner iedit anzu evil undo-tree powerline smartparens pcre2el org-category-capture alert log4e gntp markdown-mode parent-mode projectile pkg-info epl flx highlight git-commit with-editor goto-chg json-mode tablist magit-popup docker-tramp json-snatcher json-reformat terraform-mode hcl-mode dash-functional pos-tip inf-ruby bind-map bind-key yasnippet packed anaconda-mode pythonic f dash s async auto-complete popup go-mode company helm helm-core avy org-plus-contrib hydra lv flycheck typescript-mode skewer-mode simple-httpd multiple-cursors js2-mode haml-mode fringe-helper git-gutter+ git-gutter flyspell-correct web-completion-data tern smeargle orgit magit-gitflow helm-gitignore gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link evil-magit magit transient yapfify yaml-mode xterm-color ws-butler winum which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package unfill toc-org tide tagedit spaceline slim-mode shell-pop scss-mode sass-mode rvm ruby-tools ruby-test-mode rubocop rspec-mode robe reveal-in-osx-finder restart-emacs request rbenv rake rainbow-delimiters pyvenv pytest pyenv-mode py-isort pug-mode popwin pip-requirements persp-mode pbcopy paradox ox-reveal ox-gfm osx-trash osx-dictionary org-projectile org-present org-pomodoro org-mime org-download org-bullets open-junk-file neotree mwim multi-term move-text mmm-mode minitest markdown-toc macrostep lorem-ipsum livid-mode live-py-mode linum-relative link-hint ledger-mode launchctl js2-refactor js-doc insert-shebang indent-guide hy-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-pydoc helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag groovy-mode google-translate golden-ratio go-guru go-eldoc gnuplot git-gutter-fringe git-gutter-fringe+ gh-md fuzzy flyspell-popup flyspell-correct-helm flycheck-pos-tip flycheck-ledger flx-ido fish-mode fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-commentary evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help emmet-mode elisp-slime-nav dumb-jump dockerfile-mode docker diminish diff-hl cython-mode company-web company-terraform company-tern company-statistics company-shell company-quickhelp company-go company-anaconda column-enforce-mode coffee-mode clean-aindent-mode chruby bundler auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell))))
+    (company-lsp spinner iedit anzu evil undo-tree powerline smartparens pcre2el org-category-capture alert log4e gntp markdown-mode parent-mode projectile pkg-info epl flx highlight git-commit with-editor goto-chg json-mode tablist magit-popup docker-tramp json-snatcher json-reformat terraform-mode hcl-mode dash-functional pos-tip inf-ruby bind-map bind-key yasnippet packed anaconda-mode pythonic f dash s async auto-complete popup go-mode company helm helm-core avy org-plus-contrib hydra lv flycheck typescript-mode skewer-mode simple-httpd multiple-cursors js2-mode haml-mode fringe-helper git-gutter+ git-gutter flyspell-correct web-completion-data tern smeargle orgit magit-gitflow helm-gitignore gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link evil-magit magit transient yapfify yaml-mode xterm-color ws-butler winum which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package unfill toc-org tide tagedit spaceline slim-mode shell-pop scss-mode sass-mode rvm ruby-tools ruby-test-mode rubocop rspec-mode robe reveal-in-osx-finder restart-emacs request rbenv rake rainbow-delimiters pyvenv pytest pyenv-mode py-isort pug-mode popwin pip-requirements persp-mode pbcopy paradox ox-reveal ox-gfm osx-trash osx-dictionary org-projectile org-present org-pomodoro org-mime org-download org-bullets open-junk-file neotree mwim multi-term move-text mmm-mode minitest markdown-toc macrostep lorem-ipsum livid-mode live-py-mode linum-relative link-hint ledger-mode launchctl js2-refactor js-doc insert-shebang indent-guide hy-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-pydoc helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag groovy-mode google-translate golden-ratio go-guru go-eldoc gnuplot git-gutter-fringe git-gutter-fringe+ gh-md fuzzy flyspell-popup flyspell-correct-helm flycheck-pos-tip flycheck-ledger flx-ido fish-mode fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-commentary evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help emmet-mode elisp-slime-nav dumb-jump dockerfile-mode docker diminish diff-hl cython-mode company-web company-terraform company-tern company-statistics company-shell company-quickhelp company-go company-anaconda column-enforce-mode coffee-mode clean-aindent-mode chruby bundler auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
