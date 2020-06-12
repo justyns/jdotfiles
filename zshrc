@@ -128,12 +128,21 @@ export KUBE_PS1_SYMBOL_USE_IMG=true
 # TODO: Move this
 export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
 
+# Store pipenv virtualenvs in the project directory, helps with emacs autocompletion
+export PIPENV_VENV_IN_PROJECT=1
+
+# Use pyenv for multiple python versions
+[[ -x $(which pyenv) ]] && eval "$(pyenv init -)"
+
 # for gcloud
 CLOUD_SDK_HOME=/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk
 #source "${CLOUD_SDK_HOME}/path.zsh.inc"
 [[ -d ${CLOUD_SDK_HOME} ]] && source "${CLOUD_SDK_HOME}/completion.zsh.inc"
 
 [[ -x $(which jira) ]] && eval "$(jira --completion-script-zsh)"
+
+# Cache terraform provider/plugin binaries
+export TF_PLUGIN_CACHE_DIR="$HOME/.terraform.d/plugin-cache"
 
 # Shortcuts to move by word with alt + left/right arrow
 bindkey "^[^[[D" backward-word
