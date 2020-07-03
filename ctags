@@ -30,6 +30,7 @@
 --exclude=plugged
 --exclude=tmp
 --exclude=temp
+--exclude=.mypy_cache
 
 # From https://github.com/juliosueiras/vim-terraform-completion/blob/master/ctags/terraform.ctags
 --langdef=terraform

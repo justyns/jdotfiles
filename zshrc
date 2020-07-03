@@ -68,15 +68,19 @@ ZSH_THEME="spaceship"
 plugins=(
   git
   # gpg-agent
+  # keychain
   ssh-agent
-  aws
+  # aws
   docker
+  fzf
+  gcloud
   iterm2
   terraform
   virtualenvwrapper
   kubectl
   kube-ps1
   # rvm
+  z
 )
 
 source $ZSH/oh-my-zsh.sh
