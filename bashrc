@@ -42,3 +42,5 @@ done
 
 # Source .bashrc.local if it exists(Can be used to override settings on a per-machine basis)
 [[ -f $HOME/.bashrc.local ]] && source $HOME/.bashrc.local
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash

@@ -75,11 +75,12 @@ This function should only modify configuration layer settings."
      terraform
      ;; toml
      typescript
-     yaml
+     (yaml :variables
+           yaml-enable-lsp t)
 
      ;; Finance
-     beancount
-     finance
+     ;; beancount
+     ;; finance
 
      ;; Helpers
      better-defaults
