@@ -32,7 +32,8 @@ This function should only modify configuration layer settings."
 
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(windows-scripts
+   '(nginx
+     windows-scripts
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
      ;; Uncomment some layer names and press `SPC f e R' (Vim style) or
@@ -1006,11 +1007,11 @@ layers configuration. You are free to put any user code."
   (use-package lsp-mode
     :init (setq lsp-prefer-flymake nil)
     :ensure t)
-  ;; This makes imenu-lsp-minor-mode available. This minor mode 
-  ;; will show a table of contents of methods, classes, variables. 
+  ;; This makes imenu-lsp-minor-mode available. This minor mode
+  ;; will show a table of contents of methods, classes, variables.
   ;; You can configure it to be on the left by using `configure`
   (add-hook 'lsp-after-open-hook 'lsp-enable-imenu)
-  ;; lsp-ui enables the fancy showing of documentation, error 
+  ;; lsp-ui enables the fancy showing of documentation, error
   ;; messages and type hints
   (use-package lsp-ui
     :ensure t

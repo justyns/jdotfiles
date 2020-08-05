@@ -6,7 +6,7 @@
 . bash/colors
 
 #Check and see if these commands exist on the system
-reqcommands="vim git ruby screen tmux mutt pyflakes hg ack ag ctags flake8 go zsh bat editorconfig"
+reqcommands="vim git python ruby screen tmux mutt pyflakes hg ack ag ctags flake8 go zsh bat editorconfig"
 for com in $reqcommands;
 do
 	hash ${com} 2>&- || echo -e >&2 "${RedF}${com}${reset}: not installed"
@@ -69,6 +69,7 @@ done
 
 # Do the same for the config dir
 # TODO: This should all really be moved into functions
+# TODO: Migrate to ~/.local/bin ?
 ignore="README.md .gitkeep"
 cd ${dotdir}/config
 mkdir -pv ${HOME}/.config
