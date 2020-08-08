@@ -100,7 +100,14 @@
 ;; Set the directory where magit looks for repos in
 (setq magit-repository-directories '("~/dev/"))
 
-(setq projectile-project-search-path '("~/dev/" "~/dev/clients/"))
+(use-package! treemacs-magit
+  :defer t
+  :after (treemacs magit))
+
+;; (setq projectile-project-search-path '("~/dev/" "~/dev/clients/"))
+;; Found on https://github.com/bbatsov/projectile/issues/1500
+;; TODO: This still isn't recursive more than one level
+(setq projectile-project-search-path (cddr (directory-files "~/dev" t)))
 
 (setq org-agenda-files (quote ("~/org/")))
 (setq org-refile-targets '((org-agenda-files . (:maxlevel . 3))))
@@ -129,13 +136,13 @@
 ;; Use my default ctags configuration which excludes a lot of things we don't want
 (setq projectile-tags-command "ctags --options=~/.ctags -Re -f \"%s\" %s \"%s\"")
 
-;; Alias [ and ] to all types of brackets
-;; With this, I can use evil-snipe by pressing f and then [ and it will search for any of these types of brackets
-(push '(?\[ "[[{(]") evil-snipe-aliases)
-(push '(?\] "[]})]") evil-snipe-aliases)
-(use-package evil-snipe
+(use-package! evil-snipe
   :defer t
   :config
+  ;; Alias [ and ] to all types of brackets
+  ;; With this, I can use evil-snipe by pressing f and then [ and it will search for any of these types of brackets
+  (push '(?\[ "[[{(]") evil-snipe-aliases)
+  (push '(?\] "[]})]") evil-snipe-aliases)
   (setq evil-snipe-scope 'visible)
   (setq evil-snipe-repeat-scope 'buffer)
   (setq evil-snipe-spillover-scope 'whole-buffer))
@@ -154,7 +161,7 @@
 (put 'evil-ex-history 'history-length 50)
 (put 'kill-ring 'history-length 25)
 
-(use-package recentf
+(use-package! recentf
   :defer t
   :ensure nil
   :hook (after-init . recentf-mode)
@@ -176,3 +183,16 @@
 
 ;; When buffer is closed, saves the cursor location
 (save-place-mode 1)
+
+(defhydra hydra-paste (:color red
+                       :hint nil)
+  "\n[%s(length kill-ring-yank-pointer)/%s(length kill-ring)] \
+ [_C-j_/_C-k_] cycles through yanked text, [_p_/_P_] pastes the same text \
+ above or below. Anything else exits."
+  ("C-j" evil-paste-pop)
+  ("C-k" evil-paste-pop-next)
+  ("p" evil-paste-after)
+  ("P" evil-paste-before))
+
+(map! :nv "p" #'hydra-paste/evil-paste-after
+      :nv "P" #'hydra-paste/evil-paste-before)

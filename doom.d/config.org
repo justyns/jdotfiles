@@ -16,6 +16,7 @@
   - [[#window-size-and-position][Window Size and Position]]
   - [[#theme][Theme]]
 - [[#version-control][Version Control]]
+  - [[#treemacs-magit][treemacs-magit]]
 - [[#projectile][Projectile]]
 - [[#org-mode][Org Mode]]
   - [[#general][General]]
@@ -23,6 +24,7 @@
 - [[#tags][Tags]]
 - [[#evil-snipe][evil-snipe]]
 - [[#backups-and-history][Backups and history]]
+- [[#hydra-paste][Hydra Paste]]
 
 * References
 
@@ -43,7 +45,7 @@ https://www.youtube.com/watch?v=ywRExNOyybY&list=PLhXZp00uXBk4np17N39WvB80zgxlZf
 
 Stuff I need to figure out for doom-emacs config
 
-- [ ] smart paste - In spacemacs, I can press =p= and then =C-j= and =C-k= to cycle between different kill rings
+- [X] smart paste - In spacemacs, I can press =p= and then =C-j= and =C-k= to cycle between different kill rings
 
 * Default Doom config
 
@@ -237,16 +239,27 @@ Themes I like so far:
 ;; Set the directory where magit looks for repos in
 (setq magit-repository-directories '("~/dev/"))
 #+END_SRC
+
+** treemacs-magit
+#+BEGIN_SRC emacs-lisp
+(use-package! treemacs-magit
+  :defer t
+  :after (treemacs magit))
+#+END_SRC
 * Projectile
 
 Use =SPC p D= to run discover projects in the search path.
 
 This seems to only search one folder deep, so if you use a path of =~/dev= it detects =~/dev/proj1= but it will not detect something like =~/dev/clients/clientA/proj2=.
 
-- [ ] TODO: Can I use wildcards somehow?
+- [X] TODO: Can I use wildcards somehow?
+- [ ] TODO: Discover projects in ~/dev/*/*/* (2 or 3 levels nested)
 
 #+BEGIN_SRC emacs-lisp
-(setq projectile-project-search-path '("~/dev/" "~/dev/clients/"))
+;; (setq projectile-project-search-path '("~/dev/" "~/dev/clients/"))
+;; Found on https://github.com/bbatsov/projectile/issues/1500
+;; TODO: This still isn't recursive more than one level
+(setq projectile-project-search-path (cddr (directory-files "~/dev" t)))
 #+END_SRC
 * Org Mode
 TODO:
@@ -302,13 +315,13 @@ I have a custom configuration for ctags stored in [[file:~/.ctags][~/.ctags]] th
 * evil-snipe
 
 #+BEGIN_SRC emacs-lisp
-;; Alias [ and ] to all types of brackets
-;; With this, I can use evil-snipe by pressing f and then [ and it will search for any of these types of brackets
-(push '(?\[ "[[{(]") evil-snipe-aliases)
-(push '(?\] "[]})]") evil-snipe-aliases)
-(use-package evil-snipe
+(use-package! evil-snipe
   :defer t
   :config
+  ;; Alias [ and ] to all types of brackets
+  ;; With this, I can use evil-snipe by pressing f and then [ and it will search for any of these types of brackets
+  (push '(?\[ "[[{(]") evil-snipe-aliases)
+  (push '(?\] "[]})]") evil-snipe-aliases)
   (setq evil-snipe-scope 'visible)
   (setq evil-snipe-repeat-scope 'buffer)
   (setq evil-snipe-spillover-scope 'whole-buffer))
@@ -337,7 +350,7 @@ I was running into issues with Emacs using up 100% of my cpu for a while when it
 
 From https://gitlab.com/justinekizhak/dotfiles/blob/master/emacs/doom.d/config.org
 #+BEGIN_SRC emacs-lisp
-(use-package recentf
+(use-package! recentf
   :defer t
   :ensure nil
   :hook (after-init . recentf-mode)
@@ -359,4 +372,24 @@ From https://gitlab.com/justinekizhak/dotfiles/blob/master/emacs/doom.d/config.o
 
 ;; When buffer is closed, saves the cursor location
 (save-place-mode 1)
+#+END_SRC
+* Hydra Paste
+
+From https://github.com/hlissner/doom-emacs/blob/develop/docs/api.org#create-a-paste-transient-state-to-cycle-through-kill-ring-on-paste
+
+This lets me paste something and then cycle through the kill ring.
+
+#+BEGIN_SRC emacs-lisp
+(defhydra hydra-paste (:color red
+                       :hint nil)
+  "\n[%s(length kill-ring-yank-pointer)/%s(length kill-ring)] \
+ [_C-j_/_C-k_] cycles through yanked text, [_p_/_P_] pastes the same text \
+ above or below. Anything else exits."
+  ("C-j" evil-paste-pop)
+  ("C-k" evil-paste-pop-next)
+  ("p" evil-paste-after)
+  ("P" evil-paste-before))
+
+(map! :nv "p" #'hydra-paste/evil-paste-after
+      :nv "P" #'hydra-paste/evil-paste-before)
 #+END_SRC
