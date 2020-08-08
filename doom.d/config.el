@@ -51,6 +51,27 @@
 
 
 
+(setq org-agenda-files (quote ("~/org/")))
+(setq org-refile-targets '((org-agenda-files . (:maxlevel . 3))))
+
+;; Keywords to use by default in .org files
+
+(setq org-todo-keywords
+      '((sequence "TODO(t)" "NEXT(n)" "IN-PROGRESS(i!)" "|" "DONE(d!)")
+        (sequence "WAITING(w@/!)" "BLOCKED(b@/!)" "|" "CANCELLED(c@/!)")
+        (sequence "[ ](T)" "[-](P)" "[?](M)" "|" "[X](D)")))
+
+
+;; Default Column View
+(setq org-columns-default-format "%5TODO %30ITEM(Task) %10Effort(Effort){:} %10CLOCKSUM(Clocked) %3PRIORITY(PRI) %TAGS")
+
+;; Enable speed commands for single-key commands at the beginning of headers.  ? for help  TODO: I don't really know what these do
+(setq org-use-speed-commands t)
+;; Prettier code blocks
+(setq org-src-fontify-natively t)
+;; Hide code blocks by default in org-mode
+'(org-hide-block-startup t)
+
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
 (setq org-directory "~/org/")
@@ -72,6 +93,19 @@
 (map! "M-s" #'save-buffer)
 ;; Paste menu
 (map! "M-v" #'counsel-yank-pop)
+
+(map!
+ :n "C-h" #'evil-window-left
+ :n "C-j" #'evil-window-down
+ :n "C-k" #'evil-window-up
+ :n "C-l" #'evil-window-right
+ )
+
+(map!
+ (:map evil-treemacs-state-map
+       "C-h" #'evil-window-left
+       "C-l" #'evil-window-right)
+ )
 
 ;; On startup, restore the last-used window size and position
 (when-let (dims (doom-store-get 'last-frame-size))
@@ -97,8 +131,13 @@
 (setq doom-theme 'doom-one)
 (load-theme doom-theme t)
 
+(setq evil-split-window-below t
+      evil-vsplit-window-right t)
+
 ;; Set the directory where magit looks for repos in
 (setq magit-repository-directories '("~/dev/"))
+
+(setq magit-revision-show-gravatars '("^Author:     " . "^Commit:     "))
 
 (use-package! treemacs-magit
   :defer t
@@ -108,26 +147,6 @@
 ;; Found on https://github.com/bbatsov/projectile/issues/1500
 ;; TODO: This still isn't recursive more than one level
 (setq projectile-project-search-path (cddr (directory-files "~/dev" t)))
-
-(setq org-agenda-files (quote ("~/org/")))
-(setq org-refile-targets '((org-agenda-files . (:maxlevel . 3))))
-
-;; Keywords to use by default in .org files
-
-(setq org-todo-keywords
-      '((sequence "TODO(t)" "NEXT(n)" "IN-PROGRESS(i!)" "|" "DONE(d!)")
-        (sequence "WAITING(w@/!)" "BLOCKED(b@/!)" "|" "CANCELLED(c@/!)")))
-
-
-;; Default Column View
-(setq org-columns-default-format "%5TODO %30ITEM(Task) %10Effort(Effort){:} %10CLOCKSUM(Clocked) %3PRIORITY(PRI) %TAGS")
-
-;; Enable speed commands for single-key commands at the beginning of headers.  ? for help  TODO: I don't really know what these do
-(setq org-use-speed-commands t)
-;; Prettier code blocks
-(setq org-src-fontify-natively t)
-;; Hide code blocks by default in org-mode
-'(org-hide-block-startup t)
 
 ;; Use /sshx because /ssh doesn't seem to work on bsd, and some of my
 ;; remote shells don't use sh/bash.  ssh/sshx should also be faster than scp
@@ -196,3 +215,7 @@
 
 (map! :nv "p" #'hydra-paste/evil-paste-after
       :nv "P" #'hydra-paste/evil-paste-before)
+
+(setq which-key-idle-delay 0.25)
+
+(setq avy-all-windows t)
