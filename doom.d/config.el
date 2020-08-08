@@ -49,7 +49,130 @@
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
 
+
+
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
 (setq org-directory "~/org/")
 (setq org-noter-notes-search-path '("~/org/noter/"))
+
+;; TODO: I'm not sure how to go to a specific window, so this really just goes left and right for now
+(map! :leader
+      (:desc "Window left" "1" #'evil-window-left
+       :desc "Window right" "2" #'evil-window-right))
+(map! :leader
+      (:prefix ("w" . "window")
+               (:desc "Window left" "1" #'evil-window-left
+                :desc "Window right" "2" #'evil-window-right
+                :desc "evil-window-vsplit" "|" #'evil-window-vsplit)))
+
+;; Select-all
+(map! "M-a" #'mark-whole-buffer)
+;; Save
+(map! "M-s" #'save-buffer)
+;; Paste menu
+(map! "M-v" #'counsel-yank-pop)
+
+;; On startup, restore the last-used window size and position
+(when-let (dims (doom-store-get 'last-frame-size))
+  (cl-destructuring-bind ((left . top) width height fullscreen) dims
+    (setq initial-frame-alist
+          (append initial-frame-alist
+                  `((left . ,left)
+                    (top . ,top)
+                    (width . ,width)
+                    (height . ,height)
+                    (fullscreen . ,fullscreen))))))
+
+(defun save-frame-dimensions ()
+  (doom-store-put 'last-frame-size
+                  (list (frame-position)
+                        (frame-width)
+                        (frame-height)
+                        (frame-parameter nil 'fullscreen))))
+
+;; When we kill emacs, save the current window size and position
+(add-hook 'kill-emacs-hook #'save-frame-dimensions)
+
+(setq doom-theme 'doom-one)
+(load-theme doom-theme t)
+
+;; Set the directory where magit looks for repos in
+(setq magit-repository-directories '("~/dev/"))
+
+(setq projectile-project-search-path '("~/dev/" "~/dev/clients/"))
+
+(setq org-agenda-files (quote ("~/org/")))
+(setq org-refile-targets '((org-agenda-files . (:maxlevel . 3))))
+
+;; Keywords to use by default in .org files
+
+(setq org-todo-keywords
+      '((sequence "TODO(t)" "NEXT(n)" "IN-PROGRESS(i!)" "|" "DONE(d!)")
+        (sequence "WAITING(w@/!)" "BLOCKED(b@/!)" "|" "CANCELLED(c@/!)")))
+
+
+;; Default Column View
+(setq org-columns-default-format "%5TODO %30ITEM(Task) %10Effort(Effort){:} %10CLOCKSUM(Clocked) %3PRIORITY(PRI) %TAGS")
+
+;; Enable speed commands for single-key commands at the beginning of headers.  ? for help  TODO: I don't really know what these do
+(setq org-use-speed-commands t)
+;; Prettier code blocks
+(setq org-src-fontify-natively t)
+;; Hide code blocks by default in org-mode
+'(org-hide-block-startup t)
+
+;; Use /sshx because /ssh doesn't seem to work on bsd, and some of my
+;; remote shells don't use sh/bash.  ssh/sshx should also be faster than scp
+(setq tramp-default-method "sshx")
+
+;; Use my default ctags configuration which excludes a lot of things we don't want
+(setq projectile-tags-command "ctags --options=~/.ctags -Re -f \"%s\" %s \"%s\"")
+
+;; Alias [ and ] to all types of brackets
+;; With this, I can use evil-snipe by pressing f and then [ and it will search for any of these types of brackets
+(push '(?\[ "[[{(]") evil-snipe-aliases)
+(push '(?\] "[]})]") evil-snipe-aliases)
+(use-package evil-snipe
+  :defer t
+  :config
+  (setq evil-snipe-scope 'visible)
+  (setq evil-snipe-repeat-scope 'buffer)
+  (setq evil-snipe-spillover-scope 'whole-buffer))
+
+;; Save backups in one place
+(setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
+
+;; TODO: I'm not sure if I need this anymore?  It was originally because of Nextcloud having issues with my .org files
+;; Disable lock files
+;; (setq create-lockfiles nil)
+
+;; Try to prevent emacs from using 100% cpu due to autosave
+;; See https://github.com/syl20bnr/spacemacs/issues/9409
+(setq history-length 350)
+(put 'minibuffer-history 'history-length 50)
+(put 'evil-ex-history 'history-length 50)
+(put 'kill-ring 'history-length 25)
+
+(use-package recentf
+  :defer t
+  :ensure nil
+  :hook (after-init . recentf-mode)
+  :custom
+  (recentf-auto-cleanup "05:00am")
+  (recentf-max-saved-items 200)
+  (recentf-exclude '((expand-file-name package-user-dir)
+                     ".cache"
+                     ".cask"
+                     ".elfeed"
+                     "bookmarks"
+                     "cache"
+                     "ido.*"
+                     "persp-confs"
+                     "recentf"
+                     "undo-tree-hist"
+                     "url"
+                     "COMMIT_EDITMSG\\'")))
+
+;; When buffer is closed, saves the cursor location
+(save-place-mode 1)
