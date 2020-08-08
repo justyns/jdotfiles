@@ -131,17 +131,21 @@ This [[https://rameezkhan.me/adding-keybindings-to-doom-emacs/][blog post]] help
 
 TODO: I'll probably want to sort this into categories eventually.
 
-| Key       | What                                                      |
-| =SPC ,=   | Switch to another buffer in the current project           |
-| =SPC b b= | ^                                                         |
-| =SPC <=   | Show/switch to all buffers in a session                   |
-| =SPC b B= | ^                                                         |
-| =SPC `=   | Switch to the last used buffer (=SPC b TAB= in spacemacs) |
-| =SPC b l= | ^                                                         |
-| =SPC o p= | Open treemacs in the project sidebar                      |
-| =C-w w=   | Cycle through open windows                                |
-| =SPC 0=   | Go to the window to the left                              |
-| =SPC 1=   | Go to the window to the right                             |
+| Key       | What                                                               |
+| =SPC ,=   | Switch to another buffer in the current project                    |
+| =SPC b b= | ^                                                                  |
+| =SPC <=   | Show/switch to all buffers in a session                            |
+| =SPC b B= | ^                                                                  |
+| =SPC `=   | Switch to the last used buffer (=SPC b TAB= in spacemacs)          |
+| =SPC b l= | ^                                                                  |
+| =SPC o p= | Open treemacs in the project sidebar                               |
+| =C-w w=   | Cycle through open windows                                         |
+| =SPC 0=   | Go to the window to the left                                       |
+| =SPC 1=   | Go to the window to the right                                      |
+| =R=       | evil-multiedit - Select all matches at once                        |
+| =M-d=     | evil-multiedit - start multicursor, keep pressing to expand search |
+
+
 
 ** Keybindings from Spacemacs
 
