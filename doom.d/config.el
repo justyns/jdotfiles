@@ -10,7 +10,126 @@
       (:prefix ("a" . "applications")
                :desc "Cycle through string case using String-inflection" "c" #'string-inflection-all-cycle))
 
+;; Shortcuts for org-structure templates (the +BEGIN_SRC type blocks)
+;; This can be accessed by pressing C-c C-,
+(after! org
+  (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+  (add-to-list 'org-structure-template-alist '("sh" . "src bash"))
+  (add-to-list 'org-structure-template-alist '("y" . "src yaml"))
+  (add-to-list 'org-structure-template-alist '("py" . "src python"))
+  )
 
+(setq org-agenda-files (quote ("~/org/")))
+(setq org-refile-targets '((org-agenda-files . (:maxlevel . 3))))
+
+;; Disable tag inheritence to speed up agenda rendering
+(setq org-agenda-use-tag-inheritance nil)
+;; Disable dim blocked tasks to speed up agenda rendering
+(setq org-agenda-dim-blocked-tasks nil)
+;; Don't prepare agenda buffers on startup
+(setq org-agenda-inhibit-startup t)
+;; Don't kill agenda buffers, just hide them
+(setq org-agenda-sticky t)
+;; Disable processing some org drawer properties to speed up the agenda rendering
+(setq org-agenda-ignore-drawer-properties '(effort appt category))
+
+;; Keywords to use by default in .org files
+(setq org-todo-keywords
+      '((sequence "TODO(t)" "NEXT(n)" "IN-PROGRESS(i!)" "|" "DONE(d!)")
+        (sequence "WAITING(w@/!)" "BLOCKED(b@/!)" "|" "CANCELLED(c@/!)")
+        (sequence "[ ](T)" "[-](P)" "[?](M)" "|" "[X](D)")))
+
+(setq org-agenda-custom-commands
+      '(("d" "Daily agenda and all TODOs"
+         ((agenda "" ((org-agenda-span 2)))
+          (todo "IN-PROGRESS"
+                ((org-agenda-overriding-header "In-Progress tasks:")))
+          (tags "PRIORITY=\"A\""
+                ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo 'done)
+                                                (org-agenda-skip-entry-if 'todo '("IN-PROGRESS"))))
+                 (org-agenda-overriding-header "High-priority unfinished tasks:")))
+          (todo "NEXT"
+                ((org-agenda-skip-function '(or (air-org-skip-subtree-if-priority ?A)))
+                 (org-agenda-overriding-header "NEXT tasks: ")))
+          (todo "WAITING|BLOCKED"
+                ((org-agenda-skip-function '(or (air-org-skip-subtree-if-priority ?A)))
+                 (org-agenda-overriding-header "WAITING/BLOCKED tasks:")))
+          ;; TODO: Figure out how to exclude readlater tag
+          (alltodo ""
+                   ((org-agenda-skip-function '(or (air-org-skip-subtree-if-habit)
+                                                   (air-org-skip-subtree-if-priority ?A)
+                                                   (org-agenda-skip-entry-if 'todo '("NEXT" "IN-PROGRESS" "WAITING" "BLOCKED"))
+                                                   (org-agenda-skip-if nil '(scheduled deadline))))
+                    (org-agenda-overriding-header "ALL normal priority tasks:"))))
+         ((org-agenda-compact-blocks t)))
+        ("n" todo "NEXT")
+        ("w" todo "BLOCKED|WAITING")
+        ("i" todo "IN-PROGRESS")
+        ))
+
+
+
+(setq org-capture-templates
+      ;; TODO: Move some of these to a separate file not in git, since I don't need them in every computer
+      '(("t" "Todo" entry (file+headline "~/org/TODO.org" "Tasks")
+         "* TODO %?\nCREATED: %U\n%i\n%a")
+        ("T" "Todo with Clipboard" entry (file+headline "~/org/TODO.org" "Tasks")
+         "* TODO %?\nCREATED: %U\n%c"
+         :empty-lines 1)
+        ("r" "Read Later" entry (file+headline "~/org/TODO.org" "Read Later")
+         "* TODO %?  :readlater:\nCREATED: %U")
+        ("j" "Journal"
+         entry (file+datetree "~/org/journal.org")
+         "* %? \nCREATED: %U\n%i\n%a"
+         :empty-lines 1)
+        ;; TODO: Use year in filename automatically
+        ("w" "New WorkLog entry"
+         entry (file+datetree "~/org/worklog_2020.org")
+         "* %? :work:\nCREATED: %T\n%i\n%a\n"
+         :clock-in t
+         :clock-resume t
+         :empty-lines 1)
+        ("W" "New Work Ticket"
+         entry (file+datetree "~/org/worklog_2020.org")
+         "* IN-PROGRESS %^{TicketID}: %^{Title} :work:ticket:
+:PROPERTIES:
+:ID: %\\1
+:BI_ENVIRONMENT: %^{BI_ENVIRONMENT}
+:BI_CUSTOMER: %^{BI_CUSTOMER}
+:CREATED: %T
+:END:\n%?"
+         :clock-in t
+         :clock-resume t
+         :empty-lines 1)
+        ("n" "Append timestamped note to clocked task"
+         plain (clock)
+         "%U %?"
+         :empty-lines 1)
+        ("m" "Meeting"
+         entry (file+datetree "~/org/worklog_2020.org")
+         "* Meeting for %^{Title} :work:meeting:\nCREATED: %T\nAgenda/Purpose: \nWho: \n\n - %?\n"
+         :empty-lines 1
+         :clock-in t
+         :clock-resume t)
+        ("M" "Adhoc Meeting(Chat/InPerson/Email/Etc)"
+         entry (file+datetree "~/org/worklog_2020.org")
+         "* Adhoc meeting w/ %^{Who} about %^{What} :work:meeting:\nCREATED: %T\nWho: %\\1 \nNotes: %?\n"
+         :empty-lines 1
+         :clock-in t
+         :clock-resume t)
+        ("f" "Todo - Follow-up later today on e-mail/slack/etc"
+         entry (file+datetree "~/org/worklog_2020.org")
+         "* NEXT [#A] %? :work:followup:\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\")) CREATED: %T\n"
+         :empty-lines 1)
+        ("v" "Code Reference with Comments to Current Task"
+         plain (clock)
+         "%?\n%(ha/org-capture-code-snippet \"%F\")\n\n"
+         :empty-lines 1)
+        ("V" "Link to Code Reference to Current Task"
+         plain (clock)
+         "%(ha/org-capture-code-snippet \"%F\")"
+         :empty-lines 1 :immediate-finish t)
+        ))
 
 ;; Add a small amount of extra space in between each line
 (setq line-spacing 2)
@@ -82,17 +201,6 @@
 
 (setq which-key-idle-delay 0.25)
 
-
-
-(setq org-agenda-files (quote ("~/org/")))
-(setq org-refile-targets '((org-agenda-files . (:maxlevel . 3))))
-
-;; Keywords to use by default in .org files
-
-(setq org-todo-keywords
-      '((sequence "TODO(t)" "NEXT(n)" "IN-PROGRESS(i!)" "|" "DONE(d!)")
-        (sequence "WAITING(w@/!)" "BLOCKED(b@/!)" "|" "CANCELLED(c@/!)")
-        (sequence "[ ](T)" "[-](P)" "[?](M)" "|" "[X](D)")))
 
 
 ;; Default Column View
