@@ -1,3 +1,34 @@
+(use-package! powerthesaurus
+  :defer t)
+(map! :leader
+      (:prefix ("a" . "applications")
+               :desc "Use powerthesaurus to fetch better word" "p" #'powerthesaurus-lookup-word-dwim))
+
+(use-package! string-inflection
+  :defer t)
+(map! :leader
+      (:prefix ("a" . "applications")
+               :desc "Cycle through string case using String-inflection" "c" #'string-inflection-all-cycle))
+
+
+
+;; Add a small amount of extra space in between each line
+(setq line-spacing 2)
+
+(setq indent-tabs-mode nil
+      tab-width 2)
+
+(use-package! autorevert
+  :defer t
+  :ensure nil
+  :config
+  (global-auto-revert-mode +1)
+  (setq auto-revert-interval 2
+        auto-revert-check-vc-info t
+        auto-revert-verbose nil))
+
+(setq avy-all-windows t)
+
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
 
 ;; Place your private configuration here! Remember, you do not need to run 'doom
@@ -48,6 +79,8 @@
 ;;
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
+
+(setq which-key-idle-delay 0.25)
 
 
 
@@ -215,7 +248,3 @@
 
 (map! :nv "p" #'hydra-paste/evil-paste-after
       :nv "P" #'hydra-paste/evil-paste-before)
-
-(setq which-key-idle-delay 0.25)
-
-(setq avy-all-windows t)

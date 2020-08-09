@@ -1,24 +1,34 @@
 #+TITLE: Justyn's Doom Config
 
-* TOC :TOC:
+* TOC :TOC_3_gh:
 - [[#references][References]]
   - [[#example-doom-literate-configs][Example Doom literate configs]]
   - [[#doomcasts][Doomcasts]]
 - [[#things-i-need-to-work-on][Things I need to work on]]
-- [[#default-doom-config][Default Doom config]]
+- [[#doom-specific-config][Doom-specific Config]]
+  - [[#default-doom-configel][Default Doom config.el]]
+  - [[#open-which-key-popup-quicker][Open which-key popup quicker]]
 - [[#packages][Packages]]
+  - [[#powerthesaurus][Powerthesaurus]]
+  - [[#string-inflection][string-inflection]]
 - [[#org-mode][Org Mode]]
   - [[#general][General]]
   - [[#org-directories][Org Directories]]
+  - [[#org-agenda][Org Agenda]]
 - [[#keybindings][Keybindings]]
   - [[#useful-keybinding-reminders][Useful keybinding reminders]]
   - [[#keybindings-from-spacemacs][Keybindings from Spacemacs]]
+    - [[#more-keybindings-from-spacemacs][More keybindings from spacemacs]]
   - [[#misc-keybindings][Misc Keybindings]]
   - [[#navigation][Navigation]]
 - [[#display][Display]]
   - [[#window-size-and-position][Window Size and Position]]
+  - [[#font-and-font-sizing][Font and font sizing]]
   - [[#theme][Theme]]
   - [[#move-to-new-split-windows][Move to new split windows]]
+- [[#editing][Editing]]
+  - [[#tabs-vs-spaces][Tabs vs Spaces]]
+  - [[#refresh-buffer-on-external-file-changes][Refresh buffer on external file changes]]
 - [[#version-control][Version Control]]
   - [[#magit][magit]]
   - [[#treemacs-magit][treemacs-magit]]
@@ -29,7 +39,6 @@
 - [[#backups-and-history][Backups and history]]
 - [[#hydra-paste][Hydra Paste]]
 - [[#avy][Avy]]
-- [[#open-which-key-popup-quicker][Open which-key popup quicker]]
 
 * References
 
@@ -53,8 +62,14 @@ https://www.youtube.com/watch?v=ywRExNOyybY&list=PLhXZp00uXBk4np17N39WvB80zgxlZf
 Stuff I need to figure out for doom-emacs config
 
 - [X] smart paste - In spacemacs, I can press =p= and then =C-j= and =C-k= to cycle between different kill rings
+- [ ] Try [[https://github.com/bastibe/annotate.el][annotate mode]] like in [[https://gitlab.com/justinekizhak/dotfiles/blob/master/emacs/doom.d/config.org][this config]]
+- [ ] Use gpg for all of my org files? (Wouldnt be able to access on android anymore though)
 
-* Default Doom config
+* Doom-specific Config
+
+Config related to Doom itself, or packages I probably wouldn't use if Doom wasn't using it.  This should also be the first section of my config and get added to the top of the file.
+
+** Default Doom config.el
 
 This is what came in config.el when it first got generated.  I've moved some of it into other sections where it makes sense.  Eventually I'll move everything out.
 
@@ -110,6 +125,11 @@ This is what came in config.el when it first got generated.  I've moved some of 
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
 #+END_SRC
+** Open which-key popup quicker
+
+#+BEGIN_SRC emacs-lisp
+(setq which-key-idle-delay 0.25)
+#+END_SRC
 * Packages
 
 I think I can split this up into other sections throughout the file, but I'm just leaving it here for now.
@@ -117,6 +137,29 @@ I think I can split this up into other sections throughout the file, but I'm jus
 TODO: Tangle this to packages.el
 #+BEGIN_SRC emacs-lisp
 
+#+END_SRC
+** Powerthesaurus
+
+[[https://github.com/SavchenkoValeriy/emacs-powerthesaurus][Powerthesaurus]], use =SPC a p= to look up a synonym for the word at the cursor.
+
+#+BEGIN_SRC elisp
+(use-package! powerthesaurus
+  :defer t)
+(map! :leader
+      (:prefix ("a" . "applications")
+               :desc "Use powerthesaurus to fetch better word" "p" #'powerthesaurus-lookup-word-dwim))
+#+END_SRC
+** string-inflection
+
+[[https://github.com/akicho8/string-inflection][string-inflection]], use =SPC a c= to cycle a word like this:
+emacs_lisp => EMACS_LISP => EmacsLisp => emacsLisp => emacs-lisp => Emacs_Lisp => emacs_lisp
+
+#+BEGIN_SRC elisp
+(use-package! string-inflection
+  :defer t)
+(map! :leader
+      (:prefix ("a" . "applications")
+               :desc "Cycle through string case using String-inflection" "c" #'string-inflection-all-cycle))
 #+END_SRC
 * Org Mode
 TODO:
@@ -165,6 +208,12 @@ Set org-directory and dir for org-noter.
 ;; change `org-directory'. It must be set before org loads!
 (setq org-directory "~/org/")
 (setq org-noter-notes-search-path '("~/org/noter/"))
+#+END_SRC
+** Org Agenda
+
+#+BEGIN_SRC elisp
+
+
 #+END_SRC
 
 * Keybindings
@@ -287,6 +336,14 @@ This is from https://github.com/hlissner/doom-emacs/blob/develop/docs/api.org#ce
 ;; When we kill emacs, save the current window size and position
 (add-hook 'kill-emacs-hook #'save-frame-dimensions)
 #+END_SRC
+** Font and font sizing
+
+TODO: Change font depending on OS?
+
+#+BEGIN_SRC elisp
+;; Add a small amount of extra space in between each line
+(setq line-spacing 2)
+#+END_SRC
 ** Theme
 
 Lots of doom-specific themes available at https://github.com/hlissner/emacs-doom-themes
@@ -309,6 +366,32 @@ Themes I like so far:
 #+BEGIN_SRC emacs-lisp
 (setq evil-split-window-below t
       evil-vsplit-window-right t)
+#+END_SRC
+* Editing
+** Tabs vs Spaces
+
+Use spaces instead of tabs by default, and set the default indent width to 2.  The =editorconfig= package/module should allow this to be overriden per project or repository.
+
+- [ ] TODO:  Some languages like go want to use tabs by default, I should make sure that still happens.
+- [ ] TODO:  =tab-width= only affects display, not actual number of spaces afaik
+
+#+BEGIN_SRC elisp
+(setq indent-tabs-mode nil
+      tab-width 2)
+#+END_SRC
+** Refresh buffer on external file changes
+
+From https://gitlab.com/justinekizhak/dotfiles/blob/master/emacs/doom.d/config.org - automatically refresh the buffer if a file is changed outside of emacs.
+
+#+BEGIN_SRC elisp
+(use-package! autorevert
+  :defer t
+  :ensure nil
+  :config
+  (global-auto-revert-mode +1)
+  (setq auto-revert-interval 2
+        auto-revert-check-vc-info t
+        auto-revert-verbose nil))
 #+END_SRC
 
 * Version Control
@@ -445,9 +528,4 @@ This lets me paste something and then cycle through the kill ring.
 Search all open windows
 #+BEGIN_SRC elisp
 (setq avy-all-windows t)
-#+END_SRC
-* Open which-key popup quicker
-
-#+BEGIN_SRC emacs-lisp
-(setq which-key-idle-delay 0.25)
 #+END_SRC

@@ -50,3 +50,5 @@
 ;(unpin! t)
 
 (package! treemacs-magit)
+(package! autorevert)
+(package! powerthesaurus)
