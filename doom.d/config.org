@@ -722,18 +722,31 @@ I'm used to using =SPC N= to switch to window N, and use some other =SPC w ...= 
       (:prefix ("w" . "window")
                (:desc "Window left" "1" #'evil-window-left
                 :desc "Window right" "2" #'evil-window-right
-                :desc "evil-window-vsplit" "|" #'evil-window-vsplit)))
+                :desc "evil-window-vsplit" "|" #'evil-window-vsplit
+                :desc "evil-window-vsplit" "/" #'evil-window-vsplit)))
+#+END_SRC
+
+Org clock shortcuts:
+#+BEGIN_SRC elisp
+;; TODO: Maybe map this to SPC m c like where doom puts the clock stuff currently?
+(map! :leader
+      (:prefix ("o" . "open")
+               (:desc "org-mru-clock-in" "c" #'org-mru-clock-in
+                :desc "org-mru-clock-select-recent-task" "C" #'org-mru-clock-select-recent-task
+                :desc "bh/punch-in" "i" #'bh/punch-in
+                :desc "bh/punch-out" "I" #'bh/punch-out
+                :desc "org-save-all-org-buffers" "s" #'org-save-all-org-buffers)))
 #+END_SRC
 *** TODO More keybindings from spacemacs
 
 These are all from =SPC 0= which is "custom" for Spacemacs.  Doom uses it for "open" by default.  I'm not sure whether there's an equivalent to "custom" for doom that doom won't override.
 
 - [ ] o == custom
-- [ ] op = punch-in
-- [ ] oP = punch-out
+- [X] op = punch-in
+- [X] oP = punch-out
 - [ ] oC = calculator
-- [ ] oc = org-mru-clock-in
-- [ ] os = org-save-all-org-buffers
+- [X] oc = org-mru-clock-in
+- [X] os = org-save-all-org-buffers
 - [ ] oq = auto-fill-mode
 ** Misc Keybindings
 

@@ -78,7 +78,8 @@
       (:prefix ("w" . "window")
                (:desc "Window left" "1" #'evil-window-left
                 :desc "Window right" "2" #'evil-window-right
-                :desc "evil-window-vsplit" "|" #'evil-window-vsplit)))
+                :desc "evil-window-vsplit" "|" #'evil-window-vsplit
+                :desc "evil-window-vsplit" "/" #'evil-window-vsplit)))
 
 ;; Select-all
 (map! "M-a" #'mark-whole-buffer)
@@ -622,6 +623,15 @@ as the default task."
            :empty-lines 1 :immediate-finish t)
           ))
   )
+
+;; TODO: Maybe map this to SPC m c like where doom puts the clock stuff currently?
+(map! :leader
+      (:prefix ("o" . "open")
+               (:desc "org-mru-clock-in" "c" #'org-mru-clock-in
+                :desc "org-mru-clock-select-recent-task" "C" #'org-mru-clock-select-recent-task
+                :desc "bh/punch-in" "i" #'bh/punch-in
+                :desc "bh/punch-out" "I" #'bh/punch-out
+                :desc "org-save-all-org-buffers" "s" #'org-save-all-org-buffers)))
 
 ;; Add a small amount of extra space in between each line
 (setq line-spacing 2)
