@@ -127,8 +127,18 @@
 (setq evil-split-window-below t
       evil-vsplit-window-right t)
 
-;; Set the directory where magit looks for repos in
-(setq magit-repository-directories '("~/dev/"))
+(after! magit
+  :config
+  ;; Set the directory where magit looks for repos in
+  ;; (setq magit-repository-directories '(("~/dev/" . 4)))
+  )
+(after! projectile
+  :config
+  (when (require 'magit nil t)
+    (mapc #'projectile-add-known-project
+          (mapcar #'file-name-as-directory (magit-list-repos)))
+    ;; Optionally write to persistent `projectile-known-projects-file'
+    (projectile-save-known-projects)))
 
 (setq magit-revision-show-gravatars '("^Author:     " . "^Commit:     "))
 
@@ -253,6 +263,26 @@
             (sequence "WAITING(w@/!)" "BLOCKED(b@/!)" "|" "CANCELLED(c@/!)")
             (sequence "[ ](T)" "[-](P)" "[?](M)" "|" "[X](D)"))))
 
+;; From https://blog.aaronbieber.com/2016/09/24/an-agenda-for-life-with-org-mode.html
+(defun air-org-skip-subtree-if-priority (priority)
+  "Skip an agenda subtree if it has a priority of PRIORITY.
+
+PRIORITY may be one of the characters ?A, ?B, or ?C."
+  (let ((subtree-end (save-excursion (org-end-of-subtree t)))
+        (pri-value (* 1000 (- org-lowest-priority priority)))
+        (pri-current (org-get-priority (thing-at-point 'line t))))
+    (if (= pri-value pri-current)
+        subtree-end
+      nil)))
+
+;; Also from above link, but do I really want to filter out habits?
+(defun air-org-skip-subtree-if-habit ()
+  "Skip an agenda entry if it has a STYLE property equal to \"habit\"."
+  (let ((subtree-end (save-excursion (org-end-of-subtree t))))
+    (if (string= (org-entry-get nil "STYLE") "habit")
+        subtree-end
+      nil)))
+
 (setq org-agenda-custom-commands
       '(("d" "Daily agenda and all TODOs"
          ((agenda "" ((org-agenda-span 2)))
@@ -283,67 +313,315 @@
 
 
 
-(setq org-capture-templates
-      ;; TODO: Move some of these to a separate file not in git, since I don't need them in every computer
-      '(("t" "Todo" entry (file+headline "~/org/TODO.org" "Tasks")
-         "* TODO %?\nCREATED: %U\n%i\n%a")
-        ("T" "Todo with Clipboard" entry (file+headline "~/org/TODO.org" "Tasks")
-         "* TODO %?\nCREATED: %U\n%c"
-         :empty-lines 1)
-        ("r" "Read Later" entry (file+headline "~/org/TODO.org" "Read Later")
-         "* TODO %?  :readlater:\nCREATED: %U")
-        ("j" "Journal"
-         entry (file+datetree "~/org/journal.org")
-         "* %? \nCREATED: %U\n%i\n%a"
-         :empty-lines 1)
-        ;; TODO: Use year in filename automatically
-        ("w" "New WorkLog entry"
-         entry (file+datetree "~/org/worklog_2020.org")
-         "* %? :work:\nCREATED: %T\n%i\n%a\n"
-         :clock-in t
-         :clock-resume t
-         :empty-lines 1)
-        ("W" "New Work Ticket"
-         entry (file+datetree "~/org/worklog_2020.org")
-         "* IN-PROGRESS %^{TicketID}: %^{Title} :work:ticket:
+;; From https://gitlab.com/howardabrams/spacemacs.d/blob/master/layers/ha-org/funcs.el#L352
+(defun ha/org-capture-code-snippet (f)
+  "Given a file, F, this captures the currently selected text
+within an Org SRC block with a language based on the current mode
+and a backlink to the function and the file."
+  (with-current-buffer (find-buffer-visiting f)
+    (let ((org-src-mode (replace-regexp-in-string "-mode" "" (format "%s" major-mode)))
+          (func-name (which-function)))
+      (ha/org-capture-fileref-snippet f "SRC" org-src-mode func-name))))
+
+(defun ha/org-capture-clip-snippet (f)
+  "Given a file, F, this captures the currently selected text
+within an Org EXAMPLE block and a backlink to the file."
+  (with-current-buffer (find-buffer-visiting f)
+    (ha/org-capture-fileref-snippet f "EXAMPLE" "" nil)))
+
+(defun ha/org-capture-fileref-snippet (f type headers func-name)
+  (let* ((code-snippet
+          (buffer-substring-no-properties (mark) (- (point) 1)))
+         (file-name   (buffer-file-name))
+         (file-base   (file-name-nondirectory file-name))
+         (line-number (line-number-at-pos (region-beginning)))
+         (initial-txt (if (null func-name)
+                          (format "From [[file:%s::%s][%s]]:"
+                                  file-name line-number file-base)
+                        (format "From ~%s~ (in [[file:%s::%s][%s]]):"
+                                func-name file-name line-number
+                                file-base))))
+    (format "
+%s
+
+#+BEGIN_%s %s
+%s
+#+END_%s" initial-txt type headers code-snippet type)))
+
+(defun ha/code-to-clock (&optional start end)
+  "Send the currently selected code to the currently clocked-in org-mode task."
+  (interactive)
+  (org-capture nil "F"))
+
+(defun ha/code-comment-to-clock (&optional start end)
+  "Send the currently selected code (with comments) to the
+currently clocked-in org-mode task."
+  (interactive)
+  (org-capture nil "f"))
+
+;; Helpful clock functions from http://doc.norang.ca/org-mode.html#Clocking
+(defun bh/clock-in-to-next (kw)
+  "Switch a task from TODO to IN-PROGRESS when clocking in.
+Skips capture tasks, projects, and subprojects.
+Switch projects and subprojects from IN-PROGRESS back to TODO"
+  (when (not (and (boundp 'org-capture-mode) org-capture-mode))
+    (cond
+     ((and (member (org-get-todo-state) (list "TODO"))
+           (bh/is-task-p))
+      "IN-PROGRESS")
+     ((and (member (org-get-todo-state) (list "IN-PROGRESS"))
+           (bh/is-project-p))
+      "TODO"))))
+
+(defun bh/find-project-task ()
+  "Move point to the parent (project) task if any"
+  (save-restriction
+    (widen)
+    (let ((parent-task (save-excursion (org-back-to-heading 'invisible-ok) (point))))
+      (while (org-up-heading-safe)
+        (when (member (nth 2 (org-heading-components)) org-todo-keywords-1)
+          (setq parent-task (point))))
+      (goto-char parent-task)
+      parent-task)))
+
+(defun bh/punch-in (arg)
+  "Start continuous clocking and set the default task to the
+selected task.  If no task is selected set the Organization task
+as the default task."
+  (interactive "p")
+  (setq bh/keep-clock-running t)
+  (if (equal major-mode 'org-agenda-mode)
+      ;;
+      ;; We're in the agenda
+      ;;
+      (let* ((marker (org-get-at-bol 'org-hd-marker))
+             (tags (org-with-point-at marker (org-get-tags-at))))
+        (if (and (eq arg 4) tags)
+            (org-agenda-clock-in '(16))
+          (bh/clock-in-organization-task-as-default)))
+    ;;
+    ;; We are not in the agenda
+    ;;
+    (save-restriction
+      (widen)
+      ; Find the tags on the current task
+      (if (and (equal major-mode 'org-mode) (not (org-before-first-heading-p)) (eq arg 4))
+          (org-clock-in '(16))
+        (bh/clock-in-organization-task-as-default)))))
+
+(defun bh/punch-out ()
+  (interactive)
+  (setq bh/keep-clock-running nil)
+  (when (org-clock-is-active)
+    (org-clock-out))
+  (org-agenda-remove-restriction-lock))
+
+(defun bh/clock-in-default-task ()
+  (save-excursion
+    (org-with-point-at org-clock-default-task
+      (org-clock-in))))
+
+(defun bh/clock-in-parent-task ()
+  "Move point to the parent (project) task if any and clock in"
+  (let ((parent-task))
+    (save-excursion
+      (save-restriction
+        (widen)
+        (while (and (not parent-task) (org-up-heading-safe))
+          (when (member (nth 2 (org-heading-components)) org-todo-keywords-1)
+            (setq parent-task (point))))
+        (if parent-task
+            (org-with-point-at parent-task
+              (org-clock-in))
+          (when bh/keep-clock-running
+            (bh/clock-in-default-task)))))))
+
+(defvar bh/organization-task-id "EE4C523B-574F-4C5B-B270-9B3A340B7514")
+
+(defun bh/clock-in-organization-task-as-default ()
+  (interactive)
+  (org-with-point-at (org-id-find bh/organization-task-id 'marker)
+    (org-clock-in '(16))))
+
+(defun bh/clock-out-maybe ()
+  (when (and bh/keep-clock-running
+             (not org-clock-clocking-in)
+             (marker-buffer org-clock-default-task)
+             (not org-clock-resolving-clocks-due-to-idleness))
+    (bh/clock-in-parent-task)))
+
+;; From https://gist.github.com/ironchicken/6b5424bc2024b3d0a58a8a130f73c2ee and
+;; https://emacs.stackexchange.com/questions/32178/how-to-create-table-of-time-distribution-by-tags-in-org-mode
+(defun clocktable-by-tag/shift-cell (n)
+  (let ((str ""))
+    (dotimes (i n)
+      (setq str (concat str "| ")))
+    str))
+
+(defun clocktable-by-tag/insert-tag (params)
+  (let ((tag (plist-get params :tags)))
+    (insert "|--\n")
+    (insert (format "| %s | *Tag time* |\n" tag))
+    (let ((total 0))
+      (mapcar
+       (lambda (file)
+         (let ((clock-data (with-current-buffer (find-file-noselect file)
+                             (org-clock-get-table-data (buffer-name) params))))
+           (when (> (nth 1 clock-data) 0)
+             (setq total (+ total (nth 1 clock-data)))
+             (insert (format "| | File *%s* | %.2f |\n"
+                             (file-name-nondirectory file)
+                             (/ (nth 1 clock-data) 60.0)))
+             (dolist (entry (nth 2 clock-data))
+               (insert (format "| | . %s%s | %s %.2f |\n"
+                               (org-clocktable-indent-string (nth 0 entry))
+                               (nth 1 entry)
+                               (clocktable-by-tag/shift-cell (nth 0 entry))
+                               (/ (nth 4 entry) 60.0)))))))
+       (org-agenda-files))
+      (save-excursion
+        (re-search-backward "*Tag time*")
+        (org-table-next-field)
+        (org-table-blank-field)
+        (insert (format "*%.2f*" (/ total 60.0)))))
+    (org-table-align)))
+
+(defun org-dblock-write:clocktable-by-tag (params)
+  (insert "| Tag | Headline | Time (h) |\n")
+  (insert "|     |          | <r>  |\n")
+  (let ((tags (plist-get params :tags)))
+    (mapcar (lambda (tag)
+              (clocktable-by-tag/insert-tag (plist-put (plist-put params :match tag) :tags tag)))
+            tags)))
+
+;; From https://emacs.stackexchange.com/questions/9502/category-based-clock-report
+(defun private/clocktable-formatter-group-by-prop (ipos tables params)
+  (let* ((formatter (or org-clock-clocktable-formatter
+                        'org-clocktable-write-default))
+         (ht (make-hash-table :test 'equal))
+         (total 0)
+         (grouped
+          (dolist (tt tables (sort (hash-table-keys ht)
+                                   #'(lambda (x y) (string< x y))))
+            (setq total (+ total (nth 1 tt)))
+            (dolist (record (nth 2 tt))
+              (let* ((lasttwo (last record 2))
+                     (time (pop lasttwo))
+                     (prop (cdr (car (car lasttwo))))
+                     (prev (gethash prop ht 0)))
+                (puthash prop (+ prev time) ht))
+              ))
+          )
+         (newtable (mapcar (lambda (arg) (list 1 arg nil nil (gethash arg ht) nil)) grouped))
+         (new-params (org-plist-delete params :properties)))
+    (funcall formatter ipos (list (list nil total newtable)) new-params)))
+
+; TODO: This doesn't work. because I don't know how to lisp
+(defun justyn/clock-in-recent-tasks ()
+  (interactive)
+  (setq current-prefix-arg 4)
+  ; (universal-argument)
+  (org-clock-in))
+
+(after! org
+  (use-package! org-mru-clock
+    :config
+    (setq org-mru-clock-how-many 50)
+    )
+
+  (setq org-clock-persist t)
+  (org-clock-persistence-insinuate)
+
+  (setq bh/keep-clock-running nil)
+  (add-hook 'org-clock-out-hook 'bh/clock-out-maybe 'append)
+
+  ;; Delete clocks that are 0:00
+  (setq org-clock-out-remove-zero-time-clocks t)
+  ;; Include current task in clock report
+  (setq org-clock-report-include-clocking-task t)
+  ;; Store clock history for longer
+  (setq org-clock-history-length 15)
+  ;; Clock report default params
+  (setq org-agenda-clockreport-parameter-plist
+        (quote (:link t :maxlevel 3 :fileskip0 t :compact t :narrow 100)))
+  )
+
+(after! org
+  (use-package! org-expiry
+    :config
+    (setq org-expiry-created-property-name "CREATED"
+          org-expiry-inactive-timestamps t)
+    )
+  ;; TODO:  Install org-expiry-insinuate?
+  ;; (use-package! org-expiry-insinuate
+  ;;   :config
+  ;;   (org-expiry-insinuate)
+  ;;   )
+  )
+
+(after! org
+  (setq org-capture-templates
+        ;; TODO: Move some of these to a separate file not in git, since I don't need them in every computer
+        '(("t" "Todo" entry (file+headline "~/org/TODO.org" "Tasks")
+           "* TODO %?\nCREATED: %U\n%i\n%a")
+          ("T" "Todo with Clipboard" entry (file+headline "~/org/TODO.org" "Tasks")
+           "* TODO %?\nCREATED: %U\n%c"
+           :empty-lines 1)
+          ("r" "Read Later" entry (file+headline "~/org/TODO.org" "Read Later")
+           "* TODO %?  :readlater:\nCREATED: %U")
+          ("j" "Journal"
+           entry (file+datetree "~/org/journal.org")
+           "* %? \nCREATED: %U\n%i\n%a"
+           :empty-lines 1)
+          ;; TODO: Use year in filename automatically
+          ("w" "New WorkLog entry"
+           entry (file+datetree "~/org/worklog_2020.org")
+           "* %? :work:\nCREATED: %T\n%i\n%a\n"
+           :clock-in t
+           :clock-resume t
+           :empty-lines 1)
+          ("W" "New Work Ticket"
+           entry (file+datetree "~/org/worklog_2020.org")
+           "* IN-PROGRESS %^{TicketID}: %^{Title} :work:ticket:
 :PROPERTIES:
 :ID: %\\1
 :BI_ENVIRONMENT: %^{BI_ENVIRONMENT}
 :BI_CUSTOMER: %^{BI_CUSTOMER}
 :CREATED: %T
 :END:\n%?"
-         :clock-in t
-         :clock-resume t
-         :empty-lines 1)
-        ("n" "Append timestamped note to clocked task"
-         plain (clock)
-         "%U %?"
-         :empty-lines 1)
-        ("m" "Meeting"
-         entry (file+datetree "~/org/worklog_2020.org")
-         "* Meeting for %^{Title} :work:meeting:\nCREATED: %T\nAgenda/Purpose: \nWho: \n\n - %?\n"
-         :empty-lines 1
-         :clock-in t
-         :clock-resume t)
-        ("M" "Adhoc Meeting(Chat/InPerson/Email/Etc)"
-         entry (file+datetree "~/org/worklog_2020.org")
-         "* Adhoc meeting w/ %^{Who} about %^{What} :work:meeting:\nCREATED: %T\nWho: %\\1 \nNotes: %?\n"
-         :empty-lines 1
-         :clock-in t
-         :clock-resume t)
-        ("f" "Todo - Follow-up later today on e-mail/slack/etc"
-         entry (file+datetree "~/org/worklog_2020.org")
-         "* NEXT [#A] %? :work:followup:\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\")) CREATED: %T\n"
-         :empty-lines 1)
-        ("v" "Code Reference with Comments to Current Task"
-         plain (clock)
-         "%?\n%(ha/org-capture-code-snippet \"%F\")\n\n"
-         :empty-lines 1)
-        ("V" "Link to Code Reference to Current Task"
-         plain (clock)
-         "%(ha/org-capture-code-snippet \"%F\")"
-         :empty-lines 1 :immediate-finish t)
-        ))
+           :clock-in t
+           :clock-resume t
+           :empty-lines 1)
+          ("n" "Append timestamped note to clocked task"
+           plain (clock)
+           "%U %?"
+           :empty-lines 1)
+          ("m" "Meeting"
+           entry (file+datetree "~/org/worklog_2020.org")
+           "* Meeting for %^{Title} :work:meeting:\nCREATED: %T\nAgenda/Purpose: \nWho: \n\n - %?\n"
+           :empty-lines 1
+           :clock-in t
+           :clock-resume t)
+          ("M" "Adhoc Meeting(Chat/InPerson/Email/Etc)"
+           entry (file+datetree "~/org/worklog_2020.org")
+           "* Adhoc meeting w/ %^{Who} about %^{What} :work:meeting:\nCREATED: %T\nWho: %\\1 \nNotes: %?\n"
+           :empty-lines 1
+           :clock-in t
+           :clock-resume t)
+          ("f" "Todo - Follow-up later today on e-mail/slack/etc"
+           entry (file+datetree "~/org/worklog_2020.org")
+           "* NEXT [#A] %? :work:followup:\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\")) CREATED: %T\n"
+           :empty-lines 1)
+          ("v" "Code Reference with Comments to Current Task"
+           plain (clock)
+           "%?\n%(ha/org-capture-code-snippet \"%F\")\n\n"
+           :empty-lines 1)
+          ("V" "Link to Code Reference to Current Task"
+           plain (clock)
+           "%(ha/org-capture-code-snippet \"%F\")"
+           :empty-lines 1 :immediate-finish t)
+          ))
+  )
 
 ;; Add a small amount of extra space in between each line
 (setq line-spacing 2)
