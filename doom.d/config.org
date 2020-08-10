@@ -23,6 +23,7 @@
   - [[#org-capture-templates][Org Capture Templates]]
 - [[#keybindings][Keybindings]]
   - [[#useful-keybinding-reminders][Useful keybinding reminders]]
+    - [[#convert-lists-between-orderednumbereunordered][Convert Lists between ordered/numbere/unordered]]
   - [[#keybindings-from-spacemacs][Keybindings from Spacemacs]]
     - [[#more-keybindings-from-spacemacs][More keybindings from spacemacs]]
   - [[#misc-keybindings][Misc Keybindings]]
@@ -186,21 +187,25 @@ TODO:
 - [ ] org-expiry
 - [ ] org-download (and screenshots)
 - [ ] fold on startup
+- [ ] shortcut for creating sparse tree from headers (Zaiste uses =SPC / s=, but I want =SPC /= for search in project)
+- [ ] shortcut for creating sparse tree of tags (^ =SPC / t=)
 
 ** General
 
 General settings that I don't know how to categorize yet.
 
 #+BEGIN_SRC emacs-lisp
-;; Default Column View
-(setq org-columns-default-format "%5TODO %30ITEM(Task) %10Effort(Effort){:} %10CLOCKSUM(Clocked) %3PRIORITY(PRI) %TAGS")
+(after! org
+  ;; Default Column View
+  (setq org-columns-default-format "%5TODO %30ITEM(Task) %10Effort(Effort){:} %10CLOCKSUM(Clocked) %3PRIORITY(PRI) %TAGS")
 
-;; Enable speed commands for single-key commands at the beginning of headers.  ? for help  TODO: I don't really know what these do
-(setq org-use-speed-commands t)
-;; Prettier code blocks
-(setq org-src-fontify-natively t)
-;; Hide code blocks by default in org-mode
-'(org-hide-block-startup t)
+  ;; Enable speed commands for single-key commands at the beginning of headers.  ? for help  TODO: I don't really know what these do
+  (setq org-use-speed-commands t)
+  ;; Prettier code blocks
+  (setq org-src-fontify-natively t)
+  ;; Hide code blocks by default in org-mode
+  '(org-hide-block-startup t)
+  )
 #+END_SRC
 
 ** Org Directories
@@ -232,20 +237,21 @@ Access these by using =C-c C-,= and then using the shortcut for each one.  It ad
 *** General settings
 
 #+BEGIN_SRC elisp
-(setq org-agenda-files (quote ("~/org/")))
-(setq org-refile-targets '((org-agenda-files . (:maxlevel . 3))))
+(after! org
+  (setq org-agenda-files (quote ("~/org/")))
+  (setq org-refile-targets '((org-agenda-files . (:maxlevel . 3))))
 
-;; Disable tag inheritence to speed up agenda rendering
-(setq org-agenda-use-tag-inheritance nil)
-;; Disable dim blocked tasks to speed up agenda rendering
-(setq org-agenda-dim-blocked-tasks nil)
-;; Don't prepare agenda buffers on startup
-(setq org-agenda-inhibit-startup t)
-;; Don't kill agenda buffers, just hide them
-(setq org-agenda-sticky t)
-;; Disable processing some org drawer properties to speed up the agenda rendering
-(setq org-agenda-ignore-drawer-properties '(effort appt category))
-
+  ;; Disable tag inheritence to speed up agenda rendering
+  (setq org-agenda-use-tag-inheritance nil)
+  ;; Disable dim blocked tasks to speed up agenda rendering
+  (setq org-agenda-dim-blocked-tasks nil)
+  ;; Don't prepare agenda buffers on startup
+  (setq org-agenda-inhibit-startup t)
+  ;; Don't kill agenda buffers, just hide them
+  (setq org-agenda-sticky t)
+  ;; Disable processing some org drawer properties to speed up the agenda rendering
+  (setq org-agenda-ignore-drawer-properties '(effort appt category))
+  )
 #+END_SRC
 *** Org todo keywords
 
@@ -253,10 +259,11 @@ This isn't really org-agenda specific, but the agenda view is where I'd see this
 
 #+BEGIN_SRC elisp
 ;; Keywords to use by default in .org files
-(setq org-todo-keywords
-      '((sequence "TODO(t)" "NEXT(n)" "IN-PROGRESS(i!)" "|" "DONE(d!)")
-        (sequence "WAITING(w@/!)" "BLOCKED(b@/!)" "|" "CANCELLED(c@/!)")
-        (sequence "[ ](T)" "[-](P)" "[?](M)" "|" "[X](D)")))
+(after! org
+    (setq org-todo-keywords
+        '((sequence "TODO(t)" "NEXT(n)" "IN-PROGRESS(i!)" "|" "DONE(d!)")
+            (sequence "WAITING(w@/!)" "BLOCKED(b@/!)" "|" "CANCELLED(c@/!)")
+            (sequence "[ ](T)" "[-](P)" "[?](M)" "|" "[X](D)"))))
 #+END_SRC
 *** Custom Commands and Agenda views
 
@@ -391,6 +398,15 @@ TODO: I'll probably want to sort this into categories eventually.
 | =R=       | evil-multiedit - Select all matches at once                        |
 | =M-d=     | evil-multiedit - start multicursor, keep pressing to expand search |
 
+*** Convert Lists between ordered/numbere/unordered
+
+If you have a list like this:
+
+- item 1
+- item 2
+- item 3
+
+You can change the - on the first item to a + or =1.= and then press =C-c C-c= and the rest of the list will automatically be updated to a numbered list.
 
 
 ** Keybindings from Spacemacs
