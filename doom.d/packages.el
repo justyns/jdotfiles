@@ -54,3 +54,4 @@
 (package! powerthesaurus)
 (package! org-mru-clock)
 (package! keychain-environment)
+(package! org-super-agenda)

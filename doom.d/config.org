@@ -21,6 +21,7 @@
     - [[#custom-commands-and-agenda-views][Custom Commands and Agenda views]]
     - [[#org-clock][org-clock]]
     - [[#org-expiry][org-expiry]]
+    - [[#org-super-agenda][org-super-agenda]]
   - [[#org-capture-templates][Org Capture Templates]]
 - [[#keybindings][Keybindings]]
   - [[#useful-keybinding-reminders][Useful keybinding reminders]]
@@ -48,6 +49,7 @@
 - [[#backups-and-history][Backups and history]]
 - [[#hydra-paste][Hydra Paste]]
 - [[#avy][Avy]]
+- [[#pdf-viewing-and-editing][PDF Viewing and Editing]]
 
 * References
 
@@ -596,6 +598,61 @@ as the default task."
     )
   )
 #+END_SRC
+*** org-super-agenda
+
+After reading https://www.rousette.org.uk/archives/doom-emacs-tweaks-org-journal-and-org-super-agenda/ and https://github.com/alphapapa/org-super-agenda, I realized org-super-agenda solves some of the issues I tried to fix in my regular org-agenda mode.  I copied the config from the first link to start with.
+
+I'm not sure exactly why, but org-super-agenda is also extremely fast compared to the regular agenda.  The regular agenda takes over a minute to process my .org files and load sometimes.   org-super-agenda-mode loads within a few seconds.
+
+#+BEGIN_SRC elisp
+(use-package! org-super-agenda
+  :after org-agenda
+  :init
+  (setq org-agenda-skip-scheduled-if-done t
+      org-agenda-skip-deadline-if-done t
+      org-agenda-include-deadlines t
+      org-agenda-block-separator nil
+      org-agenda-compact-blocks t
+      org-agenda-start-day nil ;; i.e. today
+      org-agenda-span 1
+      org-agenda-start-on-weekday nil)
+  (setq org-agenda-custom-commands
+        '(("c" "Super view"
+           ((agenda "" ((org-agenda-overriding-header "")
+                        (org-super-agenda-groups
+                         '((:name "Today"
+                                  :time-grid t
+                                  :date today
+                                  :order 1)))))
+            (alltodo "" ((org-agenda-overriding-header "")
+                         (org-super-agenda-groups
+                          '((:log t)
+                            (:name "To refile"
+                                   :file-path "refile\\.org")
+                            (:name "Next to do"
+                                   :todo "NEXT"
+                                   :order 1)
+                            (:name "Important"
+                                   :priority "A"
+                                   :order 6)
+                            (:name "Today's tasks"
+                                   :file-path "journal/")
+                            (:name "Due Today"
+                                   :deadline today
+                                   :order 2)
+                            (:name "Scheduled Soon"
+                                   :scheduled future
+                                   :order 8)
+                            (:name "Overdue"
+                                   :deadline past
+                                   :order 7)
+                            (:name "Meetings"
+                                   :and (:todo "MEET" :scheduled future)
+                                   :order 10)
+                            (:discard (:not (:todo "TODO")))))))))))
+  :config
+  (org-super-agenda-mode))
+#+END_SRC
 
 ** Org Capture Templates
 
@@ -1019,4 +1076,30 @@ This lets me paste something and then cycle through the kill ring.
 Search all open windows
 #+BEGIN_SRC elisp
 (setq avy-all-windows t)
+#+END_SRC
+* PDF Viewing and Editing
+
+Keys:
+
+ - C-j / C-k - Scroll up/down a page
+
+TODO: I'm not sure if I like using emacs as a pdf viewer, so I might just remove this.
+TODO: Can I select something and have it annotate a specific sentence/paragraph?   org-noter-insert-note just marks the page number.
+
+#+BEGIN_SRC elisp
+(after! pdf-view
+  ;; open pdfs scaled to fit page
+  (setq-default pdf-view-display-size 'fit-width)
+  ;; automatically annotate highlights
+  (setq pdf-annot-activate-created-annotations t
+        org-noter-insert-note-no-questions t
+        pdf-view-resize-factor 1.1)
+  ;; faster motion
+  (map!
+   :map pdf-view-mode-map
+   :n "g g"          #'pdf-view-first-page
+   :n "G"            #'pdf-view-last-page
+   :localleader
+   (:desc "Insert" "i" 'org-noter-insert-note)
+   ))
 #+END_SRC
