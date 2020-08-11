@@ -54,6 +54,3 @@
 (package! powerthesaurus)
 (package! org-mru-clock)
 (package! keychain-environment)
-;; (package! org-expiry)
-;; (package! org-habit)
-;; (package! org-expiry-insinuate)

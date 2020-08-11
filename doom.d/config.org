@@ -41,6 +41,7 @@
   - [[#magit][magit]]
   - [[#treemacs-magit][treemacs-magit]]
 - [[#projectile][Projectile]]
+- [[#ssh-and-gpg-agent][SSH and GPG Agent]]
 - [[#tramp][Tramp]]
 - [[#tags][Tags]]
 - [[#evil-snipe][evil-snipe]]
@@ -180,9 +181,11 @@ emacs_lisp => EMACS_LISP => EmacsLisp => emacsLisp => emacs-lisp => Emacs_Lisp =
 * Org Mode
 TODO:
 
-- [ ] org-mru-clock
-- [ ] org-capture and templates
-- [ ] org-clock
+- [X] org-mru-clock
+- [ ] org-mru-clock - clock recent task isn't working very well?
+- [X] org-capture and templates
+- [ ] open org-capture in vertical split
+- [X] org-clock
 - [ ] org-agenda
 - [ ] org-habit
 - [ ] org-expiry
@@ -589,12 +592,8 @@ as the default task."
     :config
     (setq org-expiry-created-property-name "CREATED"
           org-expiry-inactive-timestamps t)
+    (org-expiry-insinuate)
     )
-  ;; TODO:  Install org-expiry-insinuate?
-  ;; (use-package! org-expiry-insinuate
-  ;;   :config
-  ;;   (org-expiry-insinuate)
-  ;;   )
   )
 #+END_SRC
 
@@ -911,6 +910,14 @@ This seems to only search one folder deep, so if you use a path of =~/dev= it de
 ;; TODO: This still isn't recursive more than one level
 (setq projectile-project-search-path (cddr (directory-files "~/dev" t)))
 #+END_SRC
+* SSH and GPG Agent
+
+Attempt to source the env vars from keychain.
+#+BEGIN_SRC elisp
+;; Source ssh-agent from keychain
+(keychain-refresh-environment)
+#+END_SRC
+
 * Tramp
 
 #+BEGIN_SRC emacs-lisp

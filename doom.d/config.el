@@ -552,12 +552,8 @@ as the default task."
     :config
     (setq org-expiry-created-property-name "CREATED"
           org-expiry-inactive-timestamps t)
+    (org-expiry-insinuate)
     )
-  ;; TODO:  Install org-expiry-insinuate?
-  ;; (use-package! org-expiry-insinuate
-  ;;   :config
-  ;;   (org-expiry-insinuate)
-  ;;   )
   )
 
 (after! org
@@ -647,5 +643,8 @@ as the default task."
   (setq auto-revert-interval 2
         auto-revert-check-vc-info t
         auto-revert-verbose nil))
+
+;; Source ssh-agent from keychain
+(keychain-refresh-environment)
 
 (setq avy-all-windows t)
