@@ -1,5 +1,6 @@
 ;;; init.el -*- lexical-binding: t; -*-
 
+
 ;; This file controls what Doom modules are enabled and what order they load
 ;; in. Remember to run 'doom sync' after modifying it!
 
@@ -104,6 +105,9 @@
        terraform         ; infrastructure as code
        ;;tmux              ; an API for interacting with tmux
        ;;upload            ; map local to remote projects via ssh/ftp
+
+       :os
+       tty                 ; improve the terminal Emacs experience
 
        :lang
        ;;agda              ; types of types of types of types...

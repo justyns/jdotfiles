@@ -51,7 +51,24 @@
 
 (setq which-key-idle-delay 0.25)
 
+(defun justyn/doom-sync-and-build ()
+  "Runs doom sync and then doom build"
+  (interactive)
+  (shell-command "doom sync && doom build"))
 
+(defun justyn/doom-sync ()
+  "Runs doom sync"
+  (interactive)
+  (shell-command "doom sync"))
+
+(map! :leader
+      (:prefix ("j" . "justyn")
+               (:prefix ("d" . "doom")
+                        :desc "Doom sync" "s" #'justyn/doom-sync
+                        :desc "Doom sync/build" "s" #'justyn/doom-sync-and-build)))
+
+(if (file-exists-p "~/.doom.local.el")
+    (load-file "~/.doom.local.el"))
 
 (after! org
   ;; Default Column View
@@ -255,6 +272,8 @@
   (setq org-agenda-sticky t)
   ;; Disable processing some org drawer properties to speed up the agenda rendering
   (setq org-agenda-ignore-drawer-properties '(effort appt category))
+  ;; TODO: Do I want this?  It logs status changes into a LOGBOOK drawer instead of just as a list
+  (setq org-log-into-drawer t)
   )
 
 ;; Keywords to use by default in .org files
