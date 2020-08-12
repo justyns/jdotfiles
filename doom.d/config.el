@@ -274,6 +274,11 @@
   (setq org-agenda-ignore-drawer-properties '(effort appt category))
   ;; TODO: Do I want this?  It logs status changes into a LOGBOOK drawer instead of just as a list
   (setq org-log-into-drawer t)
+  ;; Hide things that are done
+  (setq org-agenda-skip-scheduled-if-done t
+   org-agenda-skip-deadline-if-done t)
+  ;; org-enforce-todo-checkbox-dependencies t
+  ;; org-enforce-todo-dependencies t
   )
 
 ;; Keywords to use by default in .org files

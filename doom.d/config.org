@@ -86,8 +86,8 @@ Stuff I need to figure out for doom-emacs config
 - [ ] Setup and test lsp for terraform and python
 - [ ] ctrl+enter doesn't work to add to lists in a terminal
 - [ ] make =SPC /= work for searching project
-
-
+- [ ] org-rifle
+- [ ] better keybindings for moving between windows/panes
 
 * Doom-specific Config
 
@@ -283,7 +283,6 @@ Refer to https://github.com/hlissner/doom-emacs/blob/develop/init.example.el for
        literate
        (default +bindings +smartparens))
 #+END_SRC
-
 
 ** Default Doom config.el
 
@@ -550,6 +549,11 @@ Access these by using =C-c C-,= and then using the shortcut for each one.  It ad
   (setq org-agenda-ignore-drawer-properties '(effort appt category))
   ;; TODO: Do I want this?  It logs status changes into a LOGBOOK drawer instead of just as a list
   (setq org-log-into-drawer t)
+  ;; Hide things that are done
+  (setq org-agenda-skip-scheduled-if-done t
+   org-agenda-skip-deadline-if-done t)
+  ;; org-enforce-todo-checkbox-dependencies t
+  ;; org-enforce-todo-dependencies t
   )
 #+END_SRC
 *** Org todo keywords
