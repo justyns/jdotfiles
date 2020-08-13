@@ -61,12 +61,13 @@
 
 Found and referenced several of these while working on updating my config.
 
-- https://gitlab.com/justinekizhak/dotfiles/blob/master/emacs/doom.d/config.org
-- https://noelwelsh.com/posts/2019-01-10-doom-emacs.html
-- https://github.com/nmartin84/.doom.d/blob/master/config.org
-- https://www.reddit.com/r/emacs/comments/empzmz/doom_emacs_literate_config/
 - https://github.com/martinbaillie/dotfiles/blob/master/config/emacs/config.org
 - https://github.com/murphytalk/doom.d/blob/master/README.org
+- https://github.com/nmartin84/.doom.d/blob/master/config.org
+- https://gitlab.com/justinekizhak/dotfiles/blob/master/emacs/doom.d/config.org
+- https://noelwelsh.com/posts/2019-01-10-doom-emacs.html
+- https://www.gtrun.org/custom/init.html
+- https://www.reddit.com/r/emacs/comments/empzmz/doom_emacs_literate_config/
 
 ** Doomcasts
 
@@ -88,6 +89,12 @@ Stuff I need to figure out for doom-emacs config
 - [ ] make =SPC /= work for searching project
 - [ ] org-rifle
 - [ ] better keybindings for moving between windows/panes
+- [ ] my =~/.ctags= config isn't getting picked up
+- [ ] I think ivy is used for the minibuffer completion.  It's not as fuzzy as helm (I think?) was, so searching for files in a project is more annoying
+- [X] get lsp working for terraform
+- [ ] clocking into a task doesn't clock out of the previous task anymore, leading to duplicate time
+- [ ] How to get org-agenda to show overlapping times?
+- [ ] yasnippet or something else to insert current timestamp into buffer (I used to expand =ts= before)
 
 * Doom-specific Config
 
@@ -202,7 +209,7 @@ Refer to https://github.com/hlissner/doom-emacs/blob/develop/init.example.el for
        ;;prodigy           ; FIXME managing external services & code builders
        ;;rgb               ; creating color strings
        ;;taskrunner        ; taskrunner for all your projects
-       terraform         ; infrastructure as code
+       (terraform +lsp)         ; infrastructure as code
        ;;tmux              ; an API for interacting with tmux
        ;;upload            ; map local to remote projects via ssh/ftp
 
@@ -906,13 +913,13 @@ I'm not sure exactly why, but org-super-agenda is also extremely fast compared t
   :after org-agenda
   :init
   (setq org-agenda-skip-scheduled-if-done t
-      org-agenda-skip-deadline-if-done t
-      org-agenda-include-deadlines t
-      org-agenda-block-separator nil
-      org-agenda-compact-blocks t
-      org-agenda-start-day nil ;; i.e. today
-      org-agenda-span 1
-      org-agenda-start-on-weekday nil)
+        org-agenda-skip-deadline-if-done t
+        org-agenda-include-deadlines t
+        org-agenda-block-separator nil
+        org-agenda-compact-blocks t
+        org-agenda-start-day nil ;; i.e. today
+        org-agenda-span 1
+        org-agenda-start-on-weekday nil)
   (setq org-agenda-custom-commands
         '(("c" "Super view"
            ((agenda "" ((org-agenda-overriding-header "")
@@ -924,31 +931,33 @@ I'm not sure exactly why, but org-super-agenda is also extremely fast compared t
             (alltodo "" ((org-agenda-overriding-header "")
                          (org-super-agenda-groups
                           '((:log t)
-                            (:name "To refile"
-                                   :file-path "refile\\.org")
+                            (:name "In-Progress"
+                                   :todo "IN-PROGRESS"
+                                   :order 2)
+                            (:name "Waiting/Blocked"
+                                   :todo ("WAITING" "BLOCKED")
+                                   :order 3)
                             (:name "Next to do"
                                    :todo "NEXT"
-                                   :order 1)
-                            (:name "Important"
-                                   :priority "A"
-                                   :order 6)
-                            (:name "Today's tasks"
-                                   :file-path "journal/")
+                                   :order 4)
                             (:name "Due Today"
                                    :deadline today
-                                   :order 2)
-                            (:name "Scheduled Soon"
-                                   :scheduled future
-                                   :order 8)
+                                   :order 5)
                             (:name "Overdue"
                                    :deadline past
+                                   :order 6)
+                            (:name "Scheduled Soon"
+                                   :scheduled future
                                    :order 7)
+                            (:name "Important"
+                                   :priority "A"
+                                   :order 8)
                             (:name "Meetings"
-                                   :and (:todo "MEET" :scheduled future)
+                                   :and (:todo "meeting" :scheduled future)
                                    :order 10)
                             (:discard (:not (:todo "TODO")))))))))))
-  :config
-  (org-super-agenda-mode))
+:config
+(org-super-agenda-mode))
 #+END_SRC
 
 ** Org Capture Templates
@@ -1083,11 +1092,11 @@ Org clock shortcuts:
 #+BEGIN_SRC elisp
 ;; TODO: Maybe map this to SPC m c like where doom puts the clock stuff currently?
 (map! :leader
-      (:prefix ("o" . "open")
+      (:prefix ("j" . "justyn")
                (:desc "org-mru-clock-in" "c" #'org-mru-clock-in
                 :desc "org-mru-clock-select-recent-task" "C" #'org-mru-clock-select-recent-task
-                :desc "bh/punch-in" "i" #'bh/punch-in
-                :desc "bh/punch-out" "I" #'bh/punch-out
+                :desc "bh/punch-in" "p" #'bh/punch-in
+                :desc "bh/punch-out" "P" #'bh/punch-out
                 :desc "org-save-all-org-buffers" "s" #'org-save-all-org-buffers)))
 #+END_SRC
 *** TODO More keybindings from spacemacs
@@ -1228,7 +1237,7 @@ See https://emacs.stackexchange.com/questions/32634/how-can-the-list-of-projects
 (after! magit
   :config
   ;; Set the directory where magit looks for repos in
-  ;; (setq magit-repository-directories '(("~/dev/" . 4)))
+  (setq magit-repository-directories '(("~/dev/" . 4)))
   )
 (after! projectile
   :config

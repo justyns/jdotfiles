@@ -148,7 +148,7 @@
 (after! magit
   :config
   ;; Set the directory where magit looks for repos in
-  ;; (setq magit-repository-directories '(("~/dev/" . 4)))
+  (setq magit-repository-directories '(("~/dev/" . 4)))
   )
 (after! projectile
   :config
@@ -584,13 +584,13 @@ as the default task."
   :after org-agenda
   :init
   (setq org-agenda-skip-scheduled-if-done t
-      org-agenda-skip-deadline-if-done t
-      org-agenda-include-deadlines t
-      org-agenda-block-separator nil
-      org-agenda-compact-blocks t
-      org-agenda-start-day nil ;; i.e. today
-      org-agenda-span 1
-      org-agenda-start-on-weekday nil)
+        org-agenda-skip-deadline-if-done t
+        org-agenda-include-deadlines t
+        org-agenda-block-separator nil
+        org-agenda-compact-blocks t
+        org-agenda-start-day nil ;; i.e. today
+        org-agenda-span 1
+        org-agenda-start-on-weekday nil)
   (setq org-agenda-custom-commands
         '(("c" "Super view"
            ((agenda "" ((org-agenda-overriding-header "")
@@ -602,31 +602,33 @@ as the default task."
             (alltodo "" ((org-agenda-overriding-header "")
                          (org-super-agenda-groups
                           '((:log t)
-                            (:name "To refile"
-                                   :file-path "refile\\.org")
+                            (:name "In-Progress"
+                                   :todo "IN-PROGRESS"
+                                   :order 2)
+                            (:name "Waiting/Blocked"
+                                   :todo ("WAITING" "BLOCKED")
+                                   :order 3)
                             (:name "Next to do"
                                    :todo "NEXT"
-                                   :order 1)
-                            (:name "Important"
-                                   :priority "A"
-                                   :order 6)
-                            (:name "Today's tasks"
-                                   :file-path "journal/")
+                                   :order 4)
                             (:name "Due Today"
                                    :deadline today
-                                   :order 2)
-                            (:name "Scheduled Soon"
-                                   :scheduled future
-                                   :order 8)
+                                   :order 5)
                             (:name "Overdue"
                                    :deadline past
+                                   :order 6)
+                            (:name "Scheduled Soon"
+                                   :scheduled future
                                    :order 7)
+                            (:name "Important"
+                                   :priority "A"
+                                   :order 8)
                             (:name "Meetings"
-                                   :and (:todo "MEET" :scheduled future)
+                                   :and (:todo "meeting" :scheduled future)
                                    :order 10)
                             (:discard (:not (:todo "TODO")))))))))))
-  :config
-  (org-super-agenda-mode))
+:config
+(org-super-agenda-mode))
 
 (after! org
   (setq org-capture-templates
@@ -694,11 +696,11 @@ as the default task."
 
 ;; TODO: Maybe map this to SPC m c like where doom puts the clock stuff currently?
 (map! :leader
-      (:prefix ("o" . "open")
+      (:prefix ("j" . "justyn")
                (:desc "org-mru-clock-in" "c" #'org-mru-clock-in
                 :desc "org-mru-clock-select-recent-task" "C" #'org-mru-clock-select-recent-task
-                :desc "bh/punch-in" "i" #'bh/punch-in
-                :desc "bh/punch-out" "I" #'bh/punch-out
+                :desc "bh/punch-in" "p" #'bh/punch-in
+                :desc "bh/punch-out" "P" #'bh/punch-out
                 :desc "org-save-all-org-buffers" "s" #'org-save-all-org-buffers)))
 
 ;; Add a small amount of extra space in between each line
