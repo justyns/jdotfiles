@@ -27,6 +27,9 @@
     - [[#org-expiry][org-expiry]]
     - [[#org-super-agenda][org-super-agenda]]
   - [[#org-capture-templates][Org Capture Templates]]
+  - [[#org-rifle-and-org-ql][org-rifle and org-ql]]
+  - [[#org-journal][org-journal]]
+- [[#deft][Deft]]
 - [[#keybindings][Keybindings]]
   - [[#useful-keybinding-reminders][Useful keybinding reminders]]
     - [[#convert-lists-between-orderednumbereunordered][Convert Lists between ordered/numbere/unordered]]
@@ -89,7 +92,7 @@ Stuff I need to figure out for doom-emacs config
 - [ ] make =SPC /= work for searching project
 - [ ] org-rifle
 - [ ] better keybindings for moving between windows/panes
-- [ ] my =~/.ctags= config isn't getting picked up
+- [X] my =~/.ctags= config isn't getting picked up
 - [ ] I think ivy is used for the minibuffer completion.  It's not as fuzzy as helm (I think?) was, so searching for files in a project is more annoying
 - [X] get lsp working for terraform
 - [ ] clocking into a task doesn't clock out of the previous task anymore, leading to duplicate time
@@ -133,10 +136,10 @@ Refer to https://github.com/hlissner/doom-emacs/blob/develop/init.example.el for
        ivy               ; a search engine for love and life
 
        :ui
-       ;;deft              ; notational velocity for Emacs
+       deft              ; notational velocity for Emacs
        doom              ; what makes DOOM look the way it does
        doom-dashboard    ; a nifty splash screen for Emacs
-       doom-quit         ; DOOM quit-message prompts when you quit Emacs
+       ;; doom-quit         ; DOOM quit-message prompts when you quit Emacs
        ;;fill-column       ; a `fill-column' indicator
        hl-todo           ; highlight TODO/FIXME/NOTE/DEPRECATED/HACK/REVIEW
        hydra
@@ -201,7 +204,7 @@ Refer to https://github.com/hlissner/doom-emacs/blob/develop/init.example.el for
        ;;gist              ; interacting with github gists
        lookup              ; navigate your code and its documentation
        lsp
-       ;;macos             ; MacOS-specific commands
+       macos             ; MacOS-specific commands
        magit             ; a git porcelain for Emacs
        ;;make              ; run make tasks from Emacs
        ;;pass              ; password manager for nerds
@@ -253,7 +256,7 @@ Refer to https://github.com/hlissner/doom-emacs/blob/develop/init.example.el for
        ;;nim               ; python + lisp at the speed of c
        ;;nix               ; I hereby declare "nix geht mehr!"
        ;;ocaml             ; an objective camel
-       (org +noter +dragndrop +pandoc)               ; organize your plain life in plain text
+       (org +noter +dragndrop +pandoc +journal)               ; organize your plain life in plain text
        ;;php               ; perl's insecure younger brother
        ;;plantuml          ; diagrams for confusing people more
        ;;purescript        ; javascript, but functional
@@ -432,7 +435,7 @@ And a keybinding for =SPC j d s=.  I should probably shorten this to something e
       (:prefix ("j" . "justyn")
                (:prefix ("d" . "doom")
                         :desc "Doom sync" "s" #'justyn/doom-sync
-                        :desc "Doom sync/build" "s" #'justyn/doom-sync-and-build)))
+                        :desc "Doom sync/build" "S" #'justyn/doom-sync-and-build)))
 #+END_SRC
 * Packages
 
@@ -445,6 +448,10 @@ I think I can split this up into other sections throughout the file, but I'm jus
 (package! org-mru-clock)
 (package! keychain-environment)
 (package! org-super-agenda)
+(package! org-ql)
+(package! helm-org-rifle)
+;; (package! esup)
+(package! org-crypt)
 #+END_SRC
 ** Powerthesaurus
 
@@ -517,7 +524,7 @@ Set org-directory and dir for org-noter.
 
 #+BEGIN_SRC emacs-lisp
 ;; If you use `org' and don't want your org files in the default location below,
-;; change `org-directory'. It must be set before org loads!
+;; change `org-directory'. It must be set before org loads, so don't use after!
 (setq org-directory "~/org/")
 (setq org-noter-notes-search-path '("~/org/noter/"))
 #+END_SRC
@@ -959,7 +966,6 @@ I'm not sure exactly why, but org-super-agenda is also extremely fast compared t
 :config
 (org-super-agenda-mode))
 #+END_SRC
-
 ** Org Capture Templates
 
 #+BEGIN_SRC elisp
@@ -1026,6 +1032,57 @@ I'm not sure exactly why, but org-super-agenda is also extremely fast compared t
            :empty-lines 1 :immediate-finish t)
           ))
   )
+#+END_SRC
+** org-rifle and org-ql
+
+org-ql can potentially replace org-rifle, but I haven't figured out the best way to do that yet.
+
+Note that helm-org-rifle also brings in helm whereas the rest of this config currently uses ivy.  This causes some stuff like org-capture to automatically attempt to use helm instead of ivy.
+
+org-rifle also shows some of the content when you're searching.  This is something I like because I sometimes have multiple notes with the same title/heading.
+
+#+BEGIN_SRC emacs-lisp
+(use-package! helm-org-rifle
+  :defer t)
+(map! :leader
+      (:prefix ("j" . "justyn")
+               (:desc "helm-org-rifle" "r" #'helm-org-rifle)))
+#+END_SRC
+** org-journal
+
+- [ ] TODO: Enable encryption
+
+#+BEGIN_SRC emacs-lisp
+;; (use-package! org-journal
+;;   :defer t
+;;   :config
+;; (after! org-journal
+;; TODO: I might want to use monthly instead?  I'm not sure if weekly will be too many files or not.
+;; TODO: Store each journal entry into something like YYYY/MM/Week1.org
+(setq org-journal-file-type "weekly")
+(setq org-journal-dir "~/org/journal/")
+#+END_SRC
+
+* Deft
+
+Deft is installed/enabled in init.el
+
+#+BEGIN_SRC emacs-lisp
+;; Deft settings
+(setq deft-extensions '("org" "md" "txt"))
+(setq deft-default-extension "org")
+(setq deft-text-mode 'org-mode)
+;; I created symlinks in ~/.deft pointing to my org notes/joplin/etc
+(setq deft-directory "~/.deft")
+(setq deft-recursive t)
+;; TODO: Figure out how to make this work with stuff like Joplin's markdown format
+;; See https://jingsi.space/post/2017/04/05/organizing-a-complex-directory-for-emacs-org-mode-and-deft/
+(setq deft-use-filename-as-title nil)
+(setq deft-use-filter-string-for-filename t)
+(setq deft-file-naming-rules '((nospace . "-")
+                               (case-fn . downcase)))
+;; Limit the number of files Deft shows by default to speed it up
+(setq deft-file-limit 100)
 #+END_SRC
 
 * Keybindings
@@ -1294,7 +1351,7 @@ I have a custom configuration for ctags stored in [[file:~/.ctags][~/.ctags]] th
 
 #+BEGIN_SRC emacs-lisp
 ;; Use my default ctags configuration which excludes a lot of things we don't want
-(setq projectile-tags-command "ctags --options=~/.ctags -Re -f \"%s\" %s \"%s\"")
+(setq projectile-tags-command (concat "ctags --options=" (expand-file-name "~/.ctags") " -Re -f \"%s\" %s \"%s\""))
 #+END_SRC
 * evil-snipe
 

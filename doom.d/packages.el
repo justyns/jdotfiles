@@ -55,3 +55,6 @@
 (package! org-mru-clock)
 (package! keychain-environment)
 (package! org-super-agenda)
+(package! org-ql)
+(package! helm-org-rifle)
+(package! esup)

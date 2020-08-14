@@ -65,7 +65,7 @@
       (:prefix ("j" . "justyn")
                (:prefix ("d" . "doom")
                         :desc "Doom sync" "s" #'justyn/doom-sync
-                        :desc "Doom sync/build" "s" #'justyn/doom-sync-and-build)))
+                        :desc "Doom sync/build" "S" #'justyn/doom-sync-and-build)))
 
 (if (file-exists-p "~/.doom.local.el")
     (load-file "~/.doom.local.el"))
@@ -83,9 +83,31 @@
   )
 
 ;; If you use `org' and don't want your org files in the default location below,
-;; change `org-directory'. It must be set before org loads!
+;; change `org-directory'. It must be set before org loads, so don't use after!
 (setq org-directory "~/org/")
 (setq org-noter-notes-search-path '("~/org/noter/"))
+
+(use-package! helm-org-rifle
+  :defer t)
+(map! :leader
+      (:prefix ("j" . "justyn")
+               (:desc "helm-org-rifle" "r" #'helm-org-rifle)))
+
+;; Deft settings
+(setq deft-extensions '("org" "md" "txt"))
+(setq deft-default-extension "org")
+(setq deft-text-mode 'org-mode)
+;; I created symlinks in ~/.deft pointing to my org notes/joplin/etc
+(setq deft-directory "~/.deft")
+(setq deft-recursive t)
+;; TODO: Figure out how to make this work with stuff like Joplin's markdown format
+;; See https://jingsi.space/post/2017/04/05/organizing-a-complex-directory-for-emacs-org-mode-and-deft/
+(setq deft-use-filename-as-title nil)
+(setq deft-use-filter-string-for-filename t)
+(setq deft-file-naming-rules '((nospace . "-")
+                               (case-fn . downcase)))
+;; Limit the number of files Deft shows by default to speed it up
+(setq deft-file-limit 100)
 
 ;; TODO: I'm not sure how to go to a specific window, so this really just goes left and right for now
 (map! :leader
