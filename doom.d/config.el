@@ -93,6 +93,32 @@
       (:prefix ("j" . "justyn")
                (:desc "helm-org-rifle" "r" #'helm-org-rifle)))
 
+(defun org-journal-find-location ()
+  ;; Open today's journal, but specify a non-nil prefix argument in order to
+  ;; inhibit inserting the heading; org-capture will insert the heading.
+  (org-journal-new-entry t)
+  ;; Position point on the journal's top-level heading so that org-capture
+  ;; will add the new entry as a child entry.
+  (goto-char (point-min)))
+
+;;(org-journal-find-location)
+
+;; (use-package! org-journal
+;;   :defer t
+;;   :config
+;; (after! org-journal
+;; TODO: I might want to use monthly instead?  I'm not sure if weekly will be too many files or not.
+;; TODO: Store each journal entry into something like YYYY/MM/Week1.org
+(setq org-journal-file-type "weekly")
+(setq org-journal-dir "~/org/journal/")
+(setq org-journal-file-format "%Y-%m-%d.org")
+;; TODO: This breaks my agenda when non-nil, but I include ~/org anyways
+(setq org-journal-enable-agenda-integration nil)
+(setq org-journal-date-format "%A - %B %d, %Y")
+(setq org-journal-file-header "#+TITLE: Weekly Worklog\n#+STARTUP: folded\n")
+
+(setq org-crypt-key "AA5A79D7AD584854")
+
 ;; Deft settings
 (setq deft-extensions '("org" "md" "txt"))
 (setq deft-default-extension "org")
@@ -196,7 +222,7 @@
 (setq tramp-default-method "sshx")
 
 ;; Use my default ctags configuration which excludes a lot of things we don't want
-(setq projectile-tags-command "ctags --options=~/.ctags -Re -f \"%s\" %s \"%s\"")
+(setq projectile-tags-command (concat "ctags --options=" (expand-file-name "~/.ctags") " -Re -f \"%s\" %s \"%s\""))
 
 (use-package! evil-snipe
   :defer t
@@ -281,7 +307,7 @@
   )
 
 (after! org
-  (setq org-agenda-files (quote ("~/org/")))
+  (setq org-agenda-files (quote ("~/org/" "~/org/journal/")))
   (setq org-refile-targets '((org-agenda-files . (:maxlevel . 3))))
 
   ;; Disable tag inheritence to speed up agenda rendering
@@ -652,6 +678,14 @@ as the default task."
 :config
 (org-super-agenda-mode))
 
+;; Helper to determine what my current worklog .org file is
+;; TODO: Also create the file with a template if needed
+;; TODO: Test if this works when the month changes, and isn't evaluated during startup only
+(defun justyn/current-worklog-file ()
+  (expand-file-name (format-time-string "worklog-%Y-%m.org") org-directory)
+  )
+;; (justyn/current-worklog-file)
+
 (after! org
   (setq org-capture-templates
         ;; TODO: Move some of these to a separate file not in git, since I don't need them in every computer
@@ -663,18 +697,18 @@ as the default task."
           ("r" "Read Later" entry (file+headline "~/org/TODO.org" "Read Later")
            "* TODO %?  :readlater:\nCREATED: %U")
           ("j" "Journal"
-           entry (file+datetree "~/org/journal.org")
+           entry (file+olp+datetree "~/org/journal.org")
            "* %? \nCREATED: %U\n%i\n%a"
            :empty-lines 1)
           ;; TODO: Use year in filename automatically
           ("w" "New WorkLog entry"
-           entry (file+datetree "~/org/worklog_2020.org")
+           entry (file+olp+datetree justyn/current-worklog-file)
            "* %? :work:\nCREATED: %T\n%i\n%a\n"
            :clock-in t
            :clock-resume t
            :empty-lines 1)
           ("W" "New Work Ticket"
-           entry (file+datetree "~/org/worklog_2020.org")
+           entry (file+olp+datetree justyn/current-worklog-file)
            "* IN-PROGRESS %^{TicketID}: %^{Title} :work:ticket:
 :PROPERTIES:
 :ID: %\\1
@@ -690,19 +724,19 @@ as the default task."
            "%U %?"
            :empty-lines 1)
           ("m" "Meeting"
-           entry (file+datetree "~/org/worklog_2020.org")
+           entry (file+olp+datetree justyn/current-worklog-file)
            "* Meeting for %^{Title} :work:meeting:\nCREATED: %T\nAgenda/Purpose: \nWho: \n\n - %?\n"
            :empty-lines 1
            :clock-in t
            :clock-resume t)
           ("M" "Adhoc Meeting(Chat/InPerson/Email/Etc)"
-           entry (file+datetree "~/org/worklog_2020.org")
+           entry (file+olp+datetree justyn/current-worklog-file)
            "* Adhoc meeting w/ %^{Who} about %^{What} :work:meeting:\nCREATED: %T\nWho: %\\1 \nNotes: %?\n"
            :empty-lines 1
            :clock-in t
            :clock-resume t)
           ("f" "Todo - Follow-up later today on e-mail/slack/etc"
-           entry (file+datetree "~/org/worklog_2020.org")
+           entry (file+olp+datetree justyn/current-worklog-file)
            "* NEXT [#A] %? :work:followup:\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\")) CREATED: %T\n"
            :empty-lines 1)
           ("v" "Code Reference with Comments to Current Task"
