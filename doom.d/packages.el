@@ -58,3 +58,6 @@
 (package! org-ql)
 (package! helm-org-rifle)
 ;; (package! esup)
+
+;; (package! kubel)
+;; (package! kubel-evil)

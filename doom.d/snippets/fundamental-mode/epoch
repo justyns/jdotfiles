@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: epoch
+# uuid: epoch
+# key: /epoch
+# condition: t
+# --
+`(format-time-string "%s")`

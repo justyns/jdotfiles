@@ -59,6 +59,8 @@
 - [[#hydra-paste][Hydra Paste]]
 - [[#avy][Avy]]
 - [[#pdf-viewing-and-editing][PDF Viewing and Editing]]
+- [[#kubernetes---kubel][Kubernetes - kubel]]
+- [[#yasnippet][yasnippet]]
 
 * References
 
@@ -1506,4 +1508,28 @@ TODO: Can I select something and have it annotate a specific sentence/paragraph?
    :localleader
    (:desc "Insert" "i" 'org-noter-insert-note)
    ))
+#+END_SRC
+* Kubernetes - kubel
+
+Install [[https://github.com/abrochard/kubel][kubel]]
+
+TODO: Mostly just testing this for now.  I'm actually liking k9s better if I want any sort of kubernetes UI
+
+#+BEGIN_SRC emacs-lisp :tangle packages.el
+;; (package! kubel)
+;; (package! kubel-evil)
+#+END_SRC
+
+And load it
+
+#+BEGIN_SRC emacs-lisp
+;; (use-package! kubel)
+;; (use-package! kubel-evil)
+#+END_SRC
+* yasnippet
+
+=:editor snippets= is enabled in =init.el=, we just need to enable yasnippet's global mode.
+
+#+BEGIN_SRC emacs-lisp
+(yas-global-mode 1)
 #+END_SRC

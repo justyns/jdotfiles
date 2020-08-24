@@ -285,6 +285,11 @@
 (map! :nv "p" #'hydra-paste/evil-paste-after
       :nv "P" #'hydra-paste/evil-paste-before)
 
+;; (use-package! kubel)
+;; (use-package! kubel-evil)
+
+(yas-global-mode 1)
+
 (use-package! powerthesaurus
   :defer t)
 (map! :leader
@@ -697,7 +702,7 @@ as the default task."
           ("r" "Read Later" entry (file+headline "~/org/TODO.org" "Read Later")
            "* TODO %?  :readlater:\nCREATED: %U")
           ("j" "Journal"
-           entry (file+olp+datetree "~/org/journal.org")
+           entry (file+olp+datetree "~/org/journal.org.gpg")
            "* %? \nCREATED: %U\n%i\n%a"
            :empty-lines 1)
           ;; TODO: Use year in filename automatically
