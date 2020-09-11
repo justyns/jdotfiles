@@ -108,7 +108,7 @@ echo "Installing oh-my-zsh and plugins"
 [[ -d $HOME/.oh-my-zsh/custom/themes ]] && [[ ! -d $HOME/.oh-my-zsh/custom/themes/spaceship-prompt ]] \
     && git clone --depth=1 https://github.com/denysdovhan/spaceship-prompt.git $HOME/.oh-my-zsh/custom/themes/spaceship-prompt \
     && ln -sv $HOME/.oh-my-zsh/custom/themes/spaceship-prompt/spaceship.zsh-theme $HOME/.oh-my-zsh/custom/themes/spaceship.zsh-theme
-[[ ! -d $HOME/.oh-my-zsh ]] && echo -e "Run this to install oh-my-zsh: \n  sh -c '$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)'"
+[[ ! -d $HOME/.oh-my-zsh ]] && echo -e "Run this to install oh-my-zsh: \n  sh -c '\$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)'"
 
 if [[ ! -f ~/.gitconfig.local ]]; then
     echo -e "${RedF}~/.gitconfig.local${reset}: Doesn't exist.  You should create it with something like: \n[user]\n\tname = Justyn Shull\n\temail = git@justyn.io\n";

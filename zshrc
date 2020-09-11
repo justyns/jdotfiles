@@ -140,7 +140,7 @@ export PIPENV_VENV_IN_PROJECT=1
 
 # for gcloud
 CLOUD_SDK_HOME=/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk
-#source "${CLOUD_SDK_HOME}/path.zsh.inc"
+[[ -d ${CLOUD_SDK_HOME} ]] && source "${CLOUD_SDK_HOME}/path.zsh.inc"
 [[ -d ${CLOUD_SDK_HOME} ]] && source "${CLOUD_SDK_HOME}/completion.zsh.inc"
 
 [[ -x $(which jira) ]] && eval "$(jira --completion-script-zsh)"
@@ -151,3 +151,7 @@ export TF_PLUGIN_CACHE_DIR="$HOME/.terraform.d/plugin-cache"
 # Shortcuts to move by word with alt + left/right arrow
 bindkey "^[^[[D" backward-word
 bindkey "^[^[[C" forward-word
+
+# See https://github.com/ohmyzsh/ohmyzsh/blob/master/lib/history.zsh for what oh-my-zsh sets automatically
+export HISTFILESIZE=10000000
+export HISTSIZE=10000000
