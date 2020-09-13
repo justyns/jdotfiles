@@ -59,5 +59,8 @@
 (package! helm-org-rifle)
 ;; (package! esup)
 
+(package! beancount
+  :recipe (:local-repo "ext/beancount"))
+
 ;; (package! kubel)
 ;; (package! kubel-evil)
