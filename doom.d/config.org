@@ -15,6 +15,7 @@
 - [[#packages][Packages]]
   - [[#powerthesaurus][Powerthesaurus]]
   - [[#string-inflection][string-inflection]]
+  - [[#beancount][beancount]]
 - [[#local-config][Local config]]
 - [[#org-mode][Org Mode]]
   - [[#general][General]]
@@ -478,6 +479,19 @@ emacs_lisp => EMACS_LISP => EmacsLisp => emacsLisp => emacs-lisp => Emacs_Lisp =
 (map! :leader
       (:prefix ("a" . "applications")
                :desc "Cycle through string case using String-inflection" "c" #'string-inflection-all-cycle))
+#+END_SRC
+** beancount
+
+#+BEGIN_SRC emacs-lisp :tangle packages.el
+(package! beancount
+  :recipe (:local-repo "ext/beancount"))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(use-package! beancount
+  :mode ("\\.beancount\\'" . beancount-mode)
+  :defer t
+  :init)
 #+END_SRC
 * Local config
 
