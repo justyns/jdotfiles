@@ -10,6 +10,8 @@ export ZSH="$HOME/.oh-my-zsh"
 # ZSH_THEME="robbyrussell"
 # switched to spaceship on 02/11/2019
 ZSH_THEME="spaceship"
+# autoload -U promptinit; promptinit
+# prompt spaceship
 # vv this one looks like my fish prompt
 # ZSH_THEME="bira"
 
@@ -78,9 +80,10 @@ plugins=(
   terraform
   virtualenvwrapper
   kubectl
-  kube-ps1
+  # kube-ps1
   # rvm
   z
+  zsh-syntax-highlighting
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -145,6 +148,9 @@ CLOUD_SDK_HOME=/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk
 
 [[ -x $(which jira) ]] && eval "$(jira --completion-script-zsh)"
 
+# Completion for stern
+[[ -x $(which stern) ]] && source <(stern --completion=zsh)
+
 # Cache terraform provider/plugin binaries
 export TF_PLUGIN_CACHE_DIR="$HOME/.terraform.d/plugin-cache"
 
@@ -155,3 +161,6 @@ bindkey "^[^[[C" forward-word
 # See https://github.com/ohmyzsh/ohmyzsh/blob/master/lib/history.zsh for what oh-my-zsh sets automatically
 export HISTFILESIZE=10000000
 export HISTSIZE=10000000
+
+# Show kubectl context in spaceship prompt
+[[ -x $(which kubectl) ]] && export SPACESHIP_KUBECTL_SHOW=true
