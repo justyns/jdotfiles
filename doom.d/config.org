@@ -48,6 +48,7 @@
 - [[#editing][Editing]]
   - [[#tabs-vs-spaces][Tabs vs Spaces]]
   - [[#refresh-buffer-on-external-file-changes][Refresh buffer on external file changes]]
+  - [[#unicode-elipsis][Unicode elipsis]]
 - [[#version-control][Version Control]]
   - [[#magit][magit]]
   - [[#treemacs-magit][treemacs-magit]]
@@ -57,6 +58,8 @@
 - [[#tags][Tags]]
 - [[#evil-snipe][evil-snipe]]
 - [[#backups-and-history][Backups and history]]
+  - [[#backups-and-auto-save][Backups and auto-save]]
+  - [[#history][History]]
 - [[#hydra-paste][Hydra Paste]]
 - [[#avy][Avy]]
 - [[#pdf-viewing-and-editing][PDF Viewing and Editing]]
@@ -1341,7 +1344,13 @@ From https://gitlab.com/justinekizhak/dotfiles/blob/master/emacs/doom.d/config.o
         auto-revert-check-vc-info t
         auto-revert-verbose nil))
 #+END_SRC
+** Unicode elipsis
 
+From https://tecosaur.github.io/emacs-config/config.html
+
+#+BEGIN_SRC emacs-lisp
+(setq truncate-string-ellipsis "…")
+#+END_SRC
 * Version Control
 ** magit
 
@@ -1426,14 +1435,22 @@ I have a custom configuration for ctags stored in [[file:~/.ctags][~/.ctags]] th
 #+END_SRC
 * Backups and history
 
-#+BEGIN_SRC emacs-lisp
-;; Save backups in one place
-(setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
+** Backups and auto-save
 
-;; TODO: I'm not sure if I need this anymore?  It was originally because of Nextcloud having issues with my .org files
-;; Disable lock files
-;; (setq create-lockfiles nil)
+Doom disables auto-save and backups by default, but doom/emacs has crashed enough times on me that I would rather have it on.  I can turn off backups for sensitive/encrypted gpg files separately.  I do not, however, need or want lock files for every file as they cause issues with Nextcloud.
+
+Even though Doom disables backups, it does still configure [[help:backup-directory-alist][backup-directory-alist]] and other variables.
+
+- TODO: I might want to change the backup location so that directories don't get cluttered if they go to the cwd.
+
+#+BEGIN_SRC emacs-lisp
+(setq
+ auto-save-default t
+ make-backup-files t
+ create-lockfiles nil
+ )
 #+END_SRC
+** History
 
 I was running into issues with Emacs using up 100% of my cpu for a while when it was basically idle.  One of the issues ended up being that there was no history limit, or it was really long.
 

@@ -198,6 +198,8 @@
 (setq evil-split-window-below t
       evil-vsplit-window-right t)
 
+(setq truncate-string-ellipsis "…")
+
 (after! magit
   :config
   ;; Set the directory where magit looks for repos in
@@ -240,12 +242,11 @@
   (setq evil-snipe-repeat-scope 'buffer)
   (setq evil-snipe-spillover-scope 'whole-buffer))
 
-;; Save backups in one place
-(setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
-
-;; TODO: I'm not sure if I need this anymore?  It was originally because of Nextcloud having issues with my .org files
-;; Disable lock files
-;; (setq create-lockfiles nil)
+(setq
+ auto-save-default t
+ make-backup-files t
+ create-lockfiles nil
+ )
 
 ;; Try to prevent emacs from using 100% cpu due to autosave
 ;; See https://github.com/syl20bnr/spacemacs/issues/9409
