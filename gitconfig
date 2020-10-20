@@ -42,16 +42,9 @@
     xfuncname = "^\\*+ +.*$"
 [branch]
     autosetupmerge = true
-[difftool "sourcetree"]
-    cmd = opendiff \"$LOCAL\" \"$REMOTE\"
-    path = 
-[mergetool "sourcetree"]
-    cmd = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
-    trustExitCode = true
 [gpg]
     program = gpg
 [user]
     signingkey = 6CBBDA995E2D619C
-
 [commit]
     verbose = true
