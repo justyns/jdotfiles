@@ -125,21 +125,20 @@
 (setq org-crypt-key "AA5A79D7AD584854")
 
 ;; Deft settings
+(setq deft-extensions '("org" "md" "txt"))
+(setq deft-default-extension "org")
+(setq deft-text-mode 'org-mode)
 ;; I created symlinks in ~/.deft pointing to my org notes/joplin/etc
-(setq deft-directory "~/.deft"
-      deft-extensions '("org" "md" "txt")
-      deft-recursive t
-      deft-default-extension "org"
-      deft-text-mode 'org-mode
-
-      ;; TODO: Figure out how to make this work with stuff like Joplin's markdown format
-      ;; See https://jingsi.space/post/2017/04/05/organizing-a-complex-directory-for-emacs-org-mode-and-deft/
-      deft-use-filename-as-title nil
-      deft-use-filter-string-for-filename t
-      deft-file-naming-rules '((nospace . "-")
-                               (case-fn . downcase))
-      ;; Limit the number of files Deft shows by default to speed it up
-      deft-file-limit 100)
+(setq deft-directory "~/.deft")
+(setq deft-recursive t)
+;; TODO: Figure out how to make this work with stuff like Joplin's markdown format
+;; See https://jingsi.space/post/2017/04/05/organizing-a-complex-directory-for-emacs-org-mode-and-deft/
+(setq deft-use-filename-as-title nil)
+(setq deft-use-filter-string-for-filename t)
+(setq deft-file-naming-rules '((nospace . "-")
+                               (case-fn . downcase)))
+;; Limit the number of files Deft shows by default to speed it up
+(setq deft-file-limit 100)
 
 ;; TODO: I'm not sure how to go to a specific window, so this really just goes left and right for now
 (map! :leader
@@ -198,11 +197,6 @@
 
 (setq evil-split-window-below t
       evil-vsplit-window-right t)
-
-(setq markdown-enable-wiki-links t
-      markdown-enable-math t
-      markdown-fontify-code-blocks-natively t
-      markdown-wiki-link-search-subdirectories t)
 
 (after! magit
   :config
