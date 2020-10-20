@@ -1132,7 +1132,7 @@ Deft is installed/enabled in init.el
 (setq deft-directory "~/.deft"
       deft-extensions '("org" "md" "txt")
       deft-recursive t
-      deft-default-extension "org"
+      deft-default-extension "md"
       deft-text-mode 'org-mode
 
       ;; TODO: Figure out how to make this work with stuff like Joplin's markdown format
