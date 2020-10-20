@@ -48,6 +48,7 @@
 - [[#editing][Editing]]
   - [[#tabs-vs-spaces][Tabs vs Spaces]]
   - [[#refresh-buffer-on-external-file-changes][Refresh buffer on external file changes]]
+  - [[#markdown-mode][Markdown Mode]]
 - [[#version-control][Version Control]]
   - [[#magit][magit]]
   - [[#treemacs-magit][treemacs-magit]]
@@ -90,7 +91,7 @@ Stuff I need to figure out for doom-emacs config
 - [ ] Try [[https://github.com/bastibe/annotate.el][annotate mode]] like in [[https://gitlab.com/justinekizhak/dotfiles/blob/master/emacs/doom.d/config.org][this config]]
 - [ ] Use gpg for all of my org files? (Wouldnt be able to access on android anymore though)
 - [ ] Make more of a cheatsheet/reference for common keybindings
-- [ ] Setup deft?
+- [X] Setup deft?
 - [X] Setup org-clock and my helper functions for it
 - [ ] Setup and test lsp for terraform and python
 - [ ] ctrl+enter doesn't work to add to lists in a terminal
@@ -100,8 +101,9 @@ Stuff I need to figure out for doom-emacs config
 - [X] my =~/.ctags= config isn't getting picked up
 - [ ] I think ivy is used for the minibuffer completion.  It's not as fuzzy as helm (I think?) was, so searching for files in a project is more annoying
 - [X] get lsp working for terraform
-- [ ] clocking into a task doesn't clock out of the previous task anymore, leading to duplicate time
+- [X] clocking into a task doesn't clock out of the previous task anymore, leading to duplicate time
 - [ ] How to get org-agenda to show overlapping times?
+- [ ] Show clocked-in tasks in the daily agenda?
 - [ ] yasnippet or something else to insert current timestamp into buffer (I used to expand =ts= before)
 
 * Doom-specific Config
@@ -209,7 +211,6 @@ Refer to https://github.com/hlissner/doom-emacs/blob/develop/init.example.el for
        ;;gist              ; interacting with github gists
        lookup              ; navigate your code and its documentation
        lsp
-       macos             ; MacOS-specific commands
        magit             ; a git porcelain for Emacs
        ;;make              ; run make tasks from Emacs
        ;;pass              ; password manager for nerds
@@ -223,6 +224,7 @@ Refer to https://github.com/hlissner/doom-emacs/blob/develop/init.example.el for
 
        :os
        tty                 ; improve the terminal Emacs experience
+       macos             ; MacOS-specific commands
 
        :lang
        ;;agda              ; types of types of types of types...
@@ -1126,22 +1128,22 @@ Deft is installed/enabled in init.el
 
 #+BEGIN_SRC emacs-lisp
 ;; Deft settings
-(setq deft-extensions '("org" "md" "txt"))
-(setq deft-default-extension "org")
-(setq deft-text-mode 'org-mode)
 ;; I created symlinks in ~/.deft pointing to my org notes/joplin/etc
-(setq deft-directory "~/.deft")
-(setq deft-recursive t)
-;; TODO: Figure out how to make this work with stuff like Joplin's markdown format
-;; See https://jingsi.space/post/2017/04/05/organizing-a-complex-directory-for-emacs-org-mode-and-deft/
-(setq deft-use-filename-as-title nil)
-(setq deft-use-filter-string-for-filename t)
-(setq deft-file-naming-rules '((nospace . "-")
-                               (case-fn . downcase)))
-;; Limit the number of files Deft shows by default to speed it up
-(setq deft-file-limit 100)
-#+END_SRC
+(setq deft-directory "~/.deft"
+      deft-extensions '("org" "md" "txt")
+      deft-recursive t
+      deft-default-extension "org"
+      deft-text-mode 'org-mode
 
+      ;; TODO: Figure out how to make this work with stuff like Joplin's markdown format
+      ;; See https://jingsi.space/post/2017/04/05/organizing-a-complex-directory-for-emacs-org-mode-and-deft/
+      deft-use-filename-as-title nil
+      deft-use-filter-string-for-filename t
+      deft-file-naming-rules '((nospace . "-")
+                               (case-fn . downcase))
+      ;; Limit the number of files Deft shows by default to speed it up
+      deft-file-limit 100)
+#+END_SRC
 * Keybindings
 
 Helpful tip, use =SPC ?= to see a list of all available keybindings.
@@ -1340,6 +1342,17 @@ From https://gitlab.com/justinekizhak/dotfiles/blob/master/emacs/doom.d/config.o
   (setq auto-revert-interval 2
         auto-revert-check-vc-info t
         auto-revert-verbose nil))
+#+END_SRC
+
+** Markdown Mode
+
+Enable things like wiki-style links so that I can more easily work with external editors/tools like [[https://obsidian.md/][Obsidian]].
+
+#+BEGIN_SRC emacs-lisp
+(setq markdown-enable-wiki-links t
+      markdown-enable-math t
+      markdown-fontify-code-blocks-natively t
+      markdown-wiki-link-search-subdirectories t)
 #+END_SRC
 
 * Version Control
