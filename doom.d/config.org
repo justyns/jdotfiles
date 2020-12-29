@@ -487,6 +487,8 @@ emacs_lisp => EMACS_LISP => EmacsLisp => emacsLisp => emacs-lisp => Emacs_Lisp =
 #+END_SRC
 ** beancount
 
+I use beancount to manage my plain text accounting files.  I usually use Fava instead of editing the files directly, but do occasionally have a reason to open the .beancount files too.
+
 #+BEGIN_SRC emacs-lisp :tangle packages.el
 (package! beancount
   :recipe (:local-repo "ext/beancount"))
@@ -496,6 +498,7 @@ emacs_lisp => EMACS_LISP => EmacsLisp => emacsLisp => emacs-lisp => Emacs_Lisp =
 (use-package! beancount
   :mode ("\\.beancount\\'" . beancount-mode)
   :defer t
+  :init (add-hook 'beancount-mode-hook #'outline-minor-mode)
   :init)
 #+END_SRC
 * Local config
