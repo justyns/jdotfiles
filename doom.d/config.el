@@ -70,6 +70,7 @@
 (use-package! beancount
   :mode ("\\.beancount\\'" . beancount-mode)
   :defer t
+  :init (add-hook 'beancount-mode-hook #'outline-minor-mode)
   :init)
 
 (if (file-exists-p "~/.doom.local.el")
@@ -729,8 +730,6 @@ as the default task."
            "* IN-PROGRESS %^{TicketID}: %^{Title} :work:ticket:
 :PROPERTIES:
 :ID: %\\1
-:BI_ENVIRONMENT: %^{BI_ENVIRONMENT}
-:BI_CUSTOMER: %^{BI_CUSTOMER}
 :CREATED: %T
 :END:\n%?"
            :clock-in t

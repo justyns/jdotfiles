@@ -164,3 +164,4 @@ export HISTSIZE=10000000
 
 # Show kubectl context in spaceship prompt
 [[ -x $(which kubectl) ]] && export SPACESHIP_KUBECTL_SHOW=true
+export PATH="/usr/local/opt/yq@3/bin:$PATH"

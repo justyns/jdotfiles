@@ -1082,8 +1082,6 @@ Helper function from https://github.com/bastibe/org-journal#journal-capture-temp
            "* IN-PROGRESS %^{TicketID}: %^{Title} :work:ticket:
 :PROPERTIES:
 :ID: %\\1
-:BI_ENVIRONMENT: %^{BI_ENVIRONMENT}
-:BI_CUSTOMER: %^{BI_CUSTOMER}
 :CREATED: %T
 :END:\n%?"
            :clock-in t
