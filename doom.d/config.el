@@ -86,6 +86,9 @@
   (setq org-src-fontify-natively t)
   ;; Hide code blocks by default in org-mode
   '(org-hide-block-startup t)
+
+  ;; Open .org files as folded by default
+  (setq org-startup-folded 'overview)
   )
 
 ;; If you use `org' and don't want your org files in the default location below,
@@ -194,11 +197,16 @@
 ;; When we kill emacs, save the current window size and position
 (add-hook 'kill-emacs-hook #'save-frame-dimensions)
 
-(setq doom-theme 'doom-one)
+(setq doom-theme 'doom-vibrant)
 (load-theme doom-theme t)
 
 (setq evil-split-window-below t
       evil-vsplit-window-right t)
+
+(setq highlight-indent-guides-responsive 'stack)
+
+(add-to-list 'default-frame-alist '(inhibit-double-buffering . t))
+(setq display-line-numbers-type nil)
 
 (setq truncate-string-ellipsis "…")
 
@@ -207,10 +215,22 @@
       markdown-fontify-code-blocks-natively t
       markdown-wiki-link-search-subdirectories t)
 
+(after! lsp
+  :config
+    (lsp-register-client
+     (make-lsp-client :new-connection (lsp-stdio-connection '("/usr/local/bin/terraform-ls" "serve"))
+                      :major-modes '(terraform-mode)
+                      :server-id 'terraform-ls))
+
+    (add-hook 'terraform-mode-hook #'lsp)
+  )
+
 (after! magit
   :config
   ;; Set the directory where magit looks for repos in
-  (setq magit-repository-directories '(("~/dev/" . 4)))
+  (setq magit-repository-directories '(("~/dev/" . 4))
+        ;; Don't automatically save buffers when running magit
+        magit-save-repository-buffers nil)
   )
 (after! projectile
   :config

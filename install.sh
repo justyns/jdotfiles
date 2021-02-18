@@ -1,4 +1,4 @@
-#/bin/bash
+#!/bin/bash
 # Author:  Justyn Shull < justyn [at] justynshull.com >
 # Last Updated: 07/15/2012
 #

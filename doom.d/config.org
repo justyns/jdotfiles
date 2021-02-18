@@ -45,11 +45,14 @@
   - [[#font-and-font-sizing][Font and font sizing]]
   - [[#theme][Theme]]
   - [[#move-to-new-split-windows][Move to new split windows]]
+  - [[#indent-guides][Indent guides]]
+  - [[#fix-flickering][Fix flickering]]
 - [[#editing][Editing]]
   - [[#tabs-vs-spaces][Tabs vs Spaces]]
   - [[#refresh-buffer-on-external-file-changes][Refresh buffer on external file changes]]
   - [[#unicode-elipsis][Unicode elipsis]]
   - [[#markdown-mode][Markdown Mode]]
+  - [[#terraform][Terraform]]
 - [[#version-control][Version Control]]
   - [[#magit][magit]]
   - [[#treemacs-magit][treemacs-magit]]
@@ -153,7 +156,7 @@ Refer to https://github.com/hlissner/doom-emacs/blob/develop/init.example.el for
        ;;fill-column       ; a `fill-column' indicator
        hl-todo           ; highlight TODO/FIXME/NOTE/DEPRECATED/HACK/REVIEW
        hydra
-       ;;indent-guides     ; highlighted indent columns
+       indent-guides     ; highlighted indent columns
        ;;minimap           ; show a map of the code on the side
        modeline          ; snazzy, Atom-inspired modeline, plus API
        ;;nav-flash         ; blink cursor line after big motions
@@ -217,11 +220,11 @@ Refer to https://github.com/hlissner/doom-emacs/blob/develop/init.example.el for
        magit             ; a git porcelain for Emacs
        ;;make              ; run make tasks from Emacs
        ;;pass              ; password manager for nerds
-       pdf               ; pdf enhancements
+       ;; pdf               ; pdf enhancements
        ;;prodigy           ; FIXME managing external services & code builders
        ;;rgb               ; creating color strings
        ;;taskrunner        ; taskrunner for all your projects
-       (terraform +lsp)         ; infrastructure as code
+       terraform           ; infrastructure as code
        ;;tmux              ; an API for interacting with tmux
        ;;upload            ; map local to remote projects via ssh/ftp
 
@@ -513,7 +516,7 @@ Similar how I use =.bashrc.local=, this will load a =~/.doom.local.el= if it exi
 TODO:
 
 - [X] org-mru-clock
-- [ ] org-mru-clock - clock recent task isn't working very well?
+- [X] org-mru-clock - clock recent task isn't working very well?
 - [X] org-capture and templates
 - [ ] open org-capture in vertical split
 - [X] org-clock
@@ -540,8 +543,14 @@ General settings that I don't know how to categorize yet.
   (setq org-src-fontify-natively t)
   ;; Hide code blocks by default in org-mode
   '(org-hide-block-startup t)
+
+  ;; Open .org files as folded by default
+  (setq org-startup-folded 'overview)
   )
 #+END_SRC
+
+#+RESULTS:
+: overview
 
 ** Org Directories
 
@@ -1310,17 +1319,49 @@ Themes I like so far:
 - doom-horizon - dark, more colorful than vibrant
 - doom-tomorrow-night
 - doom-material
+- doom-dark+ - dark theme ported from VSCode
 
 #+BEGIN_SRC emacs-lisp
-(setq doom-theme 'doom-one)
+(setq doom-theme 'doom-vibrant)
 (load-theme doom-theme t)
 #+END_SRC
+
+#+RESULTS:
+: t
+
 ** Move to new split windows
 
 #+BEGIN_SRC emacs-lisp
 (setq evil-split-window-below t
       evil-vsplit-window-right t)
 #+END_SRC
+** Indent guides
+
+Saw a screenshot from https://old.reddit.com/r/emacs/comments/esgzjf/new_dark_theme_ported_from_vs_code_avaliable_now/ which included
+https://github.com/DarthFennec/highlight-indent-guides
+
+This package is installed/loaded from https://github.com/hlissner/doom-emacs/tree/develop/modules/ui/indent-guides
+
+#+begin_src emacs-lisp
+(setq highlight-indent-guides-responsive 'stack)
+#+end_src
+** Fix flickering
+
+Since I upgraded to Big Sur, emacs seems to "flicker" a lot.  This should help prevent that.
+
+Reference:
+
+- https://github.com/hlissner/doom-emacs/issues/2989
+- https://old.reddit.com/r/emacs/comments/ecctcp/how_to_debug_emacs_flickering_issue/
+- https://old.reddit.com/r/emacs/comments/jx0uog/has_anyone_else_noticed_some_flickering_on_big_sur/
+- https://old.reddit.com/r/emacs/comments/fbb4mm/how_to_debug_flickering/
+
+#+begin_src emacs-lisp
+(add-to-list 'default-frame-alist '(inhibit-double-buffering . t))
+(setq display-line-numbers-type nil)
+#+end_src
+
+
 * Editing
 ** Tabs vs Spaces
 
@@ -1365,6 +1406,21 @@ Enable things like wiki-style links so that I can more easily work with external
       markdown-fontify-code-blocks-natively t
       markdown-wiki-link-search-subdirectories t)
 #+END_SRC
+** Terraform
+
+Enables Terraform LSP support.  Install the language server following the instructions on https://github.com/hashicorp/terraform-ls/blob/main/docs/USAGE.md
+
+#+begin_src emacs-lisp
+(after! lsp
+  :config
+    (lsp-register-client
+     (make-lsp-client :new-connection (lsp-stdio-connection '("/usr/local/bin/terraform-ls" "serve"))
+                      :major-modes '(terraform-mode)
+                      :server-id 'terraform-ls))
+
+    (add-hook 'terraform-mode-hook #'lsp)
+  )
+#+end_src
 
 * Version Control
 ** magit
@@ -1375,7 +1431,9 @@ See https://emacs.stackexchange.com/questions/32634/how-can-the-list-of-projects
 (after! magit
   :config
   ;; Set the directory where magit looks for repos in
-  (setq magit-repository-directories '(("~/dev/" . 4)))
+  (setq magit-repository-directories '(("~/dev/" . 4))
+        ;; Don't automatically save buffers when running magit
+        magit-save-repository-buffers nil)
   )
 (after! projectile
   :config
