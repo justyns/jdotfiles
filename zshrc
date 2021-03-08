@@ -71,7 +71,7 @@ plugins=(
   git
   # gpg-agent
   # keychain
-  ssh-agent
+  # ssh-agent
   # aws
   docker
   fzf
@@ -165,3 +165,5 @@ export HISTSIZE=10000000
 # Show kubectl context in spaceship prompt
 [[ -x $(which kubectl) ]] && export SPACESHIP_KUBECTL_SHOW=true
 export PATH="/usr/local/opt/yq@3/bin:$PATH"
+
+export SPACESHIP_KUBECTL_SHOW=false

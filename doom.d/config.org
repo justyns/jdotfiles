@@ -17,6 +17,8 @@
   - [[#string-inflection][string-inflection]]
   - [[#beancount][beancount]]
 - [[#local-config][Local config]]
+  - [[#local-machine-overrides][Local machine overrides]]
+  - [[#customizations][Customizations]]
 - [[#org-mode][Org Mode]]
   - [[#general][General]]
   - [[#org-directories][Org Directories]]
@@ -47,7 +49,10 @@
   - [[#move-to-new-split-windows][Move to new split windows]]
   - [[#indent-guides][Indent guides]]
   - [[#fix-flickering][Fix flickering]]
+- [[#file-management][File management]]
+  - [[#send-deleted-files-to-trash][Send deleted files to trash]]
 - [[#editing][Editing]]
+  - [[#general-editing-defaults][General Editing defaults]]
   - [[#tabs-vs-spaces][Tabs vs Spaces]]
   - [[#refresh-buffer-on-external-file-changes][Refresh buffer on external file changes]]
   - [[#unicode-elipsis][Unicode elipsis]]
@@ -83,6 +88,7 @@ Found and referenced several of these while working on updating my config.
 - https://noelwelsh.com/posts/2019-01-10-doom-emacs.html
 - https://www.gtrun.org/custom/init.html
 - https://www.reddit.com/r/emacs/comments/empzmz/doom_emacs_literate_config/
+- https://tecosaur.github.io/emacs-config/config.html (really detailed and includes a lot of explanations/background)
 
 ** Doomcasts
 
@@ -110,6 +116,7 @@ Stuff I need to figure out for doom-emacs config
 - [X] clocking into a task doesn't clock out of the previous task anymore, leading to duplicate time
 - [ ] How to get org-agenda to show overlapping times?
 - [ ] Show clocked-in tasks in the daily agenda?
+- [ ] Figure out how to get logged hours to show up in the agenda by default
 - [ ] yasnippet or something else to insert current timestamp into buffer (I used to expand =ts= before)
 
 * Doom-specific Config
@@ -505,6 +512,7 @@ I use beancount to manage my plain text accounting files.  I usually use Fava in
   :init)
 #+END_SRC
 * Local config
+** Local machine overrides
 
 Similar how I use =.bashrc.local=, this will load a =~/.doom.local.el= if it exists.  I use this to set personal/private things that either change depending on the machine I'm on or that I just don't want to commit to git.
 
@@ -512,6 +520,17 @@ Similar how I use =.bashrc.local=, this will load a =~/.doom.local.el= if it exi
 (if (file-exists-p "~/.doom.local.el")
     (load-file "~/.doom.local.el"))
 #+END_SRC
+
+** Customizations
+
+Customizations made via emacs customization interface should go to a separate file instead of init.el which gets rewritten when this file is saved.
+
+#+begin_src emacs-lisp
+(setq-default custom-file (expand-file-name ".custom.el" doom-private-dir))
+(when (file-exists-p custom-file)
+  (load custom-file))
+#+end_src
+
 * Org Mode
 TODO:
 
@@ -1299,6 +1318,13 @@ This is from https://github.com/hlissner/doom-emacs/blob/develop/docs/api.org#ce
 ;; When we kill emacs, save the current window size and position
 (add-hook 'kill-emacs-hook #'save-frame-dimensions)
 #+END_SRC
+
+I found this in the "better defaults" of https://tecosaur.github.io/emacs-config/config.html#better-defaults
+
+#+begin_src emacs-lisp
+(setq window-combination-resize t)
+#+end_src
+
 ** Font and font sizing
 
 TODO: Change font depending on OS?
@@ -1361,8 +1387,17 @@ Reference:
 (setq display-line-numbers-type nil)
 #+end_src
 
-
+* File management
+** Send deleted files to trash
+#+begin_src emacs-lisp
+(setq delete-by-moving-to-trash t)
+#+end_src
 * Editing
+** General Editing defaults
+
+#+begin_src emacs-lisp
+(global-subword-mode 1)
+#+end_src
 ** Tabs vs Spaces
 
 Use spaces instead of tabs by default, and set the default indent width to 2.  The =editorconfig= package/module should allow this to be overriden per project or repository.

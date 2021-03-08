@@ -76,6 +76,10 @@
 (if (file-exists-p "~/.doom.local.el")
     (load-file "~/.doom.local.el"))
 
+(setq-default custom-file (expand-file-name ".custom.el" doom-private-dir))
+(when (file-exists-p custom-file)
+  (load custom-file))
+
 (after! org
   ;; Default Column View
   (setq org-columns-default-format "%5TODO %30ITEM(Task) %10Effort(Effort){:} %10CLOCKSUM(Clocked) %3PRIORITY(PRI) %TAGS")
@@ -197,6 +201,8 @@
 ;; When we kill emacs, save the current window size and position
 (add-hook 'kill-emacs-hook #'save-frame-dimensions)
 
+(setq window-combination-resize t)
+
 (setq doom-theme 'doom-vibrant)
 (load-theme doom-theme t)
 
@@ -207,6 +213,10 @@
 
 (add-to-list 'default-frame-alist '(inhibit-double-buffering . t))
 (setq display-line-numbers-type nil)
+
+(setq delete-by-moving-to-trash t)
+
+(global-subword-mode 1)
 
 (setq truncate-string-ellipsis "…")
 
