@@ -49,6 +49,7 @@
   - [[#move-to-new-split-windows][Move to new split windows]]
   - [[#indent-guides][Indent guides]]
   - [[#fix-flickering][Fix flickering]]
+  - [[#better-windowframe-titles][Better window/frame titles]]
 - [[#file-management][File management]]
   - [[#send-deleted-files-to-trash][Send deleted files to trash]]
 - [[#editing][Editing]]
@@ -58,6 +59,7 @@
   - [[#unicode-elipsis][Unicode elipsis]]
   - [[#markdown-mode][Markdown Mode]]
   - [[#terraform][Terraform]]
+  - [[#company-completion][Company Completion]]
 - [[#version-control][Version Control]]
   - [[#magit][magit]]
   - [[#treemacs-magit][treemacs-magit]]
@@ -262,7 +264,7 @@ Refer to https://github.com/hlissner/doom-emacs/blob/develop/init.example.el for
        ;;(haskell +dante)  ; a language that's lazier than I am
        ;;hy                ; readability of scheme w/ speed of python
        ;;idris             ;
-       json              ; At least it ain't XML
+       (json +lsp)         ; At least it ain't XML
        ;;(java +meghanada) ; the poster child for carpal tunnel syndrome
        ;;javascript        ; all(hope(abandon(ye(who(enter(here))))))
        ;;julia             ; a better, faster MATLAB
@@ -280,23 +282,23 @@ Refer to https://github.com/hlissner/doom-emacs/blob/develop/init.example.el for
        ;;php               ; perl's insecure younger brother
        ;;plantuml          ; diagrams for confusing people more
        ;;purescript        ; javascript, but functional
-       (python +lsp)            ; beautiful is better than ugly
+       (python +lsp)       ; beautiful is better than ugly
        ;;qt                ; the 'cutest' gui framework ever
        ;;racket            ; a DSL for DSLs
        ;;raku              ; the artist formerly known as perl6
        ;;rest              ; Emacs as a REST client
        ;;rst               ; ReST in peace
-       ;;(ruby +rails)     ; 1.step {|i| p "Ruby is #{i.even? ? 'love' : 'life'}"}
+       (ruby +lsp +rbenv)  ; 1.step {|i| p "Ruby is #{i.even? ? 'love' : 'life'}"}
        ;;rust              ; Fe2O3.unwrap().unwrap().unwrap().unwrap()
        ;;scala             ; java, but good
        ;;scheme            ; a fully conniving family of lisps
-       (sh +lsp)                ; she sells {ba,z,fi}sh shells on the C xor
+       (sh +lsp)           ; she sells {ba,z,fi}sh shells on the C xor
        ;;sml
        ;;solidity          ; do you need a blockchain? No.
        ;;swift             ; who asked for emoji variables?
        ;;terra             ; Earth and Moon in alignment for performance.
        ;;web               ; the tubes
-       yaml              ; JSON, but readable
+       (yaml +lsp)         ; JSON, but readable
 
        :email
        ;;(mu4e +gmail)
@@ -987,6 +989,8 @@ I'm not sure exactly why, but org-super-agenda is also extremely fast compared t
                          '((:name "Today"
                                   :time-grid t
                                   :date today
+                                  :todo "TODAY"
+                                  :scheduled today
                                   :order 1)))))
             (alltodo "" ((org-agenda-overriding-header "")
                          (org-super-agenda-groups
@@ -1386,6 +1390,28 @@ Reference:
 (add-to-list 'default-frame-alist '(inhibit-double-buffering . t))
 (setq display-line-numbers-type nil)
 #+end_src
+** Better window/frame titles
+
+Borrowed from https://tecosaur.github.io/emacs-config/config.html#window-title
+
+#+begin_src emacs-lisp
+;; TODO: This didn't work for me
+;; (setq frame-title-format
+;;       '(""
+;;         (:eval
+;;          (if (s-contains-p org-roam-directory (or buffer-file-name ""))
+;;              (replace-regexp-in-string
+;;               ".*/[0-9]*-?" "☰ "
+;;               (subst-char-in-string ?_ ?  buffer-file-name))
+;;            "%b"))
+;;         (:eval
+;;          (let ((project-name (projectile-project-name)))
+;;            (unless (string= "-" project-name)
+;;              (format (if (buffer-modified-p)  " ◉ %s" "  ●  %s") project-name))))))
+#+end_src
+
+#+RESULTS:
+|   | (:eval (if (s-contains-p org-roam-directory (or buffer-file-name )) (replace-regexp-in-string .*/[0-9]*-? ☰  (subst-char-in-string 95 32 buffer-file-name)) %b)) | (:eval (let ((project-name (projectile-project-name))) (unless (string= - project-name) (format (if (buffer-modified-p)  ◉ %s   ●  %s) project-name)))) |
 
 * File management
 ** Send deleted files to trash
@@ -1441,6 +1467,18 @@ Enable things like wiki-style links so that I can more easily work with external
       markdown-fontify-code-blocks-natively t
       markdown-wiki-link-search-subdirectories t)
 #+END_SRC
+
+Enable ox-gfm as well
+
+#+begin_src emacs-lisp :tangle packages.el
+(package! ox-gfm)
+#+end_src
+
+#+begin_src emacs-lisp
+(use-package! ox-gfm
+  :after org)
+#+end_src
+
 ** Terraform
 
 Enables Terraform LSP support.  Install the language server following the instructions on https://github.com/hashicorp/terraform-ls/blob/main/docs/USAGE.md
@@ -1455,6 +1493,15 @@ Enables Terraform LSP support.  Install the language server following the instru
 
     (add-hook 'terraform-mode-hook #'lsp)
   )
+#+end_src
+** Company Completion
+
+#+begin_src emacs-lisp
+(after! company
+  (setq company-idle-delay 0.5
+        company-minimum-prefix-length 2)
+  (setq company-show-numbers t)
+  (add-hook 'evil-normal-state-entry-hook #'company-abort)) ;; make aborting less annoying.
 #+end_src
 
 * Version Control

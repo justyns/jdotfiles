@@ -214,6 +214,20 @@
 (add-to-list 'default-frame-alist '(inhibit-double-buffering . t))
 (setq display-line-numbers-type nil)
 
+;; TODO: This didn't work for me
+;; (setq frame-title-format
+;;       '(""
+;;         (:eval
+;;          (if (s-contains-p org-roam-directory (or buffer-file-name ""))
+;;              (replace-regexp-in-string
+;;               ".*/[0-9]*-?" "☰ "
+;;               (subst-char-in-string ?_ ?  buffer-file-name))
+;;            "%b"))
+;;         (:eval
+;;          (let ((project-name (projectile-project-name)))
+;;            (unless (string= "-" project-name)
+;;              (format (if (buffer-modified-p)  " ◉ %s" "  ●  %s") project-name))))))
+
 (setq delete-by-moving-to-trash t)
 
 (global-subword-mode 1)
@@ -225,6 +239,9 @@
       markdown-fontify-code-blocks-natively t
       markdown-wiki-link-search-subdirectories t)
 
+(use-package! ox-gfm
+  :after org)
+
 (after! lsp
   :config
     (lsp-register-client
@@ -234,6 +251,12 @@
 
     (add-hook 'terraform-mode-hook #'lsp)
   )
+
+(after! company
+  (setq company-idle-delay 0.5
+        company-minimum-prefix-length 2)
+  (setq company-show-numbers t)
+  (add-hook 'evil-normal-state-entry-hook #'company-abort)) ;; make aborting less annoying.
 
 (after! magit
   :config
@@ -694,6 +717,8 @@ as the default task."
                          '((:name "Today"
                                   :time-grid t
                                   :date today
+                                  :todo "TODAY"
+                                  :scheduled today
                                   :order 1)))))
             (alltodo "" ((org-agenda-overriding-header "")
                          (org-super-agenda-groups
