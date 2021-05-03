@@ -62,5 +62,7 @@
 (package! beancount
   :recipe (:local-repo "ext/beancount"))
 
+(package! ox-gfm)
+
 ;; (package! kubel)
 ;; (package! kubel-evil)
