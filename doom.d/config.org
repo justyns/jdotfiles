@@ -369,6 +369,7 @@ This is what came in config.el when it first got generated.  I've moved some of 
 ;;
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
+
 #+END_SRC
 ** Default packages.el
 
@@ -1497,6 +1498,7 @@ This seems to only search one folder deep, so if you use a path of =~/dev= it de
 
 - [X] TODO: Can I use wildcards somehow?
 - [ ] TODO: Discover projects in ~/dev/*/*/* (2 or 3 levels nested)
+- [ ] TODO: my .gitignore isn't being honored anymore
 
 #+BEGIN_SRC emacs-lisp
 ;; (setq projectile-project-search-path '("~/dev/" "~/dev/clients/"))
@@ -1504,6 +1506,13 @@ This seems to only search one folder deep, so if you use a path of =~/dev= it de
 ;; TODO: This still isn't recursive more than one level
 (setq projectile-project-search-path (cddr (directory-files "~/dev" t)))
 #+END_SRC
+
+Projectile's indexing should be set to 'alien' by default, but hybrid still allows projectile to do some post-processing of the list of files returned inside of emacs.
+
+#+begin_src emacs-lisp
+(setq projectile-indexing-mode 'hybrid)
+#+end_src
+
 * SSH and GPG Agent
 
 Attempt to source the env vars from keychain.

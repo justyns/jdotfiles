@@ -239,3 +239,4 @@ tags**
 # Terraform
 plan.out
 .terraform/*
+!.data_modules

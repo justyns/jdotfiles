@@ -261,6 +261,8 @@
 ;; TODO: This still isn't recursive more than one level
 (setq projectile-project-search-path (cddr (directory-files "~/dev" t)))
 
+(setq projectile-indexing-mode 'hybrid)
+
 ;; Use /sshx because /ssh doesn't seem to work on bsd, and some of my
 ;; remote shells don't use sh/bash.  ssh/sshx should also be faster than scp
 (setq tramp-default-method "sshx")
