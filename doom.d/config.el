@@ -132,6 +132,9 @@
 
 (setq org-crypt-key "AA5A79D7AD584854")
 
+(use-package! ox-jira
+  :after org)
+
 ;; Deft settings
 ;; I created symlinks in ~/.deft pointing to my org notes/joplin/etc
 (setq deft-directory "~/.deft"
@@ -838,14 +841,15 @@ as the default task."
 (setq indent-tabs-mode nil
       tab-width 2)
 
-(use-package! autorevert
-  :defer t
-  :ensure nil
-  :config
-  (global-auto-revert-mode +1)
-  (setq auto-revert-interval 2
-        auto-revert-check-vc-info t
-        auto-revert-verbose nil))
+;; Currently disabled because this is now built into the core of doom emacs, and it does it better (lazily)
+;; (use-package! autorevert
+;;   :defer t
+;;   :ensure nil
+;;   :config
+;;   (global-auto-revert-mode +1)
+;;   (setq auto-revert-interval 2
+;;         auto-revert-check-vc-info t
+;;         auto-revert-verbose nil))
 
 ;; Source ssh-agent from keychain
 (keychain-refresh-environment)

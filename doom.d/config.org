@@ -34,6 +34,7 @@
   - [[#org-journal][org-journal]]
   - [[#org-capture-templates][Org Capture Templates]]
   - [[#org-crypt][org-crypt]]
+  - [[#org-jira-export][org-jira-export]]
 - [[#deft][Deft]]
 - [[#keybindings][Keybindings]]
   - [[#useful-keybinding-reminders][Useful keybinding reminders]]
@@ -55,7 +56,7 @@
 - [[#editing][Editing]]
   - [[#general-editing-defaults][General Editing defaults]]
   - [[#tabs-vs-spaces][Tabs vs Spaces]]
-  - [[#refresh-buffer-on-external-file-changes][Refresh buffer on external file changes]]
+  - [[#refresh-buffer-on-external-file-changes-disabled][Refresh buffer on external file changes (Disabled)]]
   - [[#unicode-elipsis][Unicode elipsis]]
   - [[#markdown-mode][Markdown Mode]]
   - [[#terraform][Terraform]]
@@ -1159,6 +1160,20 @@ Helper function from https://github.com/bastibe/org-journal#journal-capture-temp
 #+BEGIN_SRC emacs-lisp
 (setq org-crypt-key "AA5A79D7AD584854")
 #+END_SRC
+** org-jira-export
+
+Export org into Jira markup.  Should also work w/ Confluence?
+
+
+#+begin_src emacs-lisp :tangle packages.el
+(package! ox-jira)
+#+end_src
+
+#+begin_src emacs-lisp
+(use-package! ox-jira
+  :after org)
+#+end_src
+
 * Deft
 
 Deft is installed/enabled in init.el
@@ -1436,19 +1451,20 @@ Use spaces instead of tabs by default, and set the default indent width to 2.  T
 (setq indent-tabs-mode nil
       tab-width 2)
 #+END_SRC
-** Refresh buffer on external file changes
+** Refresh buffer on external file changes (Disabled)
 
 From https://gitlab.com/justinekizhak/dotfiles/blob/master/emacs/doom.d/config.org - automatically refresh the buffer if a file is changed outside of emacs.
 
 #+BEGIN_SRC elisp
-(use-package! autorevert
-  :defer t
-  :ensure nil
-  :config
-  (global-auto-revert-mode +1)
-  (setq auto-revert-interval 2
-        auto-revert-check-vc-info t
-        auto-revert-verbose nil))
+;; Currently disabled because this is now built into the core of doom emacs, and it does it better (lazily)
+;; (use-package! autorevert
+;;   :defer t
+;;   :ensure nil
+;;   :config
+;;   (global-auto-revert-mode +1)
+;;   (setq auto-revert-interval 2
+;;         auto-revert-check-vc-info t
+;;         auto-revert-verbose nil))
 #+END_SRC
 ** Unicode elipsis
 
