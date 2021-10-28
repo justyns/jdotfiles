@@ -1,3 +1,4 @@
+zmodload zsh/zprof
 # If you come from bash you might have to change your $PATH.
 export PATH=$HOME/bin:/usr/local/bin:$PATH
 
@@ -69,6 +70,7 @@ ZSH_THEME="spaceship"
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
   git
+  evalcache
   # gpg-agent
   # keychain
   # ssh-agent
@@ -139,14 +141,14 @@ export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
 export PIPENV_VENV_IN_PROJECT=1
 
 # Use pyenv for multiple python versions
-[[ -x $(which pyenv) ]] && eval "$(pyenv init -)"
+[[ -x $(which pyenv) ]] && _evalcache pyenv init -
 
 # for gcloud
 CLOUD_SDK_HOME=/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk
 [[ -d ${CLOUD_SDK_HOME} ]] && source "${CLOUD_SDK_HOME}/path.zsh.inc"
 [[ -d ${CLOUD_SDK_HOME} ]] && source "${CLOUD_SDK_HOME}/completion.zsh.inc"
 
-[[ -x $(which jira) ]] && eval "$(jira --completion-script-zsh)"
+[[ -x $(which jira) ]] && _evalcache jira --completion-script-zsh
 
 # Completion for stern
 [[ -x $(which stern) ]] && source <(stern --completion=zsh)
@@ -165,5 +167,15 @@ export HISTSIZE=10000000
 # Show kubectl context in spaceship prompt
 [[ -x $(which kubectl) ]] && export SPACESHIP_KUBECTL_SHOW=true
 export PATH="/usr/local/opt/yq@3/bin:$PATH"
+export PATH="/usr/local/sbin:$PATH"
 
 export SPACESHIP_KUBECTL_SHOW=false
+
+# See https://medium.com/@dannysmith/little-thing-2-speeding-up-zsh-f1860390f92 - only regenerates completion once per day
+autoload -Uz compinit
+for dump in ~/.zcompdump(N.mh+24); do
+  compinit
+done
+compinit -C
+
+zprof
