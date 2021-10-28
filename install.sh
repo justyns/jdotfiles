@@ -105,14 +105,23 @@ vim +PlugInstall +qall
 # Install oh-my-zsh and extra plugins/themes
 echo "Installing oh-my-zsh and plugins"
 # [[ ! -d $HOME/.oh-my-zsh ]] && git clone --depth=1 https://github.com/robbyrussell/oh-my-zsh.git $HOME/.oh-my-zsh
-[[ -d $HOME/.oh-my-zsh/custom/themes ]] && [[ ! -d $HOME/.oh-my-zsh/custom/themes/spaceship-prompt ]] \
-    && git clone --depth=1 https://github.com/denysdovhan/spaceship-prompt.git $HOME/.oh-my-zsh/custom/themes/spaceship-prompt \
-    && ln -sv $HOME/.oh-my-zsh/custom/themes/spaceship-prompt/spaceship.zsh-theme $HOME/.oh-my-zsh/custom/themes/spaceship.zsh-theme
-# Install powerline10k
-git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
+if [[ -d $HOME/.oh-my-zsh ]]; then
+    [[ ! -d ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom} ]] && mkdir -pv ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/{themes,plugins}
 
-[[ -d $HOME/.oh-my-zsh/custom/plugins ]] & [[ ! -d $HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting ]] && git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
-[[ ! -d $HOME/.oh-my-zsh ]] && echo -e "Run this to install oh-my-zsh: \n  sh -c '\$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)'"
+    # Install spaceship
+    [[ ! -d $HOME/.oh-my-zsh/custom/themes/spaceship-prompt ]] \
+        && git clone --depth=1 https://github.com/denysdovhan/spaceship-prompt.git $HOME/.oh-my-zsh/custom/themes/spaceship-prompt \
+        && ln -sv $HOME/.oh-my-zsh/custom/themes/spaceship-prompt/spaceship.zsh-theme $HOME/.oh-my-zsh/custom/themes/spaceship.zsh-theme
+
+    # Install powerline10k
+    [[ ! -d ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k ]] && git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
+
+    [[ ! -d $HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting ]] && git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+
+    [[ ! -d ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/evalcache ]] && git clone https://github.com/mroth/evalcache ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/evalcache
+else
+    echo -e "Run this to install oh-my-zsh: \n  sh -c '\$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)'"
+fi
 
 if [[ ! -f ~/.gitconfig.local ]]; then
     echo -e "${RedF}~/.gitconfig.local${reset}: Doesn't exist.  You should create it with something like: \n[user]\n\tname = Justyn Shull\n\temail = git@justyn.io\n";

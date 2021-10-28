@@ -5,7 +5,7 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-zmodload zsh/zprof
+# zmodload zsh/zprof
 # If you come from bash you might have to change your $PATH.
 export PATH=$HOME/bin:/usr/local/bin:$PATH
 
@@ -145,6 +145,8 @@ export KUBE_PS1_SYMBOL_USE_IMG=true
 #
 # TODO: Move this
 export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+export PATH="/usr/local/opt/yq@3/bin:$PATH"
+export PATH="/usr/local/sbin:$PATH"
 
 # Store pipenv virtualenvs in the project directory, helps with emacs autocompletion
 export PIPENV_VENV_IN_PROJECT=1
@@ -173,12 +175,18 @@ bindkey "^[^[[C" forward-word
 export HISTFILESIZE=10000000
 export HISTSIZE=10000000
 
-# Show kubectl context in spaceship prompt
-[[ -x $(which kubectl) ]] && export SPACESHIP_KUBECTL_SHOW=true
-export PATH="/usr/local/opt/yq@3/bin:$PATH"
-export PATH="/usr/local/sbin:$PATH"
+# See https://unix.stackexchange.com/questions/273861/unlimited-history-in-zsh
+# setopt INC_APPEND_HISTORY        # Write to the history file immediately, not when the shell exits.
+# setopt SHARE_HISTORY             # Share history between all sessions.
+setopt HIST_EXPIRE_DUPS_FIRST    # Expire duplicate entries first when trimming history.
+setopt HIST_IGNORE_DUPS          # Don't record an entry that was just recorded again.
+setopt HIST_IGNORE_SPACE         # Don't record an entry starting with a space.
+setopt HIST_REDUCE_BLANKS        # Remove superfluous blanks before recording entry.
+setopt EXTENDED_HISTORY
 
-export SPACESHIP_KUBECTL_SHOW=false
+# Show kubectl context in spaceship prompt
+# [[ -x $(which kubectl) ]] && export SPACESHIP_KUBECTL_SHOW=true
+# export SPACESHIP_KUBECTL_SHOW=false
 
 # See https://medium.com/@dannysmith/little-thing-2-speeding-up-zsh-f1860390f92 - only regenerates completion once per day
 autoload -Uz compinit
@@ -187,7 +195,7 @@ for dump in ~/.zcompdump(N.mh+24); do
 done
 compinit -C
 
-zprof
+# zprof
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
