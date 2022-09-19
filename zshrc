@@ -133,20 +133,15 @@ for file in $HOME/.bash/auto.d/*; do
     [ -x $file ] && . $file
 done
 
-# Source .bashrc.local if it exists(Can be used to override settings on a per-machine basis)
+# Source .bashrc.local if it exists (Can be used to override settings on a per-machine basis)
 [[ -f $HOME/.bashrc.local ]] && source $HOME/.bashrc.local
 
-# Source .zshrc.local if it exists(Can be used to override settings on a per-machine basis)
+# Source .zshrc.local if it exists (Can be used to override settings on a per-machine basis)
 [[ -f $HOME/.zshrc.local ]] && source $HOME/.zshrc.local
 
 # kube-ps1 prompt
 export KUBE_PS1_SYMBOL_USE_IMG=true
 # export PROMPT='$(kube_ps1)'$PROMPT
-#
-# TODO: Move this
-export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
-export PATH="/usr/local/opt/yq@3/bin:$PATH"
-export PATH="/usr/local/sbin:$PATH"
 
 # Store pipenv virtualenvs in the project directory, helps with emacs autocompletion
 export PIPENV_VENV_IN_PROJECT=1
@@ -199,3 +194,5 @@ compinit -C
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
