@@ -1,12 +1,62 @@
 #!env bash
 # Author:  Justyn Shull < justyn [at] justynshull.com >
-# Last Updated: 07/15/2012
 #
 # Script to link my dot files and configs to where they belong
 . bash/colors
 
+create_symlinks() {
+    local source_dir="$1"
+    local target_dir="$2" 
+    local ignore_patterns="$3"
+    local display_prefix="$4"
+    local add_dot_prefix="$5"
+    
+    cd "$source_dir"
+    mkdir -pv "$target_dir"
+    
+    for file in *; do
+        if [[ "$ignore_patterns" =~ "$file" ]] || [[ "$file" == *.md ]]; then
+            continue
+        fi
+        
+        local target_file="$target_dir/$file"
+        if [[ "$add_dot_prefix" == "true" ]]; then
+            target_file="$target_dir/.$file"
+        fi
+        local expected_target="$source_dir/$file"
+        
+        if [ -f "$target_file" ] && [ ! -L "$target_file" ]; then
+            echo -e "${RedF}${display_prefix}$file${reset}: Exists but not a symlink. You should backup and delete(or move) it."
+            continue
+        fi
+        
+        if [ -h "$target_file" ]; then
+            local current_target=$(readlink "$target_file")
+            if [ "$current_target" = "$expected_target" ] && [ -e "$target_file" ]; then
+                echo -e "${GreenF}${display_prefix}$file${reset}: symlink exists and is correct"
+            else
+                if [ ! -e "$target_file" ]; then
+                    echo -e "${RedF}${display_prefix}$file${reset}: symlink is broken (target doesn't exist). Removing and recreating."
+                else
+                    echo -e "${YellowF}${display_prefix}$file${reset}: symlink points to wrong location ($current_target vs $expected_target). Removing and recreating."
+                fi
+                rm "$target_file"
+                echo -e "${YellowF}${display_prefix}$file${reset}: Linking to ${BoldOn}$target_file${reset}"
+                ln -s "$expected_target" "$target_file"
+            fi
+        else
+            if [ -d "$target_file" ]; then
+                echo -e "${RedF}${display_prefix}$file${reset}: is a directory. You should backup and delete(or move) it."
+            else
+                echo -e "${YellowF}${display_prefix}$file${reset}: Linking to ${BoldOn}$target_file${reset}"
+                ln -s "$expected_target" "$target_file"
+            fi
+        fi
+    done
+}
+
 #Check and see if these commands exist on the system
-reqcommands="vim git python ruby screen tmux mutt pyflakes hg ack ag ctags flake8 go zsh bat editorconfig"
+reqcommands="vim nvim git python tmux ack ag ctags zsh bat editorconfig mise uv"
 for com in $reqcommands;
 do
 	hash ${com} 2>&- || echo -e >&2 "${RedF}${com}${reset}: not installed"
@@ -14,129 +64,11 @@ done
 
 
 dotdir=$(pwd)
-ignore="README.md .git install.sh bin update.sh misc .config tags"
-for file in *; 
-do
-    if [[ "$ignore" =~ "$file" ]] || [[ "$file" == *.md ]]; then
-        # ignore file
-        echo -n
-    else
-        if [ -f $HOME/.$file ] && [ ! -L $HOME/.$file ]; then
-            echo -e "${RedF}$file${reset}: Exists but not a symlink. You should backup and delete(or move) it."
-            continue
-        fi
-        if [ -h $HOME/.$file ]; then
-            # Check if symlink target exists and points to correct location
-            current_target=$(readlink "$HOME/.$file")
-            expected_target="$dotdir/$file"
-            if [ "$current_target" = "$expected_target" ] && [ -e "$HOME/.$file" ]; then
-                echo -e "${GreenF}.$file${reset}: symlink exists and is correct"
-            else
-                if [ ! -e "$HOME/.$file" ]; then
-                    echo -e "${RedF}.$file${reset}: symlink is broken (target doesn't exist). Removing and recreating."
-                else
-                    echo -e "${YellowF}.$file${reset}: symlink points to wrong location ($current_target vs $expected_target). Removing and recreating."
-                fi
-                rm "$HOME/.$file"
-                echo -e "${YellowF}$file${reset}: Linking to ${BoldOn}$HOME/.$file${reset}"
-                ln -s "$dotdir/$file" "$HOME/.$file"
-            fi
-        else
-	    if [ -d $HOME/.$file ]; then
-		    echo -e "${RedF}.$file${reset}: is a directory. You should backup and delete(or move) it."
-	    else
-            	    echo -e "${YellowF}$file${reset}: Linking to ${BoldOn}$HOME/.$file${reset}"
-                    ln -s $dotdir/$file $HOME/.$file
-	    fi
-        fi
-    fi
-done
 
-#Link files in the ~bin directory
-#TODO: make a function instead of copying/pasting the code above :)
-
-ignore="README.md .git install.sh bin"
-cd ${dotdir}/bin
-mkdir -pv ${HOME}/bin
-for file in *;
-do
-    if [[ "$ignore" =~ "$file" ]]; then
-        # ignore file
-        echo -n
-    else
-        if [ -f $HOME/bin/$file ] && [ ! -L $HOME/bin/$file ]; then
-            echo -e "${RedF}$file${reset}: Exists but not a symlink. You should backup and delete(or move) it."
-            continue
-        fi
-        if [ -h $HOME/bin/$file ]; then
-            # Check if symlink target exists and points to correct location
-            current_target=$(readlink "$HOME/bin/$file")
-            expected_target="$dotdir/bin/$file"
-            if [ "$current_target" = "$expected_target" ] && [ -e "$HOME/bin/$file" ]; then
-                echo -e "${GreenF}bin/$file${reset}: symlink exists and is correct"
-            else
-                if [ ! -e "$HOME/bin/$file" ]; then
-                    echo -e "${RedF}bin/$file${reset}: symlink is broken (target doesn't exist). Removing and recreating."
-                else
-                    echo -e "${YellowF}bin/$file${reset}: symlink points to wrong location ($current_target vs $expected_target). Removing and recreating."
-                fi
-                rm "$HOME/bin/$file"
-                echo -e "${YellowF}bin/$file${reset}: Linking to ${BoldOn}$HOME/bin/$file${reset}"
-                ln -s "$dotdir/bin/$file" "$HOME/bin/$file"
-            fi
-        else
-            if [ -d $HOME/bin/$file ]; then
-                    echo -e "${RedF}bin/$file${reset}: is a directory. You should backup and delete(or move) it."
-            else
-                    echo -e "${YellowF}bin/$file${reset}: Linking to ${BoldOn}$HOME/bin/$file${reset}"
-                    ln -s $dotdir/bin/$file $HOME/bin/$file
-            fi
-        fi
-    fi
-done
-
-# Do the same for the config dir
-# TODO: This should all really be moved into functions
+create_symlinks "$dotdir" "$HOME" ".git install.sh bin update.sh misc .config tags" "." "true"
 # TODO: Migrate to ~/.local/bin ?
-ignore="README.md .gitkeep"
-cd ${dotdir}/config
-mkdir -pv ${HOME}/.config
-for file in *;
-do
-    if [[ "$ignore" =~ "$file" ]]; then
-        # ignore file
-        echo -n
-    else
-        if [ -f $HOME/.config/$file ] && [ ! -L $HOME/.config/$file ]; then
-            echo -e "${RedF}$file${reset}: Exists but not a symlink. You should backup and delete(or move) it."
-            continue
-        fi
-        if [ -h $HOME/.config/$file ]; then
-            # Check if symlink target exists and points to correct location
-            current_target=$(readlink "$HOME/.config/$file")
-            expected_target="$dotdir/config/$file"
-            if [ "$current_target" = "$expected_target" ] && [ -e "$HOME/.config/$file" ]; then
-                echo -e "${GreenF}.config/$file${reset}: symlink exists and is correct"
-            else
-                if [ ! -e "$HOME/.config/$file" ]; then
-                    echo -e "${RedF}.config/$file${reset}: symlink is broken (target doesn't exist). Removing and recreating."
-                else
-                    echo -e "${YellowF}.config/$file${reset}: symlink points to wrong location ($current_target vs $expected_target). Removing and recreating."
-                fi
-                rm "$HOME/.config/$file"
-                echo -e "${YellowF}.config/$file${reset}: Linking to ${BoldOn}$HOME/.config/$file${reset}"
-                ln -s "$dotdir/config/$file" "$HOME/.config/$file"
-            fi
-        else
-            if [ -d $HOME/.config/$file ]; then
-                    echo -e "${RedF}.config/$file${reset}: is a directory. You should backup and delete(or move) it."
-            else
-                    echo -e "${YellowF}.config/$file${reset}: Linking to ${BoldOn}$HOME/config/$file${reset}"
-                    ln -s $dotdir/config/$file $HOME/.config/$file
-            fi
-        fi
-    fi
-done
+create_symlinks "$dotdir/bin" "$HOME/bin" ".git install.sh bin" "bin/" "false"
+create_symlinks "$dotdir/config" "$HOME/.config" ".gitkeep" ".config/" "false"
 
 #echo "Installing youcompleteme for vim"
 #cd ~/.vim/bundle/YouCompleteMe
