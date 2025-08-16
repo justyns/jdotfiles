@@ -3,8 +3,9 @@
 [core]
     attributesfile = ~/.gitattributes
     autocrlf = input
-    editor = vim
+    editor = nvim
     excludesfile = ~/.gitignore_global
+    hooksPath = ~/.git-hooks
 [color]
     pager = true
     ui = auto
