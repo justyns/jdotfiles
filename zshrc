@@ -231,8 +231,9 @@ CLOUD_SDK_HOME=/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk
 export TF_PLUGIN_CACHE_DIR="$HOME/.terraform.d/plugin-cache"
 
 # Shortcuts to move by word with alt + left/right arrow
-bindkey "^[^[[D" backward-word
-bindkey "^[^[[C" forward-word
+# Works with most modern terminals including iTerm2 on macOS, and ghostty/konsole on linux
+bindkey "^[[1;3D" backward-word
+bindkey "^[[1;3C" forward-word
 
 # Bind Ctrl+R to atuin-fzf history search
 bindkey '^R' atuin-fzf-history
