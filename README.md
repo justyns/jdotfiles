@@ -34,10 +34,19 @@ UI Themes and customizations
 
 Terminals
 ---------
-Download the iterm2 solarized colors here: https://github.com/altercation/solarized/tree/master/iterm2-colors-solarized
 
-Download the iterm2 monokai theme here: https://github.com/mbadolato/iTerm2-Color-Schemes#dimmedmonokai
-(or monokai soda)
+Iterm 2
+-------
+
+Download catppuccin theme here (I usually use Frappé): https://github.com/catppuccin/iterm
+
+Iterm configuration:
+- CMD+O to open profiles, edit profiles, edit default
+- go to colors, color presets -> import 
+- go to keys, change Left option key to "Esc+" and check "Apps can change this"
+- Right option key leave on "Normal"
+- go to Terminal, change scrollback history to something like 50,000, set terminal type to xterm-256color
+- go to Text, change font to Hack Nerd Font Mono / Regular / 14pt
 
 Editors
 -------
@@ -49,9 +58,7 @@ Vim: [space-vim-dark](https://github.com/liuchengxu/space-vim-dark)
 Shells
 ------
 
-Fish theme(matches monokai): https://github.com/hasanozgan/theme-lambda
-
-ZSH theme: [spaceship](https://github.com/denysdovhan/spaceship-prompt)
+ZSH theme: [powerlevel10k](https://github.com/romkatv/powerlevel10k)
 
 Fonts
 -----
