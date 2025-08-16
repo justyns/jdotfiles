@@ -49,7 +49,75 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # DISABLE_LS_COLORS="true"
 
 # Uncomment the following line to disable auto-setting terminal title.
-# DISABLE_AUTO_TITLE="true"
+DISABLE_AUTO_TITLE="true"
+
+# SSH function that auto-names tmux window
+ssh() {
+    if [[ -n "$TMUX" ]]; then
+        # Extract hostname from ssh arguments (basic parsing)
+        local host=$(echo "$@" | sed 's/.*@//; s/ .*//')
+        tmux rename-window "ssh:$host"
+        command ssh "$@"
+        tmux set-window-option automatic-rename on
+    else
+        command ssh "$@"
+    fi
+}
+
+# Atuin + fzf integration for history search
+atuin-fzf-history() {
+    local selected
+    local query="$BUFFER"
+    
+    if [[ -n "$TMUX" ]]; then
+        # Use tmux popup if inside tmux
+        selected=$(atuin search --cmd-only "$query" | fzf --tmux=80%,60% --tac --no-sort --query="$query")
+    else
+        # Use regular fzf outside tmux
+        selected=$(atuin search --cmd-only "$query" | fzf --tac --no-sort --query="$query")
+    fi
+    
+    if [[ -n "$selected" ]]; then
+        BUFFER="$selected"
+        CURSOR=$#BUFFER
+    fi
+    zle reset-prompt
+}
+zle -N atuin-fzf-history
+
+# tmux session switcher with fzf
+tmux-switch-session() {
+    if [[ -z "$TMUX" ]]; then
+        echo "Not in tmux session"
+        return 1
+    fi
+    
+    local selected
+    selected=$(tmux list-sessions -F "#{session_name}: #{session_windows} windows#{?session_attached, (attached),}" | \
+        fzf --tmux=80%,60% --prompt="Switch to session: " | \
+        cut -d: -f1)
+    
+    if [[ -n "$selected" ]]; then
+        tmux switch-client -t "$selected"
+    fi
+}
+
+# tmux window switcher with fzf  
+tmux-switch-window() {
+    if [[ -z "$TMUX" ]]; then
+        echo "Not in tmux session"
+        return 1
+    fi
+    
+    local selected
+    selected=$(tmux list-windows -F "#{window_index}: #{window_name}#{?window_active, (active),}" | \
+        fzf --tmux=80%,60% --prompt="Switch to window: " | \
+        cut -d: -f1)
+    
+    if [[ -n "$selected" ]]; then
+        tmux select-window -t "$selected"
+    fi
+}
 
 # Uncomment the following line to enable command auto-correction.
 # ENABLE_CORRECTION="true"
@@ -82,14 +150,14 @@ plugins=(
   evalcache
   # gpg-agent
   # keychain
-  # ssh-agent
+  ssh-agent
   # aws
   docker
   fzf
-  gcloud
+  # gcloud
   iterm2
-  terraform
-  virtualenvwrapper
+  # terraform
+  # virtualenvwrapper
   kubectl
   # kube-ps1
   # rvm
@@ -165,6 +233,9 @@ export TF_PLUGIN_CACHE_DIR="$HOME/.terraform.d/plugin-cache"
 # Shortcuts to move by word with alt + left/right arrow
 bindkey "^[^[[D" backward-word
 bindkey "^[^[[C" forward-word
+
+# Bind Ctrl+R to atuin-fzf history search
+bindkey '^R' atuin-fzf-history
 
 # See https://github.com/ohmyzsh/ohmyzsh/blob/master/lib/history.zsh for what oh-my-zsh sets automatically
 export HISTFILESIZE=10000000

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!env bash
 # Author:  Justyn Shull < justyn [at] justynshull.com >
 # Last Updated: 07/15/2012
 #
@@ -17,7 +17,7 @@ dotdir=$(pwd)
 ignore="README.md .git install.sh bin update.sh misc .config tags"
 for file in *; 
 do
-    if [[ "$ignore" =~ "$file" ]]; then
+    if [[ "$ignore" =~ "$file" ]] || [[ "$file" == *.md ]]; then
         # ignore file
         echo -n
     else
@@ -26,7 +26,21 @@ do
             continue
         fi
         if [ -h $HOME/.$file ]; then
-            echo -e "${GreenF}.$file${reset}: symlink exists"
+            # Check if symlink target exists and points to correct location
+            current_target=$(readlink "$HOME/.$file")
+            expected_target="$dotdir/$file"
+            if [ "$current_target" = "$expected_target" ] && [ -e "$HOME/.$file" ]; then
+                echo -e "${GreenF}.$file${reset}: symlink exists and is correct"
+            else
+                if [ ! -e "$HOME/.$file" ]; then
+                    echo -e "${RedF}.$file${reset}: symlink is broken (target doesn't exist). Removing and recreating."
+                else
+                    echo -e "${YellowF}.$file${reset}: symlink points to wrong location ($current_target vs $expected_target). Removing and recreating."
+                fi
+                rm "$HOME/.$file"
+                echo -e "${YellowF}$file${reset}: Linking to ${BoldOn}$HOME/.$file${reset}"
+                ln -s "$dotdir/$file" "$HOME/.$file"
+            fi
         else
 	    if [ -d $HOME/.$file ]; then
 		    echo -e "${RedF}.$file${reset}: is a directory. You should backup and delete(or move) it."
@@ -55,7 +69,21 @@ do
             continue
         fi
         if [ -h $HOME/bin/$file ]; then
-            echo -e "${GreenF}bin/$file${reset}: symlink exists"
+            # Check if symlink target exists and points to correct location
+            current_target=$(readlink "$HOME/bin/$file")
+            expected_target="$dotdir/bin/$file"
+            if [ "$current_target" = "$expected_target" ] && [ -e "$HOME/bin/$file" ]; then
+                echo -e "${GreenF}bin/$file${reset}: symlink exists and is correct"
+            else
+                if [ ! -e "$HOME/bin/$file" ]; then
+                    echo -e "${RedF}bin/$file${reset}: symlink is broken (target doesn't exist). Removing and recreating."
+                else
+                    echo -e "${YellowF}bin/$file${reset}: symlink points to wrong location ($current_target vs $expected_target). Removing and recreating."
+                fi
+                rm "$HOME/bin/$file"
+                echo -e "${YellowF}bin/$file${reset}: Linking to ${BoldOn}$HOME/bin/$file${reset}"
+                ln -s "$dotdir/bin/$file" "$HOME/bin/$file"
+            fi
         else
             if [ -d $HOME/bin/$file ]; then
                     echo -e "${RedF}bin/$file${reset}: is a directory. You should backup and delete(or move) it."
@@ -84,7 +112,21 @@ do
             continue
         fi
         if [ -h $HOME/.config/$file ]; then
-            echo -e "${GreenF}.config/$file${reset}: symlink exists"
+            # Check if symlink target exists and points to correct location
+            current_target=$(readlink "$HOME/.config/$file")
+            expected_target="$dotdir/config/$file"
+            if [ "$current_target" = "$expected_target" ] && [ -e "$HOME/.config/$file" ]; then
+                echo -e "${GreenF}.config/$file${reset}: symlink exists and is correct"
+            else
+                if [ ! -e "$HOME/.config/$file" ]; then
+                    echo -e "${RedF}.config/$file${reset}: symlink is broken (target doesn't exist). Removing and recreating."
+                else
+                    echo -e "${YellowF}.config/$file${reset}: symlink points to wrong location ($current_target vs $expected_target). Removing and recreating."
+                fi
+                rm "$HOME/.config/$file"
+                echo -e "${YellowF}.config/$file${reset}: Linking to ${BoldOn}$HOME/.config/$file${reset}"
+                ln -s "$dotdir/config/$file" "$HOME/.config/$file"
+            fi
         else
             if [ -d $HOME/.config/$file ]; then
                     echo -e "${RedF}.config/$file${reset}: is a directory. You should backup and delete(or move) it."
@@ -133,3 +175,12 @@ fi
 
 # Knife on windows or wsl is super slow, rehash causes it to cache the list of knife sub commands and speeds it up quite a bit
 hash knife  2>&- && knife rehash
+
+#echo "Installing and configuring home-manager"
+# TODO: This is a WIP
+#mkdir -pv ~/.config/home-manager
+#mkdir -pv ${HOME}/.config/home-manager
+#cd ${HOME}/.config/home-manager
+#for x in ${dotdir}/home-manager/*;do
+  #ln -sv "$x"
+#done
