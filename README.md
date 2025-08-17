@@ -13,7 +13,7 @@ Installation
     git submodule init
     git submodule update
     ./install.sh
-    ./update.sh
+
 If any files or directories exist already, move them out of the way and re-run install.sh
 
 Updates
@@ -47,6 +47,13 @@ Iterm configuration:
 - Right option key leave on "Normal"
 - go to Terminal, change scrollback history to something like 50,000, set terminal type to xterm-256color
 - go to Text, change font to Hack Nerd Font Mono / Regular / 14pt
+
+Ghostty
+-------
+
+Download ghostty following: https://ghostty.org/download
+
+Install catpuccin theme from: https://github.com/catppuccin/ghostty
 
 Editors
 -------
