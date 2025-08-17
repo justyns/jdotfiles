@@ -97,6 +97,11 @@ else
     echo -e "Run this to install oh-my-zsh: \n  sh -c '\$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)'"
 fi
 
+# Install tmux Catppuccin theme
+echo "Installing tmux Catppuccin theme"
+[[ ! -d ~/.config/tmux/plugins ]] && mkdir -pv ~/.config/tmux/plugins
+[[ ! -d ~/.config/tmux/plugins/catppuccin ]] && git clone --depth=1 https://github.com/catppuccin/tmux.git ~/.config/tmux/plugins/catppuccin
+
 if [[ ! -f ~/.gitconfig.local ]]; then
     echo -e "${RedF}~/.gitconfig.local${reset}: Doesn't exist.  You should create it with something like: \n[user]\n\tname = Justyn Shull\n\temail = git@justyn.io\n";
 else
