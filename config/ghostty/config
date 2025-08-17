@@ -1,0 +1,10 @@
+copy-on-select = true
+theme = catppuccin-frappe
+
+# TODO: quick terminal doesn't seem to work for me so far?
+keybind = global:ctrl+grave_accent=toggle_quick_terminal
+# keybind = global:super+space=toggle_quick_terminal
+
+keybind = ctrl+,=open_config
+keybind = ctrl+shift+,=reload_config
+keybind = ctrl+shift+i=inspector:toggle

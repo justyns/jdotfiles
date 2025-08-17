@@ -10,3 +10,4 @@ config/fish/config.*.copy
 Brewfile.lock.json
 home-manager/result
 .DS_Store
+config/konsole/*.colorscheme

@@ -124,12 +124,17 @@ hash knife  2>&- && knife rehash
 
 if [[ -d $HOME/.local/share/konsole ]]; then
     echo -e "${GreenF}~/.local/share/konsole${reset}: exists"
-    for file in $dotdir/config/konsole/*; do
-        if [[ -s $HOME/.local/share/konsole/${file##*/} ]]; then
-            echo -e "${GreenF}config/konsole/${file##*/}${reset}: symlink exists"
-        else
-            echo -e "${YellowF}config/konsole/${file##*/}${reset}: Linking to ${BoldOn}$HOME/.local/share/konsole/${file##*/}${reset}"
-            ln -s $dotdir/config/konsole/${file##*/} $HOME/.local/share/konsole/${file##*/}
-        fi
-    done
+    create_symlinks "$dotdir/config/konsole" "$HOME/.local/share/konsole" ".gitkeep catppuccin-frappe.colorscheme" "config/konsole/" "false"
+    
+    # Download Catppuccin Frappe theme
+    echo "Downloading Catppuccin Frappe theme for Konsole"
+    if [[ ! -f $HOME/.local/share/konsole/catppuccin-frappe.colorscheme ]]; then
+        curl -fsSL "https://raw.githubusercontent.com/catppuccin/konsole/refs/heads/main/themes/catppuccin-frappe.colorscheme" \
+            -o "$HOME/.local/share/konsole/catppuccin-frappe.colorscheme"
+        echo -e "${GreenF}Catppuccin Frappe theme${reset}: downloaded"
+    else
+        echo -e "${GreenF}Catppuccin Frappe theme${reset}: already exists"
+    fi
+else
+    echo -e "${YellowF}~/.local/share/konsole${reset}: directory doesn't exist, skipping Konsole config"
 fi
