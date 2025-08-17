@@ -7,7 +7,7 @@ fi
 
 # zmodload zsh/zprof
 # If you come from bash you might have to change your $PATH.
-export PATH=$HOME/bin:/usr/local/bin:$PATH
+export PATH=$HOME/bin:$HOME/.local/bin:$HOME/.deno/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
@@ -226,6 +226,11 @@ CLOUD_SDK_HOME=/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk
 
 # Completion for stern
 [[ -x $(which stern) ]] && source <(stern --completion=zsh)
+
+# python uv
+[[ -x $(which uv) ]] && _evalcache uv generate-shell-completion zsh
+
+export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
 
 # Cache terraform provider/plugin binaries
 export TF_PLUGIN_CACHE_DIR="$HOME/.terraform.d/plugin-cache"

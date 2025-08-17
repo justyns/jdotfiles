@@ -9,3 +9,4 @@ config/fish/config.*.copy
 .spacemacs.env
 Brewfile.lock.json
 home-manager/result
+.DS_Store

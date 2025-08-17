@@ -25,7 +25,8 @@ function check_ssl_date() {
 
 #pipe the output of a command to sprunge and it will give you a link to a paste-bin type page
 #add ?php or ?sh or etc to have it add line numbers and highlighting
-alias sprunge="curl -F 'sprunge=<-' http://sprunge.us"
+# TODO: sprunge no longer exists, replace this with something else?
+# alias sprunge="curl -F 'sprunge=<-' http://sprunge.us"
 
 #automatically resume scp transfers that failed or paused
 alias scpresume='rsync --partial --progress --rsh=ssh'

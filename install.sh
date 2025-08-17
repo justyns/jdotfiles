@@ -1,4 +1,4 @@
-#!env bash
+#!/usr/bin/bash
 # Author:  Justyn Shull < justyn [at] justynshull.com >
 #
 # Script to link my dot files and configs to where they belong
@@ -6,30 +6,30 @@
 
 create_symlinks() {
     local source_dir="$1"
-    local target_dir="$2" 
+    local target_dir="$2"
     local ignore_patterns="$3"
     local display_prefix="$4"
     local add_dot_prefix="$5"
-    
+
     cd "$source_dir"
     mkdir -pv "$target_dir"
-    
+
     for file in *; do
         if [[ "$ignore_patterns" =~ "$file" ]] || [[ "$file" == *.md ]]; then
             continue
         fi
-        
+
         local target_file="$target_dir/$file"
         if [[ "$add_dot_prefix" == "true" ]]; then
             target_file="$target_dir/.$file"
         fi
         local expected_target="$source_dir/$file"
-        
+
         if [ -f "$target_file" ] && [ ! -L "$target_file" ]; then
             echo -e "${RedF}${display_prefix}$file${reset}: Exists but not a symlink. You should backup and delete(or move) it."
             continue
         fi
-        
+
         if [ -h "$target_file" ]; then
             local current_target=$(readlink "$target_file")
             if [ "$current_target" = "$expected_target" ] && [ -e "$target_file" ]; then
