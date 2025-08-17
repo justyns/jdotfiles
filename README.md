@@ -16,6 +16,8 @@ Installation
 
 If any files or directories exist already, move them out of the way and re-run install.sh
 
+Note: If a file or directory is already a symlink, but the symlink points to something else or is invalid, it will be overwritten.
+
 Updates
 -------
     cd ~/.jdotfiles
@@ -42,7 +44,7 @@ Download catppuccin theme here (I usually use Frappé): https://github.com/catpp
 
 Iterm configuration:
 - CMD+O to open profiles, edit profiles, edit default
-- go to colors, color presets -> import 
+- go to colors, color presets -> import
 - go to keys, change Left option key to "Esc+" and check "Apps can change this"
 - Right option key leave on "Normal"
 - go to Terminal, change scrollback history to something like 50,000, set terminal type to xterm-256color
