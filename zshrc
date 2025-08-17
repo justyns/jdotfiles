@@ -7,7 +7,7 @@ fi
 
 # zmodload zsh/zprof
 # If you come from bash you might have to change your $PATH.
-export PATH=$HOME/bin:$HOME/.local/bin:$HOME/.deno/bin:/usr/local/bin:$PATH
+export PATH=$HOME/bin:$HOME/.local/bin:$HOME/.deno/bin:$HOME/.krew/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
@@ -208,6 +208,11 @@ done
 # Source .zshrc.local if it exists (Can be used to override settings on a per-machine basis)
 [[ -f $HOME/.zshrc.local ]] && source $HOME/.zshrc.local
 
+# Enable archlinux only if we're on arch or endeavouros
+[[ -x $(which pacman) ]] && plugins+=(archlinux)
+[[ -x $(which uv) ]] && plugins+=(uv)
+[[ -x $(which mise) ]] && plugins+=(mise)
+
 # kube-ps1 prompt
 export KUBE_PS1_SYMBOL_USE_IMG=true
 # export PROMPT='$(kube_ps1)'$PROMPT
@@ -236,6 +241,8 @@ export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
 
 # Cache terraform provider/plugin binaries
 export TF_PLUGIN_CACHE_DIR="$HOME/.terraform.d/plugin-cache"
+
+export ANONYMIZED_TELEMETRY=false
 
 # Shortcuts to move by word with alt + left/right arrow
 # Works with most modern terminals including iTerm2 on macOS, and ghostty/konsole on linux
@@ -275,5 +282,9 @@ compinit -C
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# Trying out Mise - https://mise.jdx.dev/getting-started.html
 [[ -x $(which mise) ]] && _evalcache mise activate zsh
+
+# atuin - zsh history
 [[ -x $(which atuin) ]] && _evalcache atuin init zsh

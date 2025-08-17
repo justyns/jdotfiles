@@ -121,3 +121,15 @@ hash knife  2>&- && knife rehash
 #for x in ${dotdir}/home-manager/*;do
   #ln -sv "$x"
 #done
+
+if [[ -d $HOME/.local/share/konsole ]]; then
+    echo -e "${GreenF}~/.local/share/konsole${reset}: exists"
+    for file in $dotdir/config/konsole/*; do
+        if [[ -s $HOME/.local/share/konsole/${file##*/} ]]; then
+            echo -e "${GreenF}config/konsole/${file##*/}${reset}: symlink exists"
+        else
+            echo -e "${YellowF}config/konsole/${file##*/}${reset}: Linking to ${BoldOn}$HOME/.local/share/konsole/${file##*/}${reset}"
+            ln -s $dotdir/config/konsole/${file##*/} $HOME/.local/share/konsole/${file##*/}
+        fi
+    done
+fi
