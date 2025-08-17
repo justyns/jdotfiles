@@ -68,7 +68,7 @@ ssh() {
 atuin-fzf-history() {
     local selected
     local query="$BUFFER"
-    
+
     if [[ -n "$TMUX" ]]; then
         # Use tmux popup if inside tmux
         selected=$(atuin search --cmd-only "$query" | fzf --tmux=80%,60% --tac --no-sort --query="$query")
@@ -76,7 +76,7 @@ atuin-fzf-history() {
         # Use regular fzf outside tmux
         selected=$(atuin search --cmd-only "$query" | fzf --tac --no-sort --query="$query")
     fi
-    
+
     if [[ -n "$selected" ]]; then
         BUFFER="$selected"
         CURSOR=$#BUFFER
@@ -85,35 +85,36 @@ atuin-fzf-history() {
 }
 zle -N atuin-fzf-history
 
+# TODO: Move tmux session stuff to a different file
 # tmux session switcher with fzf
 tmux-switch-session() {
     if [[ -z "$TMUX" ]]; then
         echo "Not in tmux session"
         return 1
     fi
-    
+
     local selected
     selected=$(tmux list-sessions -F "#{session_name}: #{session_windows} windows#{?session_attached, (attached),}" | \
         fzf --tmux=80%,60% --prompt="Switch to session: " | \
         cut -d: -f1)
-    
+
     if [[ -n "$selected" ]]; then
         tmux switch-client -t "$selected"
     fi
 }
 
-# tmux window switcher with fzf  
+# tmux window switcher with fzf
 tmux-switch-window() {
     if [[ -z "$TMUX" ]]; then
         echo "Not in tmux session"
         return 1
     fi
-    
+
     local selected
     selected=$(tmux list-windows -F "#{window_index}: #{window_name}#{?window_active, (active),}" | \
         fzf --tmux=80%,60% --prompt="Switch to window: " | \
         cut -d: -f1)
-    
+
     if [[ -n "$selected" ]]; then
         tmux select-window -t "$selected"
     fi
@@ -215,6 +216,7 @@ export KUBE_PS1_SYMBOL_USE_IMG=true
 export PIPENV_VENV_IN_PROJECT=1
 
 # Use pyenv for multiple python versions
+# TODO: Use mise instead of pyenv?
 [[ -x $(which pyenv) ]] && _evalcache pyenv init -
 
 # for gcloud
@@ -273,3 +275,5 @@ compinit -C
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+[[ -x $(which mise) ]] && _evalcache mise activate zsh
+[[ -x $(which atuin) ]] && _evalcache atuin init zsh
