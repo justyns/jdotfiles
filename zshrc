@@ -286,5 +286,5 @@ compinit -C
 # Trying out Mise - https://mise.jdx.dev/getting-started.html
 [[ -x $(which mise) ]] && _evalcache mise activate zsh
 
-# atuin - zsh history
-[[ -x $(which atuin) ]] && _evalcache atuin init zsh
+# atuin - zsh history, only bind to ctrl+r and sync history, dont take over the up arrow
+[[ -x $(which atuin) ]] && _evalcache atuin init zsh --disable-up-arrow
