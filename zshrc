@@ -288,3 +288,7 @@ compinit -C
 
 # atuin - zsh history, only bind to ctrl+r and sync history, dont take over the up arrow
 [[ -x $(which atuin) ]] && _evalcache atuin init zsh --disable-up-arrow
+
+fpath+=~/.zfunc; autoload -Uz compinit; compinit
+
+zstyle ':completion:*' menu select
