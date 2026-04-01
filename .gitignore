@@ -11,3 +11,4 @@ Brewfile.lock.json
 home-manager/result
 .DS_Store
 config/konsole/*.colorscheme
+config/uv/uv-receipt.json
