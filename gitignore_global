@@ -242,3 +242,5 @@ plan.out
 .terraform/*
 !.data_modules
 !tags.tf
+
+.claude/settings.local.json

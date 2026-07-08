@@ -233,6 +233,9 @@ export TF_PLUGIN_CACHE_DIR="$HOME/.terraform.d/plugin-cache"
 
 export ANONYMIZED_TELEMETRY=false
 
+# https://donottrack.sh/
+export DO_NOT_TRACK=1
+
 # Shortcuts to move by word with alt + left/right arrow
 # Works with most modern terminals including iTerm2 on macOS, and ghostty/konsole on linux
 bindkey "^[[1;3D" backward-word
