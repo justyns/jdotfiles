@@ -1,0 +1,148 @@
+#    -*- mode: org -*-
+
+
+Archived entries from file /home/justyns/.jdotfiles/doom.d/config.org
+
+
+* PDF Viewing and Editing
+:PROPERTIES:
+:ARCHIVE_TIME: 2026-07-08 Wed 11:41
+:ARCHIVE_FILE: ~/.jdotfiles/doom.d/config.org
+:ARCHIVE_CATEGORY: config
+:END:
+
+Keys:
+
+ - C-j / C-k - Scroll up/down a page
+
+TODO: I'm not sure if I like using emacs as a pdf viewer, so I might just remove this.
+TODO: Can I select something and have it annotate a specific sentence/paragraph?   org-noter-insert-note just marks the page number.
+
+#+BEGIN_SRC elisp
+(after! pdf-view
+  ;; open pdfs scaled to fit page
+  (setq-default pdf-view-display-size 'fit-width)
+  ;; automatically annotate highlights
+  (setq pdf-annot-activate-created-annotations t
+        org-noter-insert-note-no-questions t
+        pdf-view-resize-factor 1.1)
+  ;; faster motion
+  (map!
+   :map pdf-view-mode-map
+   :n "g g"          #'pdf-view-first-page
+   :n "G"            #'pdf-view-last-page
+   :localleader
+   (:desc "Insert" "i" 'org-noter-insert-note)
+   ))
+#+END_SRC
+
+* org-rifle and org-ql
+:PROPERTIES:
+:ARCHIVE_TIME: 2026-07-08 Wed 10:27
+:ARCHIVE_FILE: ~/.jdotfiles/doom.d/config.org
+:ARCHIVE_OLPATH: Org Mode
+:ARCHIVE_CATEGORY: config
+:END:
+
+Removed during the 2026-07 modernization (ivy/company -> vertico/corfu).
+=helm-org-rifle= drags in all of helm; =org-ql-find= gives the same "search all agenda
+files, preview the content" behaviour without the helm dependency.  =SPC j r= now calls
+a wrapper around =org-ql-find= over =org-agenda-files=.
+
+Original note: helm-org-rifle also brings in helm whereas the rest of this config used
+ivy, which caused things like org-capture to automatically try to use helm instead of
+ivy.  org-rifle also showed some of the content while searching, which was nice for
+telling apart notes with the same title/heading.
+
+#+BEGIN_SRC emacs-lisp :tangle no
+(package! helm-org-rifle)
+
+(use-package! helm-org-rifle
+  :defer t)
+(map! :leader
+      (:prefix ("j" . "justyn")
+               (:desc "helm-org-rifle" "r" #'helm-org-rifle)))
+#+END_SRC
+
+* Company Completion
+:PROPERTIES:
+:ARCHIVE_TIME: 2026-07-08 Wed 10:27
+:ARCHIVE_FILE: ~/.jdotfiles/doom.d/config.org
+:ARCHIVE_OLPATH: Editing
+:ARCHIVE_CATEGORY: config
+:END:
+
+Replaced by corfu.  The corfu equivalents live in config.org (=corfu-auto=,
+=corfu-auto-delay=, =corfu-auto-prefix=).  The corfu module already aborts completion
+when leaving evil insert state, so the old =evil-normal-state-entry-hook= /
+=company-abort= hook is no longer needed.  =company-show-numbers= has no direct corfu
+equivalent (use =corfu-indexed-mode= or =corfu-quick= if wanted).
+
+#+BEGIN_SRC emacs-lisp :tangle no
+(after! company
+  (setq company-idle-delay 0.5
+        company-minimum-prefix-length 2)
+  (setq company-show-numbers t)
+  (add-hook 'evil-normal-state-entry-hook #'company-abort)) ;; make aborting less annoying.
+#+END_SRC
+
+* beancount -- vendored local-repo recipe
+:PROPERTIES:
+:ARCHIVE_TIME: 2026-07-08 Wed 10:27
+:ARCHIVE_FILE: ~/.jdotfiles/doom.d/config.org
+:ARCHIVE_OLPATH: Packages/beancount
+:ARCHIVE_CATEGORY: config
+:END:
+
+Replaced by the official =:lang beancount= module (enabled in init.el), so the manually
+vendored copy in =ext/beancount/= and this local-repo recipe are no longer needed.  The
+beancount section in config.org now just adds the =outline-minor-mode= hook.
+
+#+BEGIN_SRC emacs-lisp :tangle no
+(package! beancount
+  :recipe (:local-repo "ext/beancount"))
+#+END_SRC
+
+* Refresh buffer on external file changes (Disabled)
+:PROPERTIES:
+:ARCHIVE_TIME: 2026-07-08 Wed 10:27
+:ARCHIVE_FILE: ~/.jdotfiles/doom.d/config.org
+:ARCHIVE_OLPATH: Editing
+:ARCHIVE_CATEGORY: config
+:END:
+
+Doom enables (lazy) auto-revert in core, so declaring the package and configuring
+=global-auto-revert-mode= by hand is redundant.  This block was already disabled in the
+config; removed entirely.
+
+#+BEGIN_SRC emacs-lisp :tangle no
+(package! autorevert)
+
+;; Currently disabled because this is now built into the core of doom emacs, and it does it better (lazily)
+;; (use-package! autorevert
+;;   :defer t
+;;   :ensure nil
+;;   :config
+;;   (global-auto-revert-mode +1)
+;;   (setq auto-revert-interval 2
+;;         auto-revert-check-vc-info t
+;;         auto-revert-verbose nil))
+#+END_SRC
+
+* Kubernetes - kubel
+:PROPERTIES:
+:ARCHIVE_TIME: 2026-07-08 Wed 10:27
+:ARCHIVE_FILE: ~/.jdotfiles/doom.d/config.org
+:ARCHIVE_CATEGORY: config
+:END:
+
+Was only ever testing kubel; k9s is preferred for a Kubernetes UI.  Both the package and
+use-package forms were already commented out.
+
+#+BEGIN_SRC emacs-lisp :tangle no
+;; (package! kubel)
+;; (package! kubel-evil)
+
+;; (use-package! kubel)
+;; (use-package! kubel-evil)
+#+END_SRC

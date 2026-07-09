@@ -50,21 +50,9 @@
 ;(unpin! t)
 
 (package! treemacs-magit)
-(package! autorevert)
 (package! powerthesaurus)
-(package! org-mru-clock)
+(package! string-inflection)
 (package! keychain-environment)
-(package! org-super-agenda)
-(package! org-ql)
-(package! helm-org-rifle)
-;; (package! esup)
-
-(package! beancount
-  :recipe (:local-repo "ext/beancount"))
-
-(package! ox-jira)
+(package! hydra)        ; for the hydra-paste transient (the ui/hydra module was removed)
 
 (package! ox-gfm)
-
-;; (package! kubel)
-;; (package! kubel-evil)
