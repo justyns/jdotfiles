@@ -54,5 +54,6 @@
 (package! string-inflection)
 (package! keychain-environment)
 (package! hydra)        ; for the hydra-paste transient (the ui/hydra module was removed)
+(package! catppuccin-theme)
 
 (package! ox-gfm)
