@@ -110,6 +110,8 @@ Stuff I need to figure out for doom-emacs config
 - [ ] Figure out how to get logged hours to show up in the agenda by default
 - [ ] yasnippet or something else to insert current timestamp into buffer (I used to expand =ts= before)
 - [ ] Update my doom config from 2021 to 2026 so I can start u sing it again
+- [ ] Configure Magit Forge
+- [ ] Configure projectile projects for my remote servers
 
 * Doom-specific Config
 
@@ -225,7 +227,7 @@ To update this, press =C-c '= in the below block and also open init.el from doom
        lookup              ; navigate your code and its documentation
        ;;llm               ; when I said you needed friends, I didn't mean...
        ;;(lsp +eglot)      ; M-x vscode
-       magit             ; a git porcelain for Emacs
+       (magit +forge)             ; a git porcelain for Emacs
        ;;make              ; run make tasks from Emacs
        ;;pass              ; password manager for nerds
        ;;pdf               ; pdf enhancements
