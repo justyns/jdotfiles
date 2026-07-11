@@ -487,6 +487,7 @@ I think I can split this up into other sections throughout the file, but I'm jus
 (package! string-inflection)
 (package! keychain-environment)
 (package! hydra)        ; for the hydra-paste transient (the ui/hydra module was removed)
+(package! catppuccin-theme)
 #+END_SRC
 ** Powerthesaurus
 
@@ -813,18 +814,11 @@ TODO: Change font depending on OS?
 Lots of doom-specific themes available at https://github.com/hlissner/emacs-doom-themes
 Screenshots available at: https://github.com/hlissner/emacs-doom-themes/tree/screenshots
 
-Themes I like so far:
-
-- doom-one - default theme, a little too dark for the comments
-- doom-vibrant - almost the same as the default theme, but a little brighter
-- doom-horizon - dark, more colorful than vibrant
-- doom-tomorrow-night
-- doom-material
-- doom-dark+ - dark theme ported from VSCode
+2026-07-11: I switched from doom-vibrant to [[https://github.com/catppuccin/emacs][catppuccin]] frappe to match what I use everywhere else.
 
 #+BEGIN_SRC emacs-lisp
-;; Doom loads `doom-theme' for us, so just set it (an explicit load-theme double-loads).
-(setq doom-theme 'doom-vibrant)
+(setq catppuccin-flavor 'frappe) ;; or 'latte, 'macchiato, or 'mocha
+(setq doom-theme 'catppuccin)
 #+END_SRC
 
 ** Move to new split windows

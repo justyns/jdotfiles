@@ -222,8 +222,8 @@
 ;; Add a small amount of extra space in between each line
 (setq line-spacing 2)
 
-;; Doom loads `doom-theme' for us, so just set it (an explicit load-theme double-loads).
-(setq doom-theme 'doom-vibrant)
+(setq catppuccin-flavor 'frappe) ;; or 'latte, 'macchiato, or 'mocha
+(setq doom-theme 'catppuccin)
 
 (setq evil-split-window-below t
       evil-vsplit-window-right t)
