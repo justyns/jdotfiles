@@ -11,3 +11,6 @@ keybind = ctrl+shift+i=inspector:toggle
 # Needed on linux, ghostty sends too many mouse events
 # see https://github.com/ghostty-org/ghostty/discussions/9966 and https://github.com/ghostty-org/ghostty/pull/8907
 mouse-scroll-multiplier = 0.5
+
+# Needed for shift+enter to work in claude code
+keybind = shift+enter=text:\x1b\r
