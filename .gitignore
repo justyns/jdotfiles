@@ -12,3 +12,4 @@ home-manager/result
 .DS_Store
 config/konsole/*.colorscheme
 config/uv/uv-receipt.json
+*.bak
