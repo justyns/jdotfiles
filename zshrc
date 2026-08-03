@@ -1,9 +1,11 @@
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-fi
+
+# TODO: Trying starship instead
+# if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+#   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+# fi
 
 # zmodload zsh/zprof
 # If you come from bash you might have to change your $PATH.
@@ -19,7 +21,10 @@ export ZSH="$HOME/.oh-my-zsh"
 # switched to spaceship on 02/11/2019
 # ZSH_THEME="spaceship"
 # switched from spaceship to powerlevel10k on 10/28/2021
-ZSH_THEME="powerlevel10k/powerlevel10k"
+#
+# TODO: Trying starship instead
+# ZSH_THEME="powerlevel10k/powerlevel10k"
+#
 # autoload -U promptinit; promptinit
 # prompt spaceship
 # vv this one looks like my fish prompt
@@ -164,6 +169,7 @@ plugins=(
   # rvm
   z
   zsh-syntax-highlighting
+  starship
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -279,7 +285,8 @@ compinit -C
 # zprof
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+# TODO: Trying startship instead
+# [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
