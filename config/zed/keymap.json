@@ -1,0 +1,25 @@
+// Zed keymap
+//
+// For information on binding keys, see the Zed
+// documentation: https://zed.dev/docs/key-bindings
+//
+// To see the default key bindings run `zed: open default keymap`
+// from the command palette.
+[
+  {
+    "context": "VimControl && vim_mode == normal",
+    "bindings": {
+      "space p r": "projects::OpenRecent",
+      "space p o": "projects::OpenRemote",
+      "space t": "terminal_panel::ToggleFocus",
+      "space g": "git_panel::ToggleFocus",
+      "space a": "agent::ToggleFocus",
+    },
+  },
+  {
+    "context": "Editor && vim_mode == insert",
+    "bindings": {
+      // "j k": "vim::NormalBefore"
+    },
+  },
+]
