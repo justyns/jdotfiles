@@ -235,6 +235,7 @@ pip-selfcheck.json
 # Personal / Custom
 .ropeproject/
 tags**
+.claude/settings.local.json
 
 # Terraform
 plan.out
