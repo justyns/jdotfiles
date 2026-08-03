@@ -161,7 +161,6 @@ plugins=(
   docker
   fzf
   # gcloud
-  iterm2
   # terraform
   # virtualenvwrapper
   kubectl
@@ -171,6 +170,12 @@ plugins=(
   zsh-syntax-highlighting
   starship
 )
+
+# Load depending on the env
+[[ "$TERM_PROGRAM" == "iTerm.app" ]] && plugins+=(iterm2)
+[[ -x $(which pacman) ]] && plugins+=(archlinux)
+[[ -x $(which uv) ]] && plugins+=(uv)
+[[ -x $(which mise) ]] && plugins+=(mise)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -213,11 +218,6 @@ done
 
 # Source .zshrc.local if it exists (Can be used to override settings on a per-machine basis)
 [[ -f $HOME/.zshrc.local ]] && source $HOME/.zshrc.local
-
-# Enable archlinux only if we're on arch or endeavouros
-[[ -x $(which pacman) ]] && plugins+=(archlinux)
-[[ -x $(which uv) ]] && plugins+=(uv)
-[[ -x $(which mise) ]] && plugins+=(mise)
 
 # kube-ps1 prompt
 export KUBE_PS1_SYMBOL_USE_IMG=true
@@ -275,6 +275,8 @@ setopt EXTENDED_HISTORY
 # [[ -x $(which kubectl) ]] && export SPACESHIP_KUBECTL_SHOW=true
 # export SPACESHIP_KUBECTL_SHOW=false
 
+fpath+=~/.zfunc
+
 # See https://medium.com/@dannysmith/little-thing-2-speeding-up-zsh-f1860390f92 - only regenerates completion once per day
 autoload -Uz compinit
 for dump in ~/.zcompdump(N.mh+24); do
@@ -295,7 +297,5 @@ compinit -C
 
 # atuin - zsh history, only bind to ctrl+r and sync history, dont take over the up arrow
 [[ -x $(which atuin) ]] && _evalcache atuin init zsh --disable-up-arrow
-
-fpath+=~/.zfunc; autoload -Uz compinit; compinit
 
 zstyle ':completion:*' menu select
