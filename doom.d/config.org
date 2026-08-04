@@ -167,7 +167,7 @@ To update this, press =C-c '= in the below block and also open init.el from doom
        ;;neotree           ; a project drawer, like NERDTree for vim
        ophints           ; highlight the region an operation acts on
        (popup +defaults)   ; tame sudden yet inevitable temporary windows
-       ;;smooth-scroll     ; So smooth you won't believe it's not butter
+       smooth-scroll     ; So smooth you won't believe it's not butter
        tabs              ; a tab bar for Emacs
        treemacs          ; a project drawer, like neotree but cooler
        ;;unicode           ; extended unicode support for various languages
@@ -967,7 +967,9 @@ See https://emacs.stackexchange.com/questions/32634/how-can-the-list-of-projects
   ;; Set the directory where magit looks for repos in
   (setq magit-repository-directories '(("~/dev/" . 4))
         ;; Don't automatically save buffers when running magit
-        magit-save-repository-buffers nil))
+        magit-save-repository-buffers nil
+        ;; Don't highlight tne entire hunk
+        magit-diff-highlight-hunk-body nil))
 (after! projectile
   (when (require 'magit nil t)
     (mapc #'projectile-add-known-project

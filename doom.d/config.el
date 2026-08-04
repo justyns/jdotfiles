@@ -283,7 +283,9 @@
   ;; Set the directory where magit looks for repos in
   (setq magit-repository-directories '(("~/dev/" . 4))
         ;; Don't automatically save buffers when running magit
-        magit-save-repository-buffers nil))
+        magit-save-repository-buffers nil
+        ;; Don't highlight tne entire hunk
+        magit-diff-highlight-hunk-body nil))
 (after! projectile
   (when (require 'magit nil t)
     (mapc #'projectile-add-known-project
