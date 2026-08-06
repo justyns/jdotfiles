@@ -1,1 +1,20 @@
 exclude-newer = "10 days"
+
+# My own packages: always allow the latest release
+[exclude-newer-package]
+hozo = "2099-01-01"
+uridx = "2099-01-01"
+tsugite = "2099-01-01"
+tsugite-acp = "2099-01-01"
+tsugite-cc-driver = "2099-01-01"
+tsugite-claude-code = "2099-01-01"
+tsugite-cli = "2099-01-01"
+tsugite-codex = "2099-01-01"
+tsugite-codex-cli = "2099-01-01"
+tsugite-daemon = "2099-01-01"
+tsugite-discord = "2099-01-01"
+tsugite-pty = "2099-01-01"
+tsugite-sandbox = "2099-01-01"
+tsugite-tmux = "2099-01-01"
+tsugite-web = "2099-01-01"
+tsugite-youtube = "2099-01-01"

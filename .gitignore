@@ -13,3 +13,9 @@ home-manager/result
 config/konsole/*.colorscheme
 config/uv/uv-receipt.json
 *.bak
+config/zed/prompts/
+config/zed/settings_backup.json
+
+# I'd like to sync these but they have machine-specific stuff and hostnames/etc
+config/zed/settings.json
+config/zed/tasks.json
