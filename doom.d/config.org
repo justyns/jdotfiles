@@ -28,6 +28,7 @@
   - [[#org-capture-templates][Org Capture Templates]]
   - [[#org-crypt][org-crypt]]
 - [[#keybindings][Keybindings]]
+  - [[#discovering-keybindings][Discovering keybindings]]
   - [[#useful-keybinding-reminders][Useful keybinding reminders]]
     - [[#convert-lists-between-orderednumbereunordered][Convert Lists between ordered/numbere/unordered]]
     - [[#org-outline-navigation][Org outline navigation]]
@@ -655,9 +656,28 @@ This isn't really org-agenda specific, but the agenda view is where I'd see this
 #+END_SRC
 * Keybindings
 
-Helpful tip, use =SPC ?= to see a list of all available keybindings.
-
 This [[https://rameezkhan.me/adding-keybindings-to-doom-emacs/][blog post]] helped me to figure out how to add new keybindings for doom-emacs. Also see [[https://github.com/hlissner/doom-emacs/blob/develop/modules/config/default/+evil-bindings.el][evil-bindings.el]] for additional examples.
+
+** Discovering keybindings
+
+Doom used to bind =SPC ?= to a searchable list of every binding, but it dropped the
+binding at some point. Re-add it.
+
+#+BEGIN_SRC emacs-lisp
+(map! :leader
+      :desc "Search keybindings" "?" #'describe-bindings)
+#+END_SRC
+
+Similar keys:
+
+| Key              | What                                                       |
+|------------------+------------------------------------------------------------|
+| =SPC ?=          | Search all active bindings (=embark-bindings=)             |
+| =SPC h b b=      | ^ (Doom's own binding for the same thing)                  |
+| =C-h= mid-prefix | Search just that prefix, e.g. =SPC g C-h= for all git keys |
+| =SPC h b m=      | which-key popup of the current major mode's bindings       |
+| =SPC h b t=      | All top-level bindings                                     |
+| =SPC h b k=      | Prompt for any keymap and show it                          |
 
 ** Useful keybinding reminders
 
