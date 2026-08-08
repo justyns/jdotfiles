@@ -146,3 +146,52 @@ use-package forms were already commented out.
 ;; (use-package! kubel)
 ;; (use-package! kubel-evil)
 #+END_SRC
+
+* Terraform
+:PROPERTIES:
+:ARCHIVE_TIME: 2026-08-08 Sat 03:13
+:ARCHIVE_FILE: ~/.jdotfiles/doom.d/config.org
+:ARCHIVE_OLPATH: Editing
+:ARCHIVE_CATEGORY: config
+:END:
+
+Enables Terraform LSP support.  Install the language server following the instructions on https://github.com/hashicorp/terraform-ls/blob/main/docs/USAGE.md
+
+#+begin_src emacs-lisp
+;; lsp-mode ships a terraform-ls client that finds `terraform-ls' on PATH, so we just
+;; enable lsp in terraform buffers when the server is actually installed.  This works on
+;; Linux and both Intel and Apple-Silicon Homebrew without hardcoding a path.
+(after! lsp-mode
+  (when (executable-find "terraform-ls")
+    (add-hook 'terraform-mode-hook #'lsp-deferred)))
+#+end_src
+
+* yasnippet
+:PROPERTIES:
+:ARCHIVE_TIME: 2026-08-08 Sat 03:15
+:ARCHIVE_FILE: ~/.jdotfiles/doom.d/config.org
+:ARCHIVE_CATEGORY: config
+:END:
+
+=:editor snippets= is enabled in =init.el=, we just need to enable yasnippet's global mode.
+
+#+BEGIN_SRC emacs-lisp
+(yas-global-mode 1)
+#+END_SRC
+
+* Indent guides
+:PROPERTIES:
+:ARCHIVE_TIME: 2026-08-08 Sat 03:19
+:ARCHIVE_FILE: ~/.jdotfiles/doom.d/config.org
+:ARCHIVE_OLPATH: Display
+:ARCHIVE_CATEGORY: config
+:END:
+
+Saw a screenshot from https://old.reddit.com/r/emacs/comments/esgzjf/new_dark_theme_ported_from_vs_code_avaliable_now/ which included
+https://github.com/DarthFennec/highlight-indent-guides
+
+This package is installed/loaded from https://github.com/hlissner/doom-emacs/tree/develop/modules/ui/indent-guides
+
+#+begin_src emacs-lisp
+(setq highlight-indent-guides-responsive 'stack)
+#+end_src

@@ -49,7 +49,6 @@
   - [[#tabs-vs-spaces][Tabs vs Spaces]]
   - [[#unicode-elipsis][Unicode elipsis]]
   - [[#markdown-mode][Markdown Mode]]
-  - [[#terraform][Terraform]]
   - [[#corfu-completion][Corfu Completion]]
 - [[#version-control][Version Control]]
   - [[#magit][magit]]
@@ -64,7 +63,6 @@
   - [[#save-place][Save place]]
 - [[#hydra-paste][Hydra Paste]]
 - [[#avy][Avy]]
-- [[#yasnippet][yasnippet]]
 
 * References
 
@@ -159,7 +157,7 @@ To update this, press =C-c '= in the below block and also open init.el from doom
        ;;doom-quit         ; DOOM quit-message prompts when you quit Emacs
        ;;(emoji +unicode)  ; 🙂
        hl-todo           ; highlight TODO/FIXME/NOTE/DEPRECATED/HACK/REVIEW
-       ;;indent-guides     ; highlighted indent columns
+       indent-guides     ; highlighted indent columns
        ligatures         ; ligatures and symbols to make your code pretty again
        ;;minimap           ; show a map of the code on the side
        modeline          ; snazzy, Atom-inspired modeline, plus API
@@ -226,7 +224,7 @@ To update this, press =C-c '= in the below block and also open init.el from doom
        (eval +overlay)     ; run code, run (also, repls)
        lookup              ; navigate your code and its documentation
        ;;llm               ; when I said you needed friends, I didn't mean...
-       ;;(lsp +eglot)      ; M-x vscode
+       (lsp +eglot)      ; M-x vscode
        (magit +forge)             ; a git porcelain for Emacs
        ;;make              ; run make tasks from Emacs
        ;;pass              ; password manager for nerds
@@ -831,14 +829,16 @@ Screenshots available at: https://github.com/hlissner/emacs-doom-themes/tree/scr
 #+END_SRC
 ** Indent guides
 
-Saw a screenshot from https://old.reddit.com/r/emacs/comments/esgzjf/new_dark_theme_ported_from_vs_code_avaliable_now/ which included
-https://github.com/DarthFennec/highlight-indent-guides
+=:ui indent-guides= uses [[https://github.com/jdtsmith/indent-bars][indent-bars]].
 
-This package is installed/loaded from https://github.com/hlissner/doom-emacs/tree/develop/modules/ui/indent-guides
+I like the bars in code, but not in org files.
 
 #+begin_src emacs-lisp
-(setq highlight-indent-guides-responsive 'stack)
+(add-hook! '+indent-guides-inhibit-functions
+  (defun justyn/indent-guides-in-org-mode-p ()
+    (derived-mode-p 'org-mode)))
 #+end_src
+
 ** Fix flickering
 
 Since I upgraded to Big Sur, emacs seems to "flicker" a lot.  This should help prevent that.
@@ -932,18 +932,6 @@ Enable ox-gfm as well
   :after org)
 #+end_src
 
-** Terraform
-
-Enables Terraform LSP support.  Install the language server following the instructions on https://github.com/hashicorp/terraform-ls/blob/main/docs/USAGE.md
-
-#+begin_src emacs-lisp
-;; lsp-mode ships a terraform-ls client that finds `terraform-ls' on PATH, so we just
-;; enable lsp in terraform buffers when the server is actually installed.  This works on
-;; Linux and both Intel and Apple-Silicon Homebrew without hardcoding a path.
-(after! lsp-mode
-  (when (executable-find "terraform-ls")
-    (add-hook 'terraform-mode-hook #'lsp-deferred)))
-#+end_src
 ** Corfu Completion
 
 Doom now uses vertico + corfu for completion.  These are the corfu equivalents of my old
@@ -960,7 +948,13 @@ already aborts completion when leaving evil insert state, so no abort hook is ne
 * Version Control
 ** magit
 
-See https://emacs.stackexchange.com/questions/32634/how-can-the-list-of-projects-used-by-projectile-be-manually-updated for an explanation.  This tells magit to look in ~/dev recursively.  My project structure is nested somewhat deep, but shouldn't be more than 4 nested directories.
+=magit-repository-directories= tells magit where to look for repos (used by =SPC g '= to
+list them).  My project structure is nested somewhat deep, but shouldn't be more than 4
+directories down.
+
+I used to also feed =magit-list-repos= into projectile's known projects here, but that
+=(require 'magit)='d at startup and walked =~/dev= on every launch.  [[#projectile][Projectile]] discovers the
+same repos on demand instead.
 
 #+BEGIN_SRC emacs-lisp
 (after! magit
@@ -970,12 +964,6 @@ See https://emacs.stackexchange.com/questions/32634/how-can-the-list-of-projects
         magit-save-repository-buffers nil
         ;; Don't highlight tne entire hunk
         magit-diff-highlight-hunk-body nil))
-(after! projectile
-  (when (require 'magit nil t)
-    (mapc #'projectile-add-known-project
-          (mapcar #'file-name-as-directory (magit-list-repos)))
-    ;; Optionally write to persistent `projectile-known-projects-file'
-    (projectile-save-known-projects)))
 #+END_SRC
 
 Show gravatars for commit authors
@@ -992,18 +980,17 @@ Show gravatars for commit authors
 
 Use =SPC p D= to run discover projects in the search path.
 
-This seems to only search one folder deep, so if you use a path of =~/dev= it detects =~/dev/proj1= but it will not detect something like =~/dev/clients/clientA/proj2=.
+Each entry can be a =(DIRECTORY . DEPTH)= cons cell, which Doom's =+default/discover-projects=
+destructures and passes on to =projectile-discover-projects-in-directory=.  A depth of 3
+picks up both =~/dev/proj1= and =~/dev/clients/clientA/proj2=.
 
-- [X] TODO: Can I use wildcards somehow?
-- [ ] TODO: Discover projects in ~/dev/*/*/* (2 or 3 levels nested)
+Nothing is scanned at startup — discovery only runs when I invoke =SPC p D=.
+
 - [ ] TODO: my .gitignore isn't being honored anymore
 
 #+BEGIN_SRC emacs-lisp
-;; (setq projectile-project-search-path '("~/dev/" "~/dev/clients/"))
-;; Found on https://github.com/bbatsov/projectile/issues/1500
-;; TODO: This still isn't recursive more than one level
-(when (file-directory-p "~/dev")
-  (setq projectile-project-search-path (cddr (directory-files "~/dev" t))))
+(after! projectile
+  (setq projectile-project-search-path '(("~/dev" . 3))))
 #+END_SRC
 
 Projectile's indexing should be set to 'alien' by default, but hybrid still allows projectile to do some post-processing of the list of files returned inside of emacs.
@@ -1098,11 +1085,4 @@ The doom-native way to do this is =SPC i y= which opens =yank-pop=.
 Search all open windows
 #+BEGIN_SRC elisp
 (setq avy-all-windows t)
-#+END_SRC
-* yasnippet
-
-=:editor snippets= is enabled in =init.el=, we just need to enable yasnippet's global mode.
-
-#+BEGIN_SRC emacs-lisp
-(yas-global-mode 1)
 #+END_SRC
