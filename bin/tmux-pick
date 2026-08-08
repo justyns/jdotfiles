@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+# tmux-pick - fuzzy session/window switcher with a live preview.
+#
+#   tmux-pick window    every window across every session (default)
+#   tmux-pick session   sessions only
+#
+# The preview is the tail of whatever pane you are pointing at, so you can see
+# what a window is doing before switching to it.
+
+set -uo pipefail
+
+mode=${1:-window}
+tmux=${TMUX_PICK_TMUX:-tmux}
+read -r -a TMUX_CMD <<<"$tmux"
+
+command -v fzf >/dev/null 2>&1 || { echo "tmux-pick: fzf not found" >&2; exit 1; }
+
+case "$mode" in
+    window)
+        # -a spans every session. Listing only the current one is what forces
+        # the switch-session-then-switch-window two step.
+        rows=$("${TMUX_CMD[@]}" list-windows -a -F \
+            '#{session_name}:#{window_index}	#{?window_active,▸, } #{p9:#{session_name}:#{window_index}} #{p32:#{=/30/…:#{window_name}}} #{pane_current_command}' 2>/dev/null)
+        prompt='window> '
+        ;;
+    session)
+        rows=$("${TMUX_CMD[@]}" list-sessions -F \
+            '#{session_name}	#{?session_attached,▸, } #{p10:#{session_name}} #{p12:#{session_windows} windows} #{?session_attached,attached,}' 2>/dev/null)
+        prompt='session> '
+        ;;
+    *)
+        echo "tmux-pick: unknown mode '$mode' (want: window | session)" >&2
+        exit 2
+        ;;
+esac
+
+[ -n "$rows" ] || { echo "tmux-pick: nothing to pick" >&2; exit 1; }
+
+# Preview is unwrapped by default because the pane width is usually wider
+# than the preview window.
+selection=$(printf '%s\n' "$rows" | fzf \
+    --ansi \
+    --delimiter=$'\t' \
+    --with-nth=2.. \
+    --no-multi \
+    --prompt="$prompt" \
+    --preview "${TMUX_CMD[*]} capture-pane -p -e -S -200 -t {1} 2>/dev/null | tail -n \${FZF_PREVIEW_LINES:-40}" \
+    --preview-window=right:60% \
+    --header='enter switch   ctrl-/ wrap' \
+    --bind 'ctrl-/:toggle-preview-wrap') || exit 130
+
+target=$(printf '%s' "$selection" | cut -f1)
+[ -n "$target" ] || exit 130
+
+[ "$mode" = window ] && "${TMUX_CMD[@]}" select-window -t "$target" 2>/dev/null
+if [ -n "${TMUX:-}" ]; then
+    "${TMUX_CMD[@]}" switch-client -t "$target"
+else
+    "${TMUX_CMD[@]}" attach-session -t "$target"
+fi
