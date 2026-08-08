@@ -228,7 +228,9 @@
 (setq evil-split-window-below t
       evil-vsplit-window-right t)
 
-(setq highlight-indent-guides-responsive 'stack)
+(add-hook! '+indent-guides-inhibit-functions
+  (defun justyn/indent-guides-in-org-mode-p ()
+    (derived-mode-p 'org-mode)))
 
 ;; The double-buffering flicker fix is macOS-specific (Big Sur+); on Linux/GTK it can make
 ;; flicker/tearing worse, so only apply it on macOS.
@@ -267,13 +269,6 @@
 (use-package! ox-gfm
   :after org)
 
-;; lsp-mode ships a terraform-ls client that finds `terraform-ls' on PATH, so we just
-;; enable lsp in terraform buffers when the server is actually installed.  This works on
-;; Linux and both Intel and Apple-Silicon Homebrew without hardcoding a path.
-(after! lsp-mode
-  (when (executable-find "terraform-ls")
-    (add-hook 'terraform-mode-hook #'lsp-deferred)))
-
 (after! corfu
   (setq corfu-auto t
         corfu-auto-delay 0.5
@@ -286,12 +281,6 @@
         magit-save-repository-buffers nil
         ;; Don't highlight tne entire hunk
         magit-diff-highlight-hunk-body nil))
-(after! projectile
-  (when (require 'magit nil t)
-    (mapc #'projectile-add-known-project
-          (mapcar #'file-name-as-directory (magit-list-repos)))
-    ;; Optionally write to persistent `projectile-known-projects-file'
-    (projectile-save-known-projects)))
 
 (setq magit-revision-show-gravatars '("^Author:     " . "^Commit:     "))
 
@@ -299,11 +288,8 @@
   :defer t
   :after (treemacs magit))
 
-;; (setq projectile-project-search-path '("~/dev/" "~/dev/clients/"))
-;; Found on https://github.com/bbatsov/projectile/issues/1500
-;; TODO: This still isn't recursive more than one level
-(when (file-directory-p "~/dev")
-  (setq projectile-project-search-path (cddr (directory-files "~/dev" t))))
+(after! projectile
+  (setq projectile-project-search-path '(("~/dev" . 3))))
 
 (setq projectile-indexing-mode 'hybrid)
 
@@ -347,5 +333,3 @@
       :nv "P" #'hydra-paste/evil-paste-before)
 
 (setq avy-all-windows t)
-
-(yas-global-mode 1)
