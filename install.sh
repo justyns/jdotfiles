@@ -65,7 +65,15 @@ done
 
 dotdir=$(pwd)
 
-create_symlinks "$dotdir" "$HOME" ".git install.sh bin update.sh misc .config tags" "." "true"
+echo "Initialising plugin submodules"
+git submodule update --init --recursive
+for sub in $(git config -f .gitmodules --get-regexp '^submodule\..*\.path$' | awk '{print $2}'); do
+    if [ -z "$(ls -A "$dotdir/$sub" 2>/dev/null)" ]; then
+        echo -e "${RedF}$sub${reset}: submodule is empty"
+    fi
+done
+
+create_symlinks "$dotdir" "$HOME" ".git install.sh bin update.sh misc .config tags zsh-custom" "." "true"
 # TODO: Migrate to ~/.local/bin ?
 create_symlinks "$dotdir/bin" "$HOME/bin" ".git install.sh bin" "bin/" "false"
 create_symlinks "$dotdir/config" "$HOME/.config" ".gitkeep" ".config/" "false"
@@ -82,25 +90,10 @@ echo "Installing oh-my-zsh and plugins"
 if [[ -d $HOME/.oh-my-zsh ]]; then
     [[ ! -d ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom} ]] && mkdir -pv ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/{themes,plugins}
 
-    # Install spaceship
-    [[ ! -d $HOME/.oh-my-zsh/custom/themes/spaceship-prompt ]] \
-        && git clone --depth=1 https://github.com/denysdovhan/spaceship-prompt.git $HOME/.oh-my-zsh/custom/themes/spaceship-prompt \
-        && ln -sv $HOME/.oh-my-zsh/custom/themes/spaceship-prompt/spaceship.zsh-theme $HOME/.oh-my-zsh/custom/themes/spaceship.zsh-theme
-
-    # Install powerline10k
-    [[ ! -d ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k ]] && git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
-
-    [[ ! -d $HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting ]] && git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
-
-    [[ ! -d ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/evalcache ]] && git clone https://github.com/mroth/evalcache ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/evalcache
+    create_symlinks "$dotdir/zsh-custom/plugins" "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins" ".gitkeep" "zsh-custom/plugins/" "false"
 else
     echo -e "Run this to install oh-my-zsh: \n  sh -c '\$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)'"
 fi
-
-# Install tmux Catppuccin theme
-echo "Installing tmux Catppuccin theme"
-[[ ! -d ~/.config/tmux/plugins ]] && mkdir -pv ~/.config/tmux/plugins
-[[ ! -d ~/.config/tmux/plugins/catppuccin ]] && git clone --depth=1 https://github.com/catppuccin/tmux.git ~/.config/tmux/plugins/catppuccin
 
 if [[ ! -f ~/.gitconfig.local ]]; then
     echo -e "${RedF}~/.gitconfig.local${reset}: Doesn't exist.  You should create it with something like: \n[user]\n\tname = Justyn Shull\n\temail = git@justyn.io\n";
@@ -125,7 +118,7 @@ hash knife  2>&- && knife rehash
 if [[ -d $HOME/.local/share/konsole ]]; then
     echo -e "${GreenF}~/.local/share/konsole${reset}: exists"
     create_symlinks "$dotdir/config/konsole" "$HOME/.local/share/konsole" ".gitkeep catppuccin-frappe.colorscheme" "config/konsole/" "false"
-    
+
     # Download Catppuccin Frappe theme
     echo "Downloading Catppuccin Frappe theme for Konsole"
     if [[ ! -f $HOME/.local/share/konsole/catppuccin-frappe.colorscheme ]]; then
