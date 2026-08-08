@@ -72,7 +72,7 @@ Vim: [space-vim-dark](https://github.com/liuchengxu/space-vim-dark)
 Shells
 ------
 
-ZSH theme: [powerlevel10k](https://github.com/romkatv/powerlevel10k)
+ZSH prompt: [starship](https://starship.rs)
 
 Fonts
 -----

@@ -19,3 +19,6 @@ config/zed/settings_backup.json
 # I'd like to sync these but they have machine-specific stuff and hostnames/etc
 config/zed/settings.json
 config/zed/tasks.json
+# ~/.gitignore_global ignores bin/ by default, but I actually want bin/ in this repo
+!bin/
+!bin/*
