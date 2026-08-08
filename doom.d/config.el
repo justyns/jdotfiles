@@ -165,6 +165,9 @@
 
 (setq org-crypt-key "AA5A79D7AD584854")
 
+(map! :leader
+      :desc "Search keybindings" "?" #'describe-bindings)
+
 ;; TODO: I'm not sure how to go to a specific window, so this really just goes left and right for now
 (map! :leader
       (:desc "Window left" "1" #'evil-window-left
