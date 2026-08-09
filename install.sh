@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 # Author:  Justyn Shull < justyn [at] justynshull.com >
 #
 # Script to link my dot files and configs to where they belong

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Author:  Justyn Shull < justyn [at] justynshull.com >
 #
 # Script that updates the files from my jdotfiles repo and also updates all git submodules
