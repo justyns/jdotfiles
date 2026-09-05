@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Walker: File Search
+Comment=File Search
+Exec=walker -m files
+Icon=folder
+Terminal=false
+NoDisplay=true
+X-KDE-Shortcuts=Meta+Ctrl+F

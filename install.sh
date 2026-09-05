@@ -56,7 +56,7 @@ create_symlinks() {
 }
 
 #Check and see if these commands exist on the system
-reqcommands="vim nvim git python tmux ack ag ctags zsh bat editorconfig mise uv"
+reqcommands="vim nvim git python tmux rg ctags zsh bat editorconfig mise uv"
 for com in $reqcommands;
 do
 	hash ${com} 2>&- || echo -e >&2 "${RedF}${com}${reset}: not installed"
@@ -76,13 +76,12 @@ done
 create_symlinks "$dotdir" "$HOME" ".git install.sh bin update.sh misc .config tags zsh-custom" "." "true"
 # TODO: Migrate to ~/.local/bin ?
 create_symlinks "$dotdir/bin" "$HOME/bin" ".git install.sh bin" "bin/" "false"
-create_symlinks "$dotdir/config" "$HOME/.config" ".gitkeep" ".config/" "false"
-
-#echo "Installing youcompleteme for vim"
-#cd ~/.vim/bundle/YouCompleteMe
-#./install.py --clang-completer --gocode-completer
-echo "Installing vim plugins"
-vim +PlugInstall +qall
+# walker/elephant/rofi are Linux-only, installed by bin/setup-walker
+config_ignore=".gitkeep"
+if ! hash pacman 2>&-; then
+    config_ignore="$config_ignore walker elephant rofi"
+fi
+create_symlinks "$dotdir/config" "$HOME/.config" "$config_ignore" ".config/" "false"
 
 # Install oh-my-zsh and extra plugins/themes
 echo "Installing oh-my-zsh and plugins"

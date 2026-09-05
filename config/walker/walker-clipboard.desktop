@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Walker: Clipboard History
+Comment=Clipboard History
+Exec=walker -m clipboard
+Icon=user-bookmarks
+Terminal=false
+NoDisplay=true
+X-KDE-Shortcuts=Meta+Ctrl+V

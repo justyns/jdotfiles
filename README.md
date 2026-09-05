@@ -35,6 +35,31 @@ If you want to update the git submodules to a commit newer than what is referenc
 
 You can then commit the changes to update the submodule metadata
 
+Apps
+====
+
+TODO: I need to organize my docs better.
+
+Walker launcher (Arch/EndeavourOS only)
+---------------------------------------
+
+    setup-walker
+
+Installs walker + the elephant providers + systemd user unit.
+
+Only tested on EndeavourOS so far, so hopefully skipped on other systems.
+
+Shortcuts:
+
+| Key | Opens |
+| --- | --- |
+| `Meta+Space` | launcher |
+| `Meta+Ctrl+E` | emoji |
+| `Meta+Ctrl+V` | clipboard history |
+| `Meta+Ctrl+F` | file search |
+| `Meta+Ctrl+D` | projects |
+
+After opening the launcher, type `;` to list all of the providers and their prefixes.
 UI Themes and customizations
 ============================
 

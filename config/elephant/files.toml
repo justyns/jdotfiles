@@ -1,0 +1,31 @@
+# search_dirs defaults to all of $HOME which has a lot of junk
+search_dirs = [
+  '/home/justyns/dev',
+  '/home/justyns/Documents',
+  '/home/justyns/Downloads',
+  '/home/justyns/Nextcloud',
+  '/home/justyns/.jdotfiles',
+]
+ignored_dirs = [
+  '/node_modules/',
+  '/\.git/',
+  '/\.venv/',
+  '/__pycache__/',
+  '/\.mypy_cache/',
+  '/\.pytest_cache/',
+  '/\.terraform/',
+  '/target/debug/',
+  '/target/release/',
+]
+fd_flags = ['--ignore-vcs', '--type', 'file', '--type', 'directory']
+ignore_previews = []
+ignore_watching = []
+watch = false
+watch_buffer = 2000
+watch_dirs = []
+
+[Config]
+hide_from_providerlist = false
+icon = 'folder'
+min_score = 20
+name_pretty = ''

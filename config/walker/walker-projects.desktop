@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Walker: Projects
+Comment=Projects
+Exec=walker -s dev
+Icon=folder-development
+Terminal=false
+NoDisplay=true
+X-KDE-Shortcuts=Meta+Ctrl+D
