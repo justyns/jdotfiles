@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Walker: Emoji Picker
+Comment=Emoji Picker
+Exec=walker -m symbols
+Icon=face-smile
+Terminal=false
+NoDisplay=true
+X-KDE-Shortcuts=Meta+Ctrl+E

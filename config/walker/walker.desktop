@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Walker
+Comment=Application launcher
+Exec=walker
+Icon=system-search
+Terminal=false
+NoDisplay=true
+X-KDE-Shortcuts=Meta+Space

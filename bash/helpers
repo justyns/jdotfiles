@@ -1,0 +1,8 @@
+# Shared output helpers for scripts in bin/. Source after bash/colors.
+info() { echo -e "${BoldOn}$1${reset}"; }
+success() { echo -e "${GreenF}✅ $1${reset}"; }
+warn() { echo -e "${YellowF}⚠️  $1${reset}" >&2; }
+fail() {
+  echo -e "${RedF}❌ $1${reset}" >&2
+  exit "${2:-1}"
+}

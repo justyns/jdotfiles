@@ -76,7 +76,12 @@ done
 create_symlinks "$dotdir" "$HOME" ".git install.sh bin update.sh misc .config tags zsh-custom" "." "true"
 # TODO: Migrate to ~/.local/bin ?
 create_symlinks "$dotdir/bin" "$HOME/bin" ".git install.sh bin" "bin/" "false"
-create_symlinks "$dotdir/config" "$HOME/.config" ".gitkeep" ".config/" "false"
+# walker/elephant/rofi are Linux-only, installed by bin/setup-walker
+config_ignore=".gitkeep"
+if ! hash pacman 2>&-; then
+    config_ignore="$config_ignore walker elephant rofi"
+fi
+create_symlinks "$dotdir/config" "$HOME/.config" "$config_ignore" ".config/" "false"
 
 #echo "Installing youcompleteme for vim"
 #cd ~/.vim/bundle/YouCompleteMe
