@@ -2,6 +2,7 @@ vim/.VimballRecord
 vim/.netrwhist
 vim/tmp/
 vim/plugged
+*.add.spl
 fish_history
 fish_read_history
 fishd.*

@@ -3,23 +3,15 @@ if &shell =~# 'fish$'
     set shell=sh
 endif
 
-" Needed because of this bug: https://github.com/vim/vim/issues/3117
-" Can probably be removed later
-if has('python3')
-  silent! python3 1
+" vim-plug https://github.com/junegunn/vim-plug
+if filereadable(expand('~/.vim/plugs.vim'))
+    so ~/.vim/plugs.vim
 endif
 
-" runtime bundle/vim-pathogen/autoload/pathogen.vim
-" call pathogen#infect()
-" vim-plug https://github.com/junegunn/vim-plug
-so ~/.vim/plugs.vim
-
 syntax on
-" colorscheme desert
-" colorscheme solarized
-" colorscheme monokai
 set background=dark
-colorscheme space-vim-dark
+" silent! so a box without the plugin installed doesn't error on startup
+silent! colorscheme space-vim-dark
 
 filetype on
 filetype plugin on
@@ -107,42 +99,6 @@ if v:version >= 730
     set undofile        " keep a persistent backup file
 endif
 
-" Load indentation rules according to the detected filetype.
-if has("autocmd")
-    filetype indent on
-endif
-
-"http://irssi.org/documentation/tips
-"Auto update changed date to todates date
-autocmd BufWrite *.pl %s/changed     => '.*/\="changed     => '" . strftime("%c") . "',"/e
-map <C-B> :w !php -l <CR>
-
-" Turn on rainbow parantheses by default
-" https://github.com/kien/rainbow_parentheses.vim
-if exists('au')
-    au VimEnter * RainbowParenthesesToggle
-    au Syntax * RainbowParenthesesLoadRound
-    au Syntax * RainbowParenthesesLoadSquare
-    au Syntax * RainbowParenthesesLoadBraces
-endif
-
-" Tagbar
-let g:tagbar_usearrows = 1
-nnoremap <leader>l :TagbarToggle<CR><C-w><C-w>
-
-" ctrlp for tags
-nnoremap <leader>. :CtrlPTag<CR>
-
-" disable arrow keys to learn to use hjkl
-" nnoremap <up> <nop>
-" nnoremap <down> <nop>
-" nnoremap <left> <nop>
-" nnoremap <right> <nop>
-" inoremap <up> <nop>
-" inoremap <down> <nop>
-" inoremap <left> <nop>
-" inoremap <right> <nop>
-
 " Allowe hidden buffers
 set hidden
 
@@ -224,8 +180,8 @@ nnoremap ; :
 " strip all trailing whitespace in the current file
 nnoremap <leader>W :%s/\s\+$//<cr>:let @/=''<CR>
 
-" Use ack by pressing ,g
-nnoremap <leader>g :Ack 
+" grep for a pattern with ,g (grepprg is set to rg/ag below when available)
+nnoremap <leader>g :grep
 
 " Select text that was just pasted
 nnoremap <leader>v V`]
@@ -252,56 +208,19 @@ map <Leader>D :bw<Return>
 map <Leader>f :b
 nmap <Leader>bb :ls<CR>:buffer<Space>
 
-" Use <leader>t to toggle nerdtree
-map <Leader>t :NERDTreeToggle<Return>
+" Use <leader>t for the file browser (netrw ships with vim)
+map <Leader>t :Explore<Return>
 
-" Format javascript
-nmap =j :%!python -m json.tool<CR>
-
-" Format python using yapf (from
-" https://github.com/mindriot101/vim-yapf#why-you-may-not-need-this-plugin)
-nmap =y :%!yapf<CR>
-
-
-" From http://www.vimbits.com/bits/153 - TODO: Move to its own file
-" Motions to Ack for things. Works with pretty much everything, including: w,
-" W, e, E, b, B, t*, f*, i*, a*, and custom text objects.
-"
-" For example: \aiw will Ack for the word under the cursor. \aib will Ack for
-" the contents of the parentheses the cursor is inside.
-nnoremap <silent> \a :set opfunc=<SID>AckMotion<CR>g@
-xnoremap <silent> \a :<C-U>call <SID>AckMotion(visualmode())<CR>
-
-function! s:CopyMotionForType(type)
-    if a:type ==# 'v'
-        silent execute "normal! `<" . a:type . "`>y"
-    elseif a:type ==# 'char'
-        silent execute "normal! `[v`]y"
-    endif
-endfunction
-
-function! s:AckMotion(type) abort
-    let reg_save = @@
-
-    call s:CopyMotionForType(a:type)
-
-    execute "normal! :Ack! --literal " . shellescape(@@) . "\<cr>"
-
-    let @@ = reg_save
-endfunction
+" Format json
+nmap =j :%!python3 -m json.tool<CR>
 
 
 " Folding stuff
 set foldmethod=syntax
 set foldnestmax=2
 set nofoldenable
-nnoremap <Space> za   " Toggle current fold open/closed
-
-" Flake8 stuff
-let g:flake8_show_in_gutter=1
-
-" https://github.com/othree/javascript-libraries-syntax.vim
-let g:used_javascript_libs = 'jquery,angularjs,react'
+" Toggle current fold open/closed
+nnoremap <Space> za
 
 " Set default font for MacVim
 if has('win32')
@@ -326,91 +245,22 @@ cmap w!! w !sudo tee % >/dev/null
 
 let g:ctrlp_cache_dir = $HOME . '/.cache/ctrlp'     " Persist ctrlp cache to disk
 
-" Check if ag (the_silver_searcher) is installed
-if executable('ag')
-    " If ag is installed, use it for ctrlp instead of the built in search
+" Use rg/ag for :grep and for ctrlp's file listing when they're available.
+" older boxes usually only have plain grep
+if executable('rg')
+    set grepprg=rg\ --vimgrep\ --smart-case
+    set grepformat=%f:%l:%c:%m
+    let g:ctrlp_user_command = 'rg %s --files --color=never'
+elseif executable('ag')
+    set grepprg=ag\ --vimgrep\ --smart-case
+    set grepformat=%f:%l:%c:%m
     let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
-    " Also use it for ack.vim due to https://github.com/rking/ag.vim/issues/124#issuecomment-227038003
-    let g:ackprg = 'ag --vimgrep --smart-case'
-    cnoreabbrev ag Ack
-    cnoreabbrev Ag Ack
 endif
 
-" For chef berkshelf
-autocmd BufNewFile,BufRead Gemfile set filetype=ruby
-autocmd BufNewFile,BufRead Berksfile set filetype=ruby
-
-" Syntastic settings
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
-let g:syntastic_ruby_checkers = [ 'rubocop' ]
+" ALE
+let g:ale_lint_on_enter = 1
+let g:ale_lint_on_text_changed = 'never'
 
 " Hide Info window after completions
 autocmd CursorMovedI * if pumvisible() == 0|pclose|endif
 autocmd InsertLeave * if pumvisible() == 0|pclose|endif
-
-" For ledger
-au BufNewFile,BufRead *.ldg,*.ledger setf ledger | comp ledger
-let g:ledger_maxwidth = 120
-let g:ledger_fold_blanks = 1
-function LedgerSort()
-    :%! ledger -f - print --sort 'date, amount'
-    :%LedgerAlign
-endfunction
-command LedgerSort call LedgerSort()
-
-" Ultisnips
-let g:UltiSnipsExpandTrigger="<NUL>"
-let g:UltiSnipsJumpForwardTrigger="<tab>"
-let g:UltiSnipsJumpBackwardTrigger="<S-tab>"
-let g:UltiSnipsListSnippets="<c-k>" "List possible snippets based on current file
-
-" https://github.com/SirVer/ultisnips/issues/376 - get YCM and Ultisnips to work together
-let g:ulti_expand_or_jump_res = 0
-function! <SID>ExpandSnippetOrReturn()
-  let snippet = UltiSnips#ExpandSnippetOrJump()
-  if g:ulti_expand_or_jump_res > 0
-    return snippet
-  else
-    return "\<CR>"
-  endif
-endfunction
-inoremap <expr> <CR> pumvisible() ? "<C-R>=<SID>ExpandSnippetOrReturn()<CR>" : "\<CR>"
-
-" YouCompleteMe YCM
-let g:ycm_key_list_select_completion=["<tab>"]
-let g:ycm_key_list_previous_completion=["<S-tab>"]
-let g:ycm_collect_identifiers_from_tags_files = 1 " Let YCM read tags from Ctags file
-let g:ycm_use_ultisnips_completer = 1 " Default 1, just ensure
-let g:ycm_seed_identifiers_with_syntax = 1 " Completion for programming language's keyword
-let g:ycm_complete_in_comments = 1 " Completion in comments
-let g:ycm_complete_in_strings = 1 " Completion in string
-
-" EditorConfig - https://github.com/editorconfig/editorconfig-vim#readme
-let g:EditorConfig_exclude_patterns = ['fugitive://.*', 'scp://.*']
-
-" https://github.com/neoclide/coc.nvim
-" set shortmess+=c
-" set signcolumn=yes
-" let g:airline_section_error = '%{airline#util#wrap(airline#extensions#coc#get_error(),0)}'
-" let g:airline_section_warning = '%{airline#util#wrap(airline#extensions#coc#get_warning(),0)}'
-
-" let g:terraform_completion_keys = 1
-" 
-" let g:deoplete#omni_patterns = {}
-" call deoplete#custom#option('omni_patterns', {
-" \ 'complete_method': 'omnifunc',
-" \ 'terraform': '[^ *\t"{=$]\w*',
-" \})
-" call deoplete#initialize()
-
-let g:vim_json_syntax_conceal = 0
-
-if v:version >= 740
-    set completeopt=menuone,preview,noinsert
-endif
