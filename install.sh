@@ -56,7 +56,7 @@ create_symlinks() {
 }
 
 #Check and see if these commands exist on the system
-reqcommands="vim nvim git python tmux ack ag ctags zsh bat editorconfig mise uv"
+reqcommands="vim nvim git python tmux rg ctags zsh bat editorconfig mise uv"
 for com in $reqcommands;
 do
 	hash ${com} 2>&- || echo -e >&2 "${RedF}${com}${reset}: not installed"
@@ -82,12 +82,6 @@ if ! hash pacman 2>&-; then
     config_ignore="$config_ignore walker elephant rofi"
 fi
 create_symlinks "$dotdir/config" "$HOME/.config" "$config_ignore" ".config/" "false"
-
-#echo "Installing youcompleteme for vim"
-#cd ~/.vim/bundle/YouCompleteMe
-#./install.py --clang-completer --gocode-completer
-echo "Installing vim plugins"
-vim +PlugInstall +qall
 
 # Install oh-my-zsh and extra plugins/themes
 echo "Installing oh-my-zsh and plugins"
