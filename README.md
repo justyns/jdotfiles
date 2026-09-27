@@ -40,26 +40,36 @@ Apps
 
 TODO: I need to organize my docs better.
 
-Walker launcher (Arch/EndeavourOS only)
----------------------------------------
+Hyprland
+--------------------------------
 
-    setup-walker
+    setup-hyprland
 
-Installs walker + the elephant providers + systemd user unit.
+Installs Hyprland and Noctalia.
+Config lives in `config/hypr/`, keybinds in `config/hypr/bindings.lua`.
 
-Only tested on EndeavourOS so far, so hopefully skipped on other systems.
+Only tested on EndeavourOS so far.
 
 Shortcuts:
 
 | Key | Opens |
 | --- | --- |
-| `Meta+Space` | launcher |
-| `Meta+Ctrl+E` | emoji |
-| `Meta+Ctrl+V` | clipboard history |
-| `Meta+Ctrl+F` | file search |
-| `Meta+Ctrl+D` | projects |
+| `Super+Return` | ghostty |
+| `Super+Space` | launcher |
+| `Super+Ctrl+E` | emoji |
+| `Super+Ctrl+V` | clipboard history |
+| `Super+S` | scratchpad |
+| `Super+M` | centre the window, or send it back (ws 1-3) |
+| `Alt+Tab` | window switcher |
+| `Super+Escape` | lock |
+| `Super+Shift+M` | session menu |
+| `Print` | screenshot region |
+| `Super+Print` | start/stop recording a region |
+| `Super+Shift+Print` | start/stop recording the focused window |
 
-After opening the launcher, type `;` to list all of the providers and their prefixes.
+In the launcher, `/p` opens a git repo under `~/dev` in ghostty, `/pe` opens one in
+nvim, and `/t` attaches a tmux session.
+
 UI Themes and customizations
 ============================
 

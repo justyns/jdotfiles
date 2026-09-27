@@ -23,3 +23,4 @@ config/zed/tasks.json
 # ~/.gitignore_global ignores bin/ by default, but I actually want bin/ in this repo
 !bin/
 !bin/*
+config/hypr/noctalia.lua
