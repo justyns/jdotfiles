@@ -1,0 +1,171 @@
+#!/usr/bin/env bash
+# Install and configure Hyprland
+
+set -euo pipefail
+
+DOTFILES_DIR="${HOME}/.jdotfiles"
+HYPR_CONFIG="${HOME}/.config/hypr"
+
+source "${DOTFILES_DIR}/bash/colors"
+source "${DOTFILES_DIR}/bash/helpers"
+
+PACMAN_PACKAGES=(
+  hyprland
+  xdg-desktop-portal-hyprland
+  xdg-desktop-portal-gtk
+  hyprpolkitagent
+  hypridle
+  noctalia
+  # Noctalia's gtk3/gtk4 templates generate CSS on top of adw-gtk3.
+  # https://docs.noctalia.dev/noctalia/templates/official/gtk-qt/
+  adw-gtk-theme
+  nwg-look
+  wl-clipboard
+  playerctl
+  # bin/screenrec records a slurp region or the focused window.
+  wf-recorder
+  slurp
+  jq
+  grim
+  qt5-wayland
+  qt6-wayland
+)
+
+# Not in the official repos.
+AUR_PACKAGES=(
+  catppuccin-cursors-frappe
+  # qt6ct-kde needed for dolphin's theming
+  qt6ct-kde
+)
+
+hash pacman 2>/dev/null || fail "Not an Arch-based system"
+hash yay 2>/dev/null || fail "yay is required to install the AUR packages"
+[ -d "$HYPR_CONFIG" ] || fail "$HYPR_CONFIG missing - run install.sh first"
+
+info "Installing Hyprland and session components"
+sudo pacman -S --needed "${PACMAN_PACKAGES[@]}"
+
+info "Installing theme packages from the AUR"
+yay -S --needed "${AUR_PACKAGES[@]}"
+
+# Install the hyprland-session.target unit so SDDM can start Hyprland
+UNIT_DIR="${HOME}/.config/systemd/user"
+mkdir -p "$UNIT_DIR"
+ln -sfn "${HYPR_CONFIG}/hyprland-session.target" "${UNIT_DIR}/hyprland-session.target"
+systemctl --user daemon-reload
+success "hyprland-session.target linked"
+
+PORTAL_CONFIG="${HOME}/.config/xdg-desktop-portal/hyprland-portals.conf"
+if [ ! -f "$PORTAL_CONFIG" ]; then
+  mkdir -p "$(dirname "$PORTAL_CONFIG")"
+  cat >"$PORTAL_CONFIG" <<'EOF'
+[preferred]
+default=hyprland;gtk
+org.freedesktop.impl.portal.FileChooser=gtk
+EOF
+  success "$PORTAL_CONFIG written"
+fi
+
+# Noctalia keeps its settings and generated theme files in ~/.local/state and ~/.config
+NOCTALIA_SCHEME='Catppuccin Frappe Blue'
+NOCTALIA_TEMPLATES='gtk3 gtk4 hyprland kcolorscheme qt'
+NOCTALIA_COMMUNITY_TEMPLATES='prismlauncher'
+NOCTALIA_SETTINGS="${HOME}/.local/state/noctalia/settings.toml"
+
+info "Configuring Noctalia"
+gsettings set org.gnome.desktop.interface gtk-theme 'adw-gtk3'
+gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
+
+# TODO: I don't really like this in-line python, but I can replace it later if I keep Noctalia
+python3 - "$NOCTALIA_SETTINGS" "$NOCTALIA_TEMPLATES" "$NOCTALIA_COMMUNITY_TEMPLATES" <<'PY'
+import os, pathlib, re, shutil, sys, time, tomllib
+
+path = pathlib.Path(sys.argv[1])
+text = path.read_text() if path.exists() else ""
+
+for key, names in (("builtin_ids", sys.argv[2]), ("community_ids", sys.argv[3])):
+    line = "    %s = [ %s ]" % (key, ", ".join('"%s"' % n for n in names.split()))
+    if re.search(r"^[ \t]*%s[ \t]*=" % key, text, re.M):
+        text = re.sub(r"^[ \t]*%s[ \t]*=.*$" % key, line, text, count=1, flags=re.M)
+    elif "[theme.templates]" in text:
+        text = text.replace("[theme.templates]", "[theme.templates]\n" + line, 1)
+    else:
+        text = text.rstrip("\n") + "\n\n[theme.templates]\n" + line + "\n"
+
+entries = '''
+[shell.launcher.dmenu.entry.projects]
+label = "Projects"
+prefix = "p"
+glyph = "folder"
+global = false
+command = "fd -H -t d '^\\\\.git$' $HOME/dev --max-depth 3 | sed 's|/\\\\.git/*$||'"
+exec = "ghostty --working-directory={selection}"
+
+[shell.launcher.dmenu.entry.projects-editor]
+label = "Projects (nvim)"
+prefix = "pe"
+glyph = "code"
+global = false
+command = "fd -H -t d '^\\\\.git$' $HOME/dev --max-depth 3 | sed 's|/\\\\.git/*$||'"
+exec = "ghostty --working-directory={selection} -e nvim"
+
+[shell.launcher.dmenu.entry.tmux]
+label = "Tmux Sessions"
+prefix = "t"
+glyph = "terminal"
+global = false
+freeform = true
+command = "tmux list-sessions -F '#{session_name}' 2>/dev/null"
+exec = "ghostty -e tmux new-session -A -s {selection}"
+'''
+
+# Drop any previous copy of each entry, header line plus its body.
+for eid in ("projects", "projects-editor", "tmux"):
+    text = re.sub(
+        r"^[ \t]*\[shell\.launcher\.dmenu\.entry\.%s\][^\n]*\n(?:(?![ \t]*\[)[^\n]*\n)*" % re.escape(eid),
+        "", text, flags=re.M)
+
+text = text.rstrip("\n") + "\n" + entries
+
+# Raises before anything is written if the edits produced invalid TOML.
+tomllib.loads(text)
+
+path.parent.mkdir(parents=True, exist_ok=True)
+if path.exists():
+    shutil.copy2(path, "%s.bak-%s" % (path, time.strftime("%Y%m%d-%H%M%S")))
+tmp = path.with_name(path.name + ".tmp")
+tmp.write_text(text)
+os.replace(tmp, path)
+PY
+
+noctalia --daemon || true
+sleep 2
+
+if noctalia msg color-scheme-set community "$NOCTALIA_SCHEME"; then
+  success "Noctalia scheme: $NOCTALIA_SCHEME"
+else
+  warn "Could not set the scheme - pick it in 'noctalia msg settings-open'"
+fi
+
+# qt6ct-kde needs the scheme from kcolorscheme template
+QT6CT_CONF="${HOME}/.config/qt6ct/qt6ct.conf"
+if [ ! -f "$QT6CT_CONF" ]; then
+  mkdir -p "$(dirname "$QT6CT_CONF")"
+  cat >"$QT6CT_CONF" <<EOF
+[Appearance]
+color_scheme_path=${HOME}/.local/share/color-schemes/noctalia.colors
+custom_palette=true
+style=Fusion
+EOF
+  success "$QT6CT_CONF written"
+fi
+
+noctalia msg config-reload >/dev/null 2>&1 || warn "config-reload failed - is the daemon running?"
+noctalia msg templates-apply >/dev/null 2>&1 &&
+  success "Noctalia templates applied: $NOCTALIA_TEMPLATES" ||
+  warn "templates-apply failed - enable them in 'noctalia msg settings-open'"
+
+info "Done. Log out and pick Hyprland at the SDDM session menu."
+echo "Plasma stays installed and selectable. To remove what this installed:"
+echo "  sudo pacman -Rns ${PACMAN_PACKAGES[*]} ${AUR_PACKAGES[*]}"
+echo "  rm $PORTAL_CONFIG"
