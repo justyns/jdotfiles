@@ -5,6 +5,7 @@
 #   tmux-agent list                 same rows, plain text
 #   tmux-agent summary              one compact line for the tmux status bar
 #   tmux-agent clean                drop state for panes that no longer exist
+#   tmux-agent last                 most recent waiting/idle pane: "session:window name<TAB>state<TAB>age secs<TAB>message"
 #   tmux-agent set <state> [msg]    record this pane's state (called by hooks)
 #   tmux-agent codex-notify <json>  codex notify entrypoint (payload in argv)
 #
@@ -21,8 +22,9 @@ STATE_DIR="${TMUX_AGENT_STATE_DIR:-${XDG_RUNTIME_DIR:-/tmp}/tmux-agent}"
 AGENT_RE="${TMUX_AGENT_CMD_RE:-^(claude|codex|aider|gemini|opencode|crush|goose|cursor-agent|amp|q)$}"
 AGENT_ARGV_RE="${TMUX_AGENT_ARGV_RE:-(^|/)(codex|claude|aider|opencode|crush|goose|amp|cursor-agent)( |$)}"
 
-# Lets the whole tool point at a non-default tmux server (tmux -L foo)
-read -r -a TMUX_CMD <<<"${TMUX_AGENT_TMUX:-tmux}"
+# Lets the whole tool point at a non-default tmux server (tmux -L foo).
+# -u keeps tabs and UTF-8 in format output when the locale is unset, as over ssh.
+read -r -a TMUX_CMD <<<"${TMUX_AGENT_TMUX:-tmux -u}"
 
 SELF=$(readlink -f "$0" 2>/dev/null || printf '%s' "$0")
 
@@ -66,9 +68,15 @@ _win_state() {
 # once per window per status-interval tick, `#{@agent_state}` does not fork.
 _publish() {
     local state=$1 msg=$2 proj=$3 tag=$4
+    local file prev=""
     mkdir -p "$STATE_DIR" 2>/dev/null || exit 0
-    printf '%s\t%s\t%s\n' "$state" "${EPOCHSECONDS:-$(date +%s)}" "${msg:0:140}" \
-        >"$STATE_DIR/$(_ns_write)-${TMUX_PANE#%}"
+    file="$STATE_DIR/$(_ns_write)-${TMUX_PANE#%}"
+    [ -f "$file" ] && IFS=$'\t' read -r prev _ <"$file"
+    printf '%s\t%s\t%s\n' "$state" "${EPOCHSECONDS:-$(date +%s)}" "${msg:0:140}" >"$file"
+    # The bell makes ghostty mark its window urgent, and Hyprland notifies when that window is hidden.
+    if [ "$state" != "$prev" ] && { [ "$state" = waiting ] || [ "$state" = idle ]; }; then
+        printf '\a' >"$("${TMUX_CMD[@]}" display -p -t "$TMUX_PANE" '#{pane_tty}')" 2>/dev/null
+    fi
     "${TMUX_CMD[@]}" set -w -t "$TMUX_PANE" @agent_state "$(_win_state "$state")" 2>/dev/null
     "${TMUX_CMD[@]}" set -w -t "$TMUX_PANE" @agent_tag "$tag" 2>/dev/null
     proj=${proj%/}
@@ -432,6 +440,17 @@ cmd_clean() {
         "$cleared" "$([ "$cleared" = 1 ] || echo s)"
 }
 
+cmd_last() {
+    local file state ts msg
+    for file in $(ls -t "$STATE_DIR/$(_ns_read)"-* 2>/dev/null); do
+        IFS=$'\t' read -r state ts msg <"$file"
+        case "$state" in waiting | idle) ;; *) continue ;; esac
+        printf '%s\t%s\t%s\t%s\n' "$("${TMUX_CMD[@]}" display -p -t "%${file##*-}" '#{session_name}:#{window_index} #{window_name}')" \
+            "$state" "$(( ${EPOCHSECONDS:-$(date +%s)} - ts ))" "$msg"
+        return
+    done
+}
+
 [ $# -eq 0 ] && set -- pick
 
 # Only the hook entry points need a pane to key on; the other commands ask tmux
@@ -448,6 +467,7 @@ case "$1" in
     list)    shift; cmd_list "$@" ;;
     summary) shift; cmd_summary "$@" ;;
     clean)   shift; cmd_clean "$@" ;;
+    last)    shift; cmd_last ;;
     -h|--help|help)
         awk 'NR>1 && /^#/ {sub(/^# ?/, ""); print; next} NR>1 {exit}' "$SELF"
         ;;
