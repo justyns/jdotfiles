@@ -44,3 +44,5 @@ done
 [[ -f $HOME/.bashrc.local ]] && source $HOME/.bashrc.local
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
+
+command -v mise >/dev/null && eval "$(mise activate bash)"
