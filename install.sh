@@ -76,7 +76,7 @@ done
 create_symlinks "$dotdir" "$HOME" ".git install.sh bin update.sh misc .config tags zsh-custom" "." "true"
 # TODO: Migrate to ~/.local/bin ?
 create_symlinks "$dotdir/bin" "$HOME/bin" ".git install.sh bin" "bin/" "false"
-config_ignore=".gitkeep"
+config_ignore=".gitkeep btop"
 if ! hash pacman 2>&-; then
     config_ignore="$config_ignore hypr"
 fi
@@ -128,4 +128,13 @@ if [[ -d $HOME/.local/share/konsole ]]; then
     fi
 else
     echo -e "${YellowF}~/.local/share/konsole${reset}: directory doesn't exist, skipping Konsole config"
+fi
+
+if hash btop 2>&-; then
+    create_symlinks "$dotdir/config/btop/themes" "$HOME/.config/btop/themes" "" "config/btop/themes/" "false"
+    if [[ -f $HOME/.config/btop/btop.conf ]]; then
+        sed -i 's/^color_theme = .*/color_theme = "catppuccin_frappe"/' "$HOME/.config/btop/btop.conf"
+    else
+        echo -e "${YellowF}btop.conf${reset}: run btop once, then re-run install.sh to set the theme"
+    fi
 fi
