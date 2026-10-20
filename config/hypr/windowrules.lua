@@ -17,9 +17,10 @@ hl.window_rule({
 })
 
 hl.window_rule({
-    name   = "keybinds-cheatsheet",
-    match  = { title = "^Keybinds$" },
+    name   = "fzf-popups",
+    match  = { title = "^(Keybinds|Captures)$" },
     float  = true,
+    size   = "1100 750",
     center = true,
 })
 

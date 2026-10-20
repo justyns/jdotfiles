@@ -22,7 +22,7 @@ PACMAN_PACKAGES=(
   nwg-look
   wl-clipboard
   playerctl
-  # bin/screenrec records a slurp region or the focused window.
+  # Used by the scripts in bin/.
   wf-recorder
   slurp
   jq
@@ -31,7 +31,6 @@ PACMAN_PACKAGES=(
   qt6-wayland
 )
 
-# Not in the official repos.
 AUR_PACKAGES=(
   catppuccin-cursors-frappe
   # qt6ct-kde needed for dolphin's theming
@@ -52,8 +51,10 @@ yay -S --needed "${AUR_PACKAGES[@]}"
 UNIT_DIR="${HOME}/.config/systemd/user"
 mkdir -p "$UNIT_DIR"
 ln -sfn "${HYPR_CONFIG}/hyprland-session.target" "${UNIT_DIR}/hyprland-session.target"
+ln -sfn "${HYPR_CONFIG}/hypr-usage-log.service" "${UNIT_DIR}/hypr-usage-log.service"
 systemctl --user daemon-reload
-success "hyprland-session.target linked"
+systemctl --user enable hypr-usage-log.service
+success "hyprland-session.target and hypr-usage-log.service linked"
 
 PORTAL_CONFIG="${HOME}/.config/xdg-desktop-portal/hyprland-portals.conf"
 if [ ! -f "$PORTAL_CONFIG" ]; then
@@ -66,7 +67,6 @@ EOF
   success "$PORTAL_CONFIG written"
 fi
 
-# Noctalia keeps its settings and generated theme files in ~/.local/state and ~/.config
 NOCTALIA_SCHEME='Catppuccin Frappe Blue'
 NOCTALIA_TEMPLATES='gtk3 gtk4 hyprland kcolorscheme qt'
 NOCTALIA_COMMUNITY_TEMPLATES='prismlauncher'
@@ -83,14 +83,22 @@ import os, pathlib, re, shutil, sys, time, tomllib
 path = pathlib.Path(sys.argv[1])
 text = path.read_text() if path.exists() else ""
 
-for key, names in (("builtin_ids", sys.argv[2]), ("community_ids", sys.argv[3])):
-    line = "    %s = [ %s ]" % (key, ", ".join('"%s"' % n for n in names.split()))
+def toml_list(names):
+    return "[ %s ]" % ", ".join('"%s"' % n for n in names.split())
+
+for table, key, value in (
+    ("theme.templates", "builtin_ids", toml_list(sys.argv[2])),
+    ("theme.templates", "community_ids", toml_list(sys.argv[3])),
+    ("shell.screenshot", "copy_to_clipboard", "true"),
+):
+    line = "    %s = %s" % (key, value)
+    header = "[%s]" % table
     if re.search(r"^[ \t]*%s[ \t]*=" % key, text, re.M):
         text = re.sub(r"^[ \t]*%s[ \t]*=.*$" % key, line, text, count=1, flags=re.M)
-    elif "[theme.templates]" in text:
-        text = text.replace("[theme.templates]", "[theme.templates]\n" + line, 1)
+    elif header in text:
+        text = text.replace(header, header + "\n" + line, 1)
     else:
-        text = text.rstrip("\n") + "\n\n[theme.templates]\n" + line + "\n"
+        text = text.rstrip("\n") + "\n\n" + header + "\n" + line + "\n"
 
 entries = '''
 [shell.launcher.dmenu.entry.projects]
